@@ -1,0 +1,56 @@
+/*
+    FONTS
+*/
+
+@font-face {
+    font-family: rajdhani-bold;
+    src: url(../fonts/Rajdhani-Bold.ttf);
+}
+@font-face {
+    font-family: rajdhani-light;
+    src: url(../fonts/Rajdhani-Light.ttf);
+}
+@font-face {
+    font-family: rajdhani-medium;
+    src: url(../fonts/Rajdhani-Medium.ttf);
+}
+@font-face {
+    font-family: rajdhani;
+    src: url(../fonts/Rajdhani-Regular.ttf);
+}
+
+/*
+    GENERAL
+*/
+
+.vertical-center {
+    min-height: 100%;  /* Fallback for browsers do NOT support vh unit */
+    min-height: 100vh; /* These two lines are counted as one */    
+    display: flex;
+    align-items: center; 
+}
+
+.horizontal-center {
+    margin-left: auto;
+    margin-right: auto;
+}
+
+* {
+    font-family: rajdhani;
+}
+
+/*
+    COLOR
+*/
+
+.twblue {
+    color:#007cc4;
+}
+
+/*
+    UTILIY
+*/
+
+.gap {
+    margin-top:15px;
+}

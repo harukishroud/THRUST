@@ -54,3 +54,15 @@
 .gap {
     margin-top:15px;
 }
+
+.sidegap-xs {
+    margin-right:5px;
+}
+
+.sidegap-s {
+    margin-right:10px;
+}
+
+.topgap-m {
+    margin-top:15px;
+}

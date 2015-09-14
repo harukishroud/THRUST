@@ -1,7 +1,8 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:h="http://java.sun.com/jsf/html">
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
     <h:head>
         <title>Dashboard | THRUST</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
@@ -9,45 +10,10 @@
         <link href="css/style.css" rel="stylesheet"/>
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>
-        
+
         <script src="js/bootstrap.js"></script>
     </h:head>
     <h:body>
-        <div class="vertical-center">
-            <div class="container" style="max-width: 400px;">
-                <div class="row">
-                    <div class="col-sm-12">
-                        <img src="img/logo.png" class="img-responsive center-block" style="max-height:150px;"/>
-                        <div class="gap"></div>
-                    </div>
-                    <div class="col-sm-12">
-                        <form>
-                            <div class="panel panel-default" style="">
-                                <div class="panel-body">
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                            <input type="text" class="form-control" id="username"/>
-                                        </div>
-                                    </div>
-                                    <div class="form-group">
-                                        <div class="input-group">
-                                            <span class="input-group-addon"><i class="fa fa-lock"></i></span>
-                                            <input type="password" class="form-control" id="userpassword"/>
-                                        </div>
-                                    </div>                                    
-                                </div>
-                                <div class="panel-footer">
-                                    <button type="submit" class="btn btn-default">Entrar</button>                                    
-                                </div>
-                            </div>
-                        </form>
-                    </div> 
-                </div>
-                <div class="row" style="text-align:center;font-size:smaller;color: #999999;margin:3%;">
-                    <p>Powered by <span class="twblue">TAILWIND PARTS and PARTNERS</span>. Developed by <b>Kevin Raian</b> from <span class="twblue">IDINALOG REBORN</span></p>
-                </div>
-            </div>
-        </div>
+        <ui:include src="masterheader.xhtml" />
     </h:body>
 </html>

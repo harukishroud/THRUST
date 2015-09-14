@@ -1,0 +1,49 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+    <h:head>
+        <title>Inventory | THRUST</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
+        <link href="css/style.css" rel="stylesheet"/>
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+        <link href="css/font-awesome.css" rel="stylesheet"/>
+
+        <script src="js/bootstrap.js"></script>
+    </h:head>
+    <h:body>
+        <ui:include src="masterheader.xhtml" />
+
+        <div class="container">
+            <div class="row">
+                <form class="form-inline">
+                    <div class="form-group">
+                        <label for="selectInventory" class="sidegap-s">Selecione o Inventário</label>
+                        <h:selectOneMenu class="form-control" style="padding:3px;width:150px;height:35px;" value="">
+                            <f:selectItem itemLabel="Todos" itemValue="Todos" />
+                        </h:selectOneMenu>
+                    </div>
+                </form>
+            </div>
+            <div class="row">
+                
+            </div>
+            <div class="row topgap-m">
+                <div class="panel panel-default">
+                    <div class="panel-heading">
+                        <h3 class="panel-title"></h3>
+                    </div>
+                    <div class="panel-body">
+                        Panel content
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </h:body>
+</html>

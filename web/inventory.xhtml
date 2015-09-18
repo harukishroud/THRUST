@@ -31,7 +31,7 @@
                 </form>
             </div>
             <div class="row">
-                
+
             </div>
             <div class="row topgap-m">
                 <div class="panel panel-default">
@@ -39,7 +39,38 @@
                         <h3 class="panel-title"></h3>
                     </div>
                     <div class="panel-body">
-                        Panel content
+                        <h:form>
+                            <div class="row clearfix" style="max-height:400px;">
+                                <div class="table-responsive">
+                                    <p:dataTable   widgetVar="inventoryTable" scrollable="true" scrollHeight="400" tableStyleClass="table table-striped"  var="inventoryItem" value="#{inventoryController.inventory}" id="inventoryTable" emptyMessage="Nenhum item encontrado.">
+                                        
+                                        <p:column headerText="PN" style="text-align:center;">
+                                            <b><h:outputText value="#{inventoryItem.pn}"/></b>
+                                        </p:column>
+                                        <p:column headerText="Descrição" style="text-align:center;">
+                                            <h:outputText value="#{inventoryItem.description}"/>
+                                        </p:column> 
+                                        <p:column headerText="Quantidade" style="text-align:center;">
+                                            <h:outputText style="font-size:18px; font-weight: bold;" value="#{inventoryItem.quantity}"/>
+                                        </p:column> 
+                                        <p:column headerText="Condição" style="text-align:center;">
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('OH')}">
+                                                <h:outputText style="font-size:12px;" class="label label-warning" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('PMA')}">
+                                                <h:outputText style="font-size:12px;" class="label label-info" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('AR')}">
+                                                <h:outputText style="font-size:12px;" class="label label-default" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                        </p:column> 
+                                        <p:column headerText="Container" style="text-align:center;">
+                                            <h:outputText value="#{inventoryItem.containerAlias}"/>
+                                        </p:column>                                    
+                                    </p:dataTable>
+                                </div>
+                            </div>
+                        </h:form>
                     </div>
                 </div>
             </div>

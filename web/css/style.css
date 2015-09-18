@@ -66,3 +66,11 @@
 .topgap-m {
     margin-top:15px;
 }
+
+/*
+    FIXES
+*/
+
+.ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
+border-width: 0px;
+}

@@ -14,16 +14,18 @@ import db.sql.QueryOperation;
 import db.sql.QueryType;
 
 public class InventoryService {
-    
-    public void listBasicInventory() throws SQLException, ExceptionDAO {
-        
+
+    public List<InventoryBasicBean> listBasicInventory() throws SQLException, ExceptionDAO {
+        List<InventoryBasicBean> inventory = new ArrayList<InventoryBasicBean>();
+        InventoryDAO inventoryDAO = new InventoryDAO();
+
         try {
-            InventoryDAO inventoryDAO = new InventoryDAO();
-            inventoryDAO.listBasicInventory();
+            inventory = inventoryDAO.listBasicInventory();
         } catch (SQLException ex) {
             System.out.println("[DATABASE][INVENTORYSERVICE] ERROR!");
         }
+
+        return inventory;
     }
-    
-   
+
 }

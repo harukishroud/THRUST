@@ -4,74 +4,327 @@
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      >
 
     <h:head>
         <title>Inventory | THRUST</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
         <link href="css/style.css" rel="stylesheet"/>
+
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>
 
         <script src="js/bootstrap.js"></script>
     </h:head>
+
     <h:body>
-        <ui:include src="masterheader.xhtml" />
+        <!-- MENU -->
+        <ui:include src="masterheader.xhtml" />        
+
 
         <div class="container">
-            <div class="row">
-                <form class="form-inline">
-                    <div class="form-group">
-                        <label for="selectInventory" class="sidegap-s">Selecione o Inventário</label>
-                        <h:selectOneMenu class="form-control" style="padding:3px;width:150px;height:35px;" value="">
-                            <f:selectItem itemLabel="Todos" itemValue="Todos" />
-                        </h:selectOneMenu>
-                    </div>
-                </form>
-            </div>
-            <div class="row">
+            <!-- FUNÇÕES -->
+            
 
-            </div>
+            <!-- PANEL -->
             <div class="row topgap-m">
                 <div class="panel panel-default">
+                    <!-- Panel Header -->
                     <div class="panel-heading">
-                        <h3 class="panel-title"></h3>
+                        <h4 style="line-height: 1px;"><i class="fa fa-list sidegap-s" style="color:grey"></i> <b>Inventário</b></h4>
                     </div>
+
+                    <!-- Panel Body -->
                     <div class="panel-body">
-                        <h:form>
-                            <div class="row clearfix" style="max-height:400px;">
-                                <div class="table-responsive">
-                                    <p:dataTable   widgetVar="inventoryTable" scrollable="true" scrollHeight="400" tableStyleClass="table table-striped"  var="inventoryItem" value="#{inventoryController.inventory}" id="inventoryTable" emptyMessage="Nenhum item encontrado.">
-                                        
-                                        <p:column headerText="PN" style="text-align:center;">
-                                            <b><h:outputText value="#{inventoryItem.pn}"/></b>
-                                        </p:column>
-                                        <p:column headerText="Descrição" style="text-align:center;">
-                                            <h:outputText value="#{inventoryItem.description}"/>
-                                        </p:column> 
-                                        <p:column headerText="Quantidade" style="text-align:center;">
-                                            <h:outputText style="font-size:18px; font-weight: bold;" value="#{inventoryItem.quantity}"/>
-                                        </p:column> 
-                                        <p:column headerText="Condição" style="text-align:center;">
+                        <div class="row clearfix" style="max-height:auto;">
+                            <!-- INVENTORY TABLE -->
+                            <div class="table-responsive">
+                                <h:form id="inventory">
+                                    <ace:dataTable id="inventoryTable"
+                                                   value="#{inventoryController.inventory}"
+                                                   var="inventoryItem"
+                                                   paginator="true"
+                                                   paginatorPosition="bottom"
+                                                   rows="20"                                                   
+                                                   scrollable="false" 
+                                                   rowStyleClass="#{inventoryItem.quantity == '0' ? 'no-item' : ''}"
+                                                   reorderableColumns="true"                                               
+                                                   >
+                                        <ace:column id="pn" headerText="PN" sortBy="#{inventoryItem.pn}"
+                                                    filterBy="#{inventoryItem.pn}" filterMatchMode="contains" >
+                                            <p:commandLink ajax="false" value="#{inventoryItem.pn}" style="font-weight:bold;font-size:16px;font-family: rajdhani;" actionListener="#{inventoryController.setEditInventoryItem(inventoryItem)}"/>
+                                        </ace:column>
+                                        <ace:column id="description" headerText="Descrição" sortBy="#{inventoryItem.description}"
+                                                    filterBy="#{inventoryItem.description}" filterMatchMode="contains">
+                                            <h:outputText id="descriptionCell" value="#{inventoryItem.description}"/>
+                                        </ace:column>
+                                        <ace:column id="condition" headerText="Condição" sortBy="#{inventoryItem.condition}"
+                                                    filterOptions="#{inventoryController.conditionFilterOptions}" filterBy="#{inventoryItem.condition}" filterMatchMode="contains">
                                             <p:outputPanel rendered="#{inventoryItem.condition.equals('OH')}">
-                                                <h:outputText style="font-size:12px;" class="label label-warning" value="#{inventoryItem.condition}"/>
-                                            </p:outputPanel>
-                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('PMA')}">
-                                                <h:outputText style="font-size:12px;" class="label label-info" value="#{inventoryItem.condition}"/>
-                                            </p:outputPanel>
-                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('AR')}">
                                                 <h:outputText style="font-size:12px;" class="label label-default" value="#{inventoryItem.condition}"/>
                                             </p:outputPanel>
-                                        </p:column> 
-                                        <p:column headerText="Container" style="text-align:center;">
-                                            <h:outputText value="#{inventoryItem.containerAlias}"/>
-                                        </p:column>                                    
-                                    </p:dataTable>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('PMA')}">
+                                                <h:outputText style="font-size:12px;" class="label label-warning" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('AR')}">
+                                                <h:outputText style="font-size:12px;" class="label label-info" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('NEW')}">
+                                                <h:outputText style="font-size:12px;" class="label label-success" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('SV')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('RP')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{inventoryItem.condition.equals('RB')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success"  value="#{inventoryItem.condition}"/>
+                                            </p:outputPanel>
+                                        </ace:column>
+                                        <ace:column id="quantity" headerText="Quantidade" sortBy="#{inventoryItem.quantity}" filterBy="#{inventoryItem.quantity}" filterMatchMode="exact">
+                                            <h:outputText id="quantityCell" value="#{inventoryItem.quantity}"/>
+                                        </ace:column>
+                                        <ace:column id="price" headerText="Preço" sortBy="#{inventoryItem.price}">
+                                            <i class="fa fa-dollar sidegap-s" style="color:grey"></i><h:outputText id="priceCell" value="#{inventoryItem.price}"/>
+                                        </ace:column>
+                                        <ace:column id="from" headerText="De" sortBy="#{inventoryItem.from}" filterBy="#{inventoryItem.from}" filterMatchMode="contains">
+                                            <h:outputText id="fromCell" value="#{inventoryItem.from}"/>
+                                        </ace:column>
+                                        <ace:column id="container" headerText="Container" sortBy="#{inventoryItem.containerAlias}"
+                                                    filterBy="#{inventoryItem.containerAlias}" filterMatchMode="contains" filterOptions="#{inventoryController.containerFilterOptions}">
+                                            <i class="fa fa-archive sidegap-s" style="color:grey"></i>
+                                            <h:commandLink value="#{inventoryItem.containerAlias}" style="font-weight:bold;font-size:16px;font-family: rajdhani;" 
+                                                           actionListener="#{inventoryController.loadContainerDetails(inventoryItem)}" onclick="$('#containerDetailsModal').modal('show');"/>
+
+                                        </ace:column> 
+                                        <ace:column style="width:120px;">
+                                            <h:commandLink  class="btn btn-default btn-xs" actionListener="#{inventoryController.setEditInventoryItem(inventoryItem)}"
+                                                            onclick="$('#editInventoryItemModal').modal('show');" >
+                                                <f:param name="selectedInventoryItem" value="#{inventoryItem.pn}" />
+                                                <i class="fa fa-pencil-square sidegap-xs"></i> Editar
+                                            </h:commandLink> 
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </h:form>
+                            </div>
+                        </div>                        
+                    </div>
+                    <!-- Panel Footer -->
+                    <div class="panel-footer">                        
+                        <!-- TABLE EXPORTER -->
+                        <h:form id="export">
+                            <div class="form-inline">
+                                <div class="form-group">
+                                    <i class="fa fa-sign-out sidegap-xs"></i><label for="typeIn" class="sidegap-s">Exportar</label>
+                                    <div class="form-group">
+                                        <h:selectOneMenu style="margin-top: 0px;height:35px;" class="form-control input-group-sm" id="typeIn" value="#{inventoryController.exportType}" required="true">
+                                            <f:ajax disabled="false"/>
+                                            <f:selectItem itemLabel="CSV" itemValue="csv" />
+                                            <f:selectItem itemLabel="PDF" itemValue="pdf" />
+                                            <f:selectItem itemLabel="XLS" itemValue="xls" />
+                                            <f:selectItem itemLabel="XML" itemValue="xml" />
+                                        </h:selectOneMenu>   
+                                    </div>
+                                    <div class="form-group">
+                                        <ace:dataExporter  style="margin-top:0px;" class="btn btn-default btn-sm"
+                                                           includeHeaders="true" id="dataExporter" label="Exportar Arquivo" type="#{inventoryController.exportType}" target="inventoryTable" fileName="inventario"/>
+                                    </div>
+
                                 </div>
                             </div>
                         </h:form>
+                        <div style="float:right;margin-top:-28px;"><i class="fa fa-warning sidegap-xs twblue"></i>Em Falta: <span class="badge sidegap-m">
+                                #{inventoryController.inventoryFaultTotal}</span><i class="fa fa-paper-plane sidegap-xs twblue"></i> Total: <span class="badge">#{inventoryController.inventoryTotal}</span></div>
                     </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- MODALS -->
+
+        <!-- Inventory Item Update Modal -->
+        <div class="modal fade" id="editInventoryItemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <h:form id="inventoryItemEditor">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="myModalLabel" style="font-weight: bold;">
+                                <i class="fa fa-pencil-square-o sidegap-s"></i> Editar <span style="color:#007DC5;">#{inventoryController.inventoryBasicBean.pn}</span></h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-cogs sidegap-s"></i>Item</h4>
+                                <div class="form-group col-xs-6">
+                                    <label for="PN">PN</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.inventoryBasicBean.pn}" />
+                                </div>
+                                <div class="form-group col-xs-6">
+                                    <label for="Description">Descrição</label>                              
+                                    <p:inputText class="form-control" size="30" value="#{inventoryController.inventoryBasicBean.description}" />
+                                </div>
+                                <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-list sidegap-s"></i>Dados</h4>
+                                <div class="form-group col-xs-3">
+                                    <label for="Condition">Condição</label>                              
+                                    <h:selectOneMenu class="form-control" value="#{inventoryController.inventoryBasicBean.condition}" style="margin-top:-5px;padding:3px;height:35px;" >                                    
+                                        <f:selectItems var="inventoryItemCondition" value="#{inventoryController.conditionFilterOptions}" />
+                                    </h:selectOneMenu>
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    <label for="Quantity">Quantidade</label>                              
+                                    <p:inputText class="form-control" size="30" value="#{inventoryController.inventoryBasicBean.quantity}" />
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    <label for="Price">Preço</label> 
+                                    <div class="input-group" style="margin-top:-5px;">
+                                        <span class="input-group-addon" style="height:33px;" id="basic-addon1"><i class="fa fa-usd"></i></span>
+                                        <h:inputText class="form-control" size="30" value="#{inventoryController.inventoryBasicBean.price}">
+                                            <f:convertNumber pattern="#,##0.00" minFractionDigits="2"/>
+                                        </h:inputText>
+                                    </div>
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    <label for="From">De</label>                              
+                                    <p:inputText class="form-control" size="30" value="#{inventoryController.inventoryBasicBean.from}" />
+                                </div>                                
+                                <div class="form-group col-xs-12">
+                                    <label for="OBS">Observações</label>                              
+                                    <p:inputTextarea class="form-control" rows="2" value="#{inventoryController.inventoryBasicBean.obs}" />
+                                </div>
+                                <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-archive sidegap-s"></i>Container</h4>
+                                <div class="form-group col-xs-6">
+                                    <label for="ContainerAlias">Alias</label>                              
+                                    <h:selectOneMenu class="form-control" value="#{inventoryController.inventoryBasicBean.containerAlias}">                                        
+                                        <f:selectItems value="#{inventoryController.containerFilterOptions}"   />                                       
+                                    </h:selectOneMenu>
+                                    <span id="helpBlock" class="help-block">Para mover o item selecione um novo container acima. Para criar um novo
+                                        utilize o <a href="#">Gerenciador de Containers</a>.</span>
+                                </div> 
+                            </div>                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <h:commandButton value="Salvar Alterações" class="btn btn-primary" action="#{inventoryController.updateInventoryItem()}" onclick="$('#editInventoryItemModal').modal('hide');">
+                            </h:commandButton>
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+
+
+        <!-- Container Details Modal -->
+        <div class="modal fade" id="containerDetailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <h:form id="containerDetailsForm">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="myModalLabel" style="font-weight: bold;">
+                                <i class="fa fa-archive sidegap-s"></i> Detalhes de <span style="color:#007DC5;">#{inventoryController.containerBean.alias}</span></h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
+                                <div class="form-group col-xs-4">
+                                    <label for="ContainerAlias">Alias</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.containerBean.alias}" />
+                                </div>
+                                <div class="form-group col-xs-4">
+                                    <label for="ContainerFrom">De</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.containerBean.from}" />
+                                </div>
+                                <div class="form-group col-xs-4">
+                                    <label for="ContainerTo">Para</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.containerBean.to}" />
+                                </div>
+                                <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-asterisk sidegap-s"></i>Aparência</h4>
+                                <div class="form-group col-xs-8">
+                                    <label for="ContainerType">Tipo</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.containerBean.type}" />
+                                </div>
+                                <div class="form-group col-xs-4">
+                                    <label for="ContainerColor">Cor</label>                              
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('VERMELHO')}">
+                                        <div class="input-group">                                           
+                                            <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                            <span class="input-group-addon" style="width:64px;height:34px;background:red"></span>
+                                        </div>
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('AZUL CLARO')}">
+                                        <div class="input-group">                                           
+                                            <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                            <span class="input-group-addon" style="width:64px;height:34px;background:lightskyblue;"></span>
+                                        </div>                                    
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('AZUL ESCURO')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:darkblue;"></span>                                    
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('VERDE')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:lightgreen;"></span>                                    
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('CINZA')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:grey;"></span>                                   
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('PRETO')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:black;"></span>                                    
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('LARANJA')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:orange;"></span>                                    
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('AZUL')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:blue;"></span>                                    
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('AMARELO')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:yellow;"></span>                                   
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('ROXO')}">
+                                        <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                        <span class="input-group-addon" style="width:64px;height:34px;background:darkslateblue;"></span>
+                                    </p:outputPanel>                                    
+                                </div>
+                            </div>
+                            <div class="row">
+                                <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-bars sidegap-s"></i>Informações Adicionais</h4>
+
+                                <div class="form-group col-xs-8">
+                                    <label for="ContainerStatus">Status</label>                                    
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.full_status.equals(true)}">
+                                        <div class="alert alert-danger">                                        
+                                            <i style="color:red" class="fa fa-remove fa-lg sidegap-s"></i> Sem espaço de armazenamento
+                                        </div>
+                                    </p:outputPanel>
+                                    <p:outputPanel rendered="#{inventoryController.containerBean.full_status.equals(false)}">
+                                        <div class="alert alert-success">
+                                            <i style="color:green" class="fa fa-check fa-lg sidegap-s"></i> Espaço de armazenamento disponível
+                                        </div>
+                                    </p:outputPanel> 
+                                </div>
+                                <div class="form-group col-xs-4">
+                                    <label for="ContainerTotalItems">Total de Items</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30"/>
+                                </div>                          
+                            </div>                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                            <h:commandButton value="Salvar Alterações" class="btn btn-primary" action="#{inventoryController.updateInventoryItem()}" onclick="$('#editInventoryItemModal').modal('hide');">
+                            </h:commandButton>
+                        </div>
+                    </h:form>
                 </div>
             </div>
         </div>

@@ -77,4 +77,22 @@ public class InventoryService {
         }               
         return inventoryFaultList;        
     }
+        
+    // SERVICE 05 - createListInventoryOwners()
+    //              Executa o DAO que busca por proprietários distintos no inve-
+    //              ntário.
+    public List<InventoryBean> createListInventoryOwners() throws ExceptionDAO {
+        
+        InventoryDAO inventoryDAO = new InventoryDAO();
+        List<InventoryBean> inventoryOwnerList = new ArrayList<InventoryBean>();        
+        
+        try {
+            inventoryOwnerList = inventoryDAO.createListInventoryOwners();
+        } catch (SQLException ex) {
+            Logger.getLogger(InventoryService.class.getName()).log(Level.SEVERE, null, ex);
+        }               
+        return inventoryOwnerList;        
+    }   
+    
+    
 }

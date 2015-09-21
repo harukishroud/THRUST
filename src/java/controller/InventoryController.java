@@ -1,5 +1,6 @@
 package controller;
 
+import bean.AlternateBean;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.model.SelectItem;
@@ -9,8 +10,11 @@ import java.sql.SQLException;
 import dao.ExceptionDAO;
 import bean.InventoryBean;
 import bean.ContainerBean;
+import bean.ItemBean;
 import service.InventoryService;
 import service.ContainerService;
+import service.ItemService;
+import service.AlternateService;
 
 @ManagedBean(name = "inventoryController")
 @ViewScoped
@@ -22,6 +26,8 @@ public class InventoryController {
     private int inventoryTotal;
     // Total de itens em falta no inventário
     private int inventoryFaultTotal;
+    // Armazena total de itens no container selecionado
+    private int containerTotal;
     // Salva tipo de arquivo a ser exportado
     private String exportType;
     // Armazena container selecionado
@@ -30,23 +36,35 @@ public class InventoryController {
     private InventoryBean inventoryBean = new InventoryBean();
     // Armazena informações do container selecionado
     private ContainerBean containerBean = new ContainerBean();
+    // Armazena informações do PN selecionado
+    private ItemBean itemBean = new ItemBean();
     // Armazena inventário
     private List<InventoryBean> inventory = new ArrayList<InventoryBean>();
     // Armazena inventário filtrado
     private List<InventoryBean> filteredInventory = new ArrayList<InventoryBean>();
     // Armazena containers existentes no inventário
     private List<InventoryBean> inventoryContainerList = new ArrayList<InventoryBean>();
+    // Armazena proprietários existentes no inventário
+    private List<InventoryBean> inventoryOwnerList = new ArrayList<InventoryBean>();
+    // Armazena container com espaço disponível no inventário
+    private List<ContainerBean> inventoryAvailableContainerList = new ArrayList<ContainerBean>();
+    // Armazena PNs Alternados para o PN selecionado
+    private List<AlternateBean> alternateItems = new ArrayList<AlternateBean>();
     // Lista de condições para filtro do inventário
     private List<SelectItem> conditionFilterOptions = new ArrayList<SelectItem>();
     // Lista de containers existentes no inventário para o filtro
     private List<SelectItem> containerFilterOptions = new ArrayList<SelectItem>();
+    // Lista de proprietários existentes no inventário para o filtro
+    private List<SelectItem> ownerFilterOptions = new ArrayList<SelectItem>();
+    // Lista de containers com armazenamento disponível
+    private List<SelectItem> availableContainers = new ArrayList<SelectItem>();
 
     // SERVIÇOS    
-    InventoryService inventoryService = new InventoryService();
-    
+    InventoryService inventoryService = new InventoryService();    
     ContainerService containerService = new ContainerService();
+    ItemService itemService = new ItemService();
+    AlternateService alternateService = new AlternateService();
    
-
     // MÉTODOS    
     // 01 - loadAllInventory()
     //      Carrega todos os itens e inventários existentes no banco de dados.
@@ -97,10 +115,70 @@ public class InventoryController {
     
     // 05 - loadContainerDetails()
     //      Carrega os detalhes do container selecionado.
-    public void loadContainerDetails(InventoryBean inventoryItem) throws SQLException {
+    public void loadContainerDetails(InventoryBean inventoryItem) throws SQLException, ExceptionDAO {
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Container selecionado para exibição de detalhes: '" + inventoryItem.getContainerAlias()+ "'.");
         containerBean = containerService.loadContainerInfo(inventoryItem.getContainerAlias());
+        containerTotal = containerService.countContainerTotalItens(inventoryItem.getContainerAlias());
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Dados do container carregados.");
+    }
+    
+    // 06 - updateOwnerList()
+    //      Executa a procura por proprietários existentes no inventário e atualiza
+    //      a lista.
+    public void updateOwnerList() throws ExceptionDAO {
+        setInventoryOwnerList(inventoryService.createListInventoryOwners());
+        
+        // Limpa filtro de proprietários
+        ownerFilterOptions = new ArrayList<SelectItem>();
+        
+        // Fix que permite que todos os proprietários sejam exibidos
+        ownerFilterOptions.add(new SelectItem(""));
+        
+        // Atualiza opções do filtro        
+        for (int i = 0; i < inventoryOwnerList.size(); i++) {
+            getOwnerFilterOptions().add(new SelectItem(inventoryOwnerList.get(i).getFrom()));           
+        }
+        
+        System.out.println("[SYSTEM][INVENTORYCONTROLLER] Lista de proprietários existentes carregada.");
+
+    }
+    
+    // 07 - updateAvailableContainerList()
+    //      Executa a procura por containers com armazenamento disponível no in-
+    //      ventário e atualiza a lista.
+    public void updateAvailableContainerList() throws ExceptionDAO {
+        setInventoryAvailableContainerList(containerService.createListAvailableContainers());
+        
+        // Limpa filtro de containers
+        availableContainers = new ArrayList<SelectItem>();
+        
+        // Fix que permite que todos os containers sejam exibidos
+        availableContainers.add(new SelectItem(""));
+        
+        // Atualiza opções do filtro        
+        for (int i = 0; i < inventoryAvailableContainerList.size(); i++) {
+            getAvailableContainers().add(new SelectItem(inventoryAvailableContainerList.get(i).getAlias()));           
+        }
+        
+        System.out.println("[SYSTEM][INVENTORYCONTROLLER] Lista de containers com armazenamento disponível carregada.");
+
+    }
+    
+    // 08 - loadItemDetails()
+    //      Carrega os detalhes do PN selecionado.
+    public void loadItemDetails(InventoryBean inventoryItem) throws SQLException, ExceptionDAO {
+        System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN selecionado para exibição de detalhes: '" + inventoryItem.getPn()+ "'.");
+        itemBean = itemService.loadItemInfo(inventoryItem.getPn());   
+        loadAlternateItems(inventoryItem);
+        System.out.println("[SYSTEM][INVENTORYCONTROLLER] Dados do PN carregados.");
+    }
+    
+    // 08 - loadAlternateItems()
+    //      Pesquisa PNs alternados para o PN selecionado.
+    public void loadAlternateItems(InventoryBean inventoryItem) throws SQLException, ExceptionDAO {
+        System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN selecionado para exibição de alternados: '" + inventoryItem.getPn()+ "'.");
+        setAlternateItems(alternateService.loadAlternateItems(inventoryItem.getPn()));
+        System.out.println("[SYSTEM][INVENTORYCONTROLLER] Dados de PNs alternados carregados.");
     }
 
     // CONSTRUTOR
@@ -111,6 +189,12 @@ public class InventoryController {
 
         // Carrega lista de containers existentes
         updateContainerList();
+        
+        // Carrega lista de proprietários existentes
+        updateOwnerList();
+        
+        // Carrega lista de containers com armazenamento disponível
+        updateAvailableContainerList();
 
         // Define o tipo de exportação padrão do inventário atual
         this.exportType = "csv";
@@ -206,6 +290,62 @@ public class InventoryController {
 
     public void setContainerBean(ContainerBean containerBean) {
         this.containerBean = containerBean;
+    }
+
+    public int getContainerTotal() {
+        return containerTotal;
+    }
+
+    public void setContainerTotal(int containerTotal) {
+        this.containerTotal = containerTotal;
+    }
+
+    public List<InventoryBean> getInventoryOwnerList() {
+        return inventoryOwnerList;
+    }
+
+    public void setInventoryOwnerList(List<InventoryBean> inventoryOwnerList) {
+        this.inventoryOwnerList = inventoryOwnerList;
+    }
+
+    public List<SelectItem> getOwnerFilterOptions() {
+        return ownerFilterOptions;
+    }
+
+    public void setOwnerFilterOptions(List<SelectItem> ownerFilterOptions) {
+        this.ownerFilterOptions = ownerFilterOptions;
+    }
+
+    public List<SelectItem> getAvailableContainers() {
+        return availableContainers;
+    }
+
+    public void setAvailableContainers(List<SelectItem> availableContainers) {
+        this.availableContainers = availableContainers;
+    }
+
+    public List<ContainerBean> getInventoryAvailableContainerList() {
+        return inventoryAvailableContainerList;
+    }
+
+    public void setInventoryAvailableContainerList(List<ContainerBean> inventoryAvailableContainerList) {
+        this.inventoryAvailableContainerList = inventoryAvailableContainerList;
+    }
+
+    public ItemBean getItemBean() {
+        return itemBean;
+    }
+
+    public void setItemBean(ItemBean itemBean) {
+        this.itemBean = itemBean;
+    }
+
+    public List<AlternateBean> getAlternateItems() {
+        return alternateItems;
+    }
+
+    public void setAlternateItems(List<AlternateBean> alternateItems) {
+        this.alternateItems = alternateItems;
     }
 
     public List<SelectItem> getConditionFilterOptions() {

@@ -158,6 +158,33 @@ public class InventoryDAO {
         conn.close();
 
         return inventoryFaultList;
-    }
+    } 
+    
+    // DAO 05 - createListInventoryOwner()
+    //          Busca por proprietários existentes no inventários.
+    public List<InventoryBean> createListInventoryOwners() throws SQLException, ExceptionDAO {
+
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+        List<InventoryBean> inventoryOwnerList = new ArrayList<InventoryBean>();
+
+        System.out.println("[DATABASE][INVENTORYDAO] Iniciando busca por proprietários distintos ...");
+
+        String sql = "SELECT DISTINCT ITEM_FROM FROM inventory_standardview";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            InventoryBean inventoryOwner = new InventoryBean();
+            inventoryOwner.setFrom(rs.getString("ITEM_FROM"));
+            inventoryOwnerList.add(inventoryOwner);
+        }
+
+        rs.close();
+        ps.close();
+        conn.close();
+
+        return inventoryOwnerList;
+    }   
 
 }

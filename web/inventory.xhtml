@@ -24,7 +24,7 @@
 
     <h:body>
         <!-- MENU -->
-        <ui:include src="masterheader.xhtml" />        
+        <ui:include src="masterheader.xhtml" />     
 
 
         <div class="container">
@@ -37,6 +37,11 @@
                     <!-- Panel Header -->
                     <div class="panel-heading">
                         <h4 style="line-height: 1px;"><i class="fa fa-list sidegap-s" style="color:grey"></i> <b>Inventário</b></h4>
+                        <h:form>
+                            <h:commandLink id="insertNew" class="btn btn-success" styleClass="btn btn-success" style="float:right;margin:-35px;margin-right:0px;">
+                            <i class="fa fa-plus sidegap-xs"></i> Inserir Novo Item
+                        </h:commandLink>
+                        </h:form>
                     </div>
 
                     <!-- Panel Body -->
@@ -57,7 +62,8 @@
                                                    >
                                         <ace:column id="pn" headerText="PN" sortBy="#{inventoryItem.pn}"
                                                     filterBy="#{inventoryItem.pn}" filterMatchMode="contains" >
-                                            <p:commandLink ajax="false" value="#{inventoryItem.pn}" style="font-weight:bold;font-size:16px;font-family: rajdhani;" actionListener="#{inventoryController.setEditInventoryItem(inventoryItem)}"/>
+                                            <p:commandLink ajax="false" value="#{inventoryItem.pn}" style="font-weight:bold;font-size:16px;font-family: rajdhani;" 
+                                                           actionListener="#{inventoryController.loadItemDetails(inventoryItem)}" onclick="$('#itemDetailsModal').modal('show');"/>
                                         </ace:column>
                                         <ace:column id="description" headerText="Descrição" sortBy="#{inventoryItem.description}"
                                                     filterBy="#{inventoryItem.description}" filterMatchMode="contains">
@@ -66,7 +72,7 @@
                                         <ace:column id="condition" headerText="Condição" sortBy="#{inventoryItem.condition}"
                                                     filterOptions="#{inventoryController.conditionFilterOptions}" filterBy="#{inventoryItem.condition}" filterMatchMode="contains">
                                             <p:outputPanel rendered="#{inventoryItem.condition.equals('OH')}">
-                                                <h:outputText style="font-size:12px;" class="label label-default" value="#{inventoryItem.condition}"/>
+                                                <h:outputText  style="font-size:12px;" class="label label-default" value="#{inventoryItem.condition}"/>
                                             </p:outputPanel>
                                             <p:outputPanel rendered="#{inventoryItem.condition.equals('PMA')}">
                                                 <h:outputText style="font-size:12px;" class="label label-warning" value="#{inventoryItem.condition}"/>
@@ -93,7 +99,7 @@
                                         <ace:column id="price" headerText="Preço" sortBy="#{inventoryItem.price}">
                                             <i class="fa fa-dollar sidegap-s" style="color:grey"></i><h:outputText id="priceCell" value="#{inventoryItem.price}"/>
                                         </ace:column>
-                                        <ace:column id="from" headerText="De" sortBy="#{inventoryItem.from}" filterBy="#{inventoryItem.from}" filterMatchMode="contains">
+                                        <ace:column id="from" headerText="De" sortBy="#{inventoryItem.from}" filterBy="#{inventoryItem.from}" filterMatchMode="contains" filterOptions="#{inventoryController.ownerFilterOptions}">
                                             <h:outputText id="fromCell" value="#{inventoryItem.from}"/>
                                         </ace:column>
                                         <ace:column id="container" headerText="Container" sortBy="#{inventoryItem.containerAlias}"
@@ -199,9 +205,9 @@
                                 </div>
                                 <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-archive sidegap-s"></i>Container</h4>
                                 <div class="form-group col-xs-6">
-                                    <label for="ContainerAlias">Alias</label>                              
+                                    <label for="ContainerAlias">Alias / Mover para</label>                              
                                     <h:selectOneMenu class="form-control" value="#{inventoryController.inventoryBasicBean.containerAlias}">                                        
-                                        <f:selectItems value="#{inventoryController.containerFilterOptions}"   />                                       
+                                        <f:selectItems value="#{inventoryController.availableContainers}"   />                                       
                                     </h:selectOneMenu>
                                     <span id="helpBlock" class="help-block">Para mover o item selecione um novo container acima. Para criar um novo
                                         utilize o <a href="#">Gerenciador de Containers</a>.</span>
@@ -218,7 +224,6 @@
             </div>
         </div>
 
-
         <!-- Container Details Modal -->
         <div class="modal fade" id="containerDetailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
@@ -226,7 +231,7 @@
                     <h:form id="containerDetailsForm">
                         <div class="modal-header">
                             <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-                            <h3 class="modal-title" id="myModalLabel" style="font-weight: bold;">
+                            <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
                                 <i class="fa fa-archive sidegap-s"></i> Detalhes de <span style="color:#007DC5;">#{inventoryController.containerBean.alias}</span></h3>
                         </div>
                         <div class="modal-body">
@@ -315,14 +320,75 @@
                                 </div>
                                 <div class="form-group col-xs-4">
                                     <label for="ContainerTotalItems">Total de Items</label>                              
-                                    <p:inputText disabled="true" class="form-control" size="30"/>
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.containerTotal}"/>
                                 </div>                          
                             </div>                            
                         </div>
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                            <h:commandButton value="Salvar Alterações" class="btn btn-primary" action="#{inventoryController.updateInventoryItem()}" onclick="$('#editInventoryItemModal').modal('hide');">
-                            </h:commandButton>
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>                            
+                        </div>
+                    </h:form>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Item Details Modal -->
+        <div class="modal fade" id="itemDetailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <h:form id="itemDetailsForm">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                            <h3 class="modal-title" id="myModalLabel3" style="font-weight: bold;">
+                                <i class="fa fa-cog sidegap-s"></i> Detalhes de <span style="color:#007DC5;">#{inventoryController.itemBean.pn}</span></h3>
+                        </div>
+                        <div class="modal-body">
+                            <div class="row">
+                                <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
+                                <div class="form-group col-xs-4">
+                                    <label for="itemPN">PN</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.pn}" />
+                                </div>
+                                <div class="form-group col-xs-8">
+                                    <label for="itemDescription">Descrição</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.description}" />
+                                </div>                                
+                                <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-object-group sidegap-s"></i>Especificações</h4>
+                                <div class="form-group col-xs-3">
+                                    <label for="ItemHeight">Altura</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.size_h}" />
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    <label for="ItemWidth">Largura</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.size_w}" />
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    <label for="ItemDepth">Profundidade</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.size_d}" />
+                                </div>
+                                <div class="form-group col-xs-3">
+                                    <label for="ItemWeight">Peso</label>                              
+                                    <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.weight}" />
+                                </div>                                
+                            </div>
+                            <div class="row">
+                                <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-retweet sidegap-s"></i>Alternados</h4>
+                                    <ace:dataTable id="alternateTable"
+                                                   value="#{inventoryController.alternateItems}"
+                                                   var="alternateItem"
+                                                   paginator="true"
+                                                   paginatorPosition="bottom"
+                                                   rows="3"                                                   
+                                                   scrollable="false" 
+                                                   >
+                                        <ace:column id="altpn">
+                                            <h:outputText id="altpnCell" value="#{alternateItem.alt_pn}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                            </div>                            
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">Fechar</button>                           
                         </div>
                     </h:form>
                 </div>

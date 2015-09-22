@@ -29,7 +29,7 @@
 
         <div class="container">
             <!-- FUNÇÕES -->
-            
+
 
             <!-- PANEL -->
             <div class="row topgap-m">
@@ -38,9 +38,8 @@
                     <div class="panel-heading">
                         <h4 style="line-height: 1px;"><i class="fa fa-list sidegap-s" style="color:grey"></i> <b>Inventário</b></h4>
                         <h:form>
-                            <h:commandLink id="insertNew" class="btn btn-success" styleClass="btn btn-success" style="float:right;margin:-35px;margin-right:0px;">
-                            <i class="fa fa-plus sidegap-xs"></i> Inserir Novo Item
-                        </h:commandLink>
+                            <h:commandButton id="insertNew" value="Inserir Novo Item" class="btn btn-success" style="float:right;margin:-35px;margin-right:0px;"/>
+                          
                         </h:form>
                     </div>
 
@@ -212,7 +211,19 @@
                                     <span id="helpBlock" class="help-block">Para mover o item selecione um novo container acima. Para criar um novo
                                         utilize o <a href="#">Gerenciador de Containers</a>.</span>
                                 </div> 
-                            </div>                            
+                            </div>
+                            <div class="row">
+                                <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-clipboard sidegap-s"></i>Documentação</h4>
+                                <div class="form-group col-xs-6">
+                                    <label for="Form">Form</label>
+                                    <div style="font-weight: normal;">
+                                        <h:selectOneRadio value="#{inventoryController.inventoryBasicBean.form_status}" enabledClass="oneradio_fix">
+                                            <f:selectItem itemLabel="Disponível" itemValue="true" class="form-control"/>
+                                            <f:selectItem itemLabel="Indisponível" itemValue="false" class="form-control"/>
+                                        </h:selectOneRadio>                                        
+                                    </div> 
+                                </div>
+                            </div>
                         </div>
                         <div class="modal-footer">
                             <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
@@ -331,7 +342,7 @@
                 </div>
             </div>
         </div>
-        
+
         <!-- Item Details Modal -->
         <div class="modal fade" id="itemDetailsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
             <div class="modal-dialog" role="document">
@@ -373,18 +384,18 @@
                             </div>
                             <div class="row">
                                 <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-retweet sidegap-s"></i>Alternados</h4>
-                                    <ace:dataTable id="alternateTable"
-                                                   value="#{inventoryController.alternateItems}"
-                                                   var="alternateItem"
-                                                   paginator="true"
-                                                   paginatorPosition="bottom"
-                                                   rows="3"                                                   
-                                                   scrollable="false" 
-                                                   >
-                                        <ace:column id="altpn">
-                                            <h:outputText id="altpnCell" value="#{alternateItem.alt_pn}"/>
-                                        </ace:column>
-                                    </ace:dataTable>
+                                <ace:dataTable id="alternateTable"
+                                               value="#{inventoryController.alternateItems}"
+                                               var="alternateItem"
+                                               paginator="true"
+                                               paginatorPosition="bottom"
+                                               rows="3"                                                   
+                                               scrollable="false" 
+                                               >
+                                    <ace:column id="altpn">
+                                        <h:outputText id="altpnCell" value="#{alternateItem.alt_pn}"/>
+                                    </ace:column>
+                                </ace:dataTable>
                             </div>                            
                         </div>
                         <div class="modal-footer">

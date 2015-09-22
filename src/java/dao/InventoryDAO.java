@@ -69,18 +69,17 @@ public class InventoryDAO {
 
         System.out.println("[DATABASE][INVENTORYDAO] Iniciando...");
         
-        String sqlitems = "UPDATE items SET PN=?, DESCRIPTION=? WHERE PN=?";
+        String sqlitems = "UPDATE items SET DESCRIPTION=? WHERE PN=?";
 
         System.out.println("[DATABASE][INVENTORYDAO] Atualizando tabela 'items'...");
-        PreparedStatement psitems = conn.prepareStatement(sqlitems);
-        psitems.setString(1, updatedInventoryItem.getPn());
-        psitems.setString(2, updatedInventoryItem.getDescription());
-        psitems.setString(3, updatedInventoryItem.getOldpn());
+        PreparedStatement psitems = conn.prepareStatement(sqlitems);       
+        psitems.setString(1, updatedInventoryItem.getDescription());
+        psitems.setString(2, updatedInventoryItem.getOldpn());
         psitems.execute();
         psitems.close();
 
         String sqlinventory = "UPDATE inventory SET ITEMCONDITION=?, QUANTITY=? "
-                + ", PRICE=?, ITEM_STATUS=?, ITEM_FROM=?, OBS=?, container_ALIAS=?, items_PN=? WHERE ID=? AND items_PN=? AND container_ALIAS=?";
+                + ", PRICE=?, ITEM_STATUS=?, ITEM_FROM=?, OBS=?, container_ALIAS=?, items_PN=?, FORM_STATUS=? WHERE ID=? AND items_PN=? AND container_ALIAS=?";
 
         System.out.println("[DATABASE][INVENTORYDAO] Atualizando tabela 'inventory'...");
         PreparedStatement psinventory = conn.prepareStatement(sqlinventory);
@@ -92,9 +91,10 @@ public class InventoryDAO {
         psinventory.setString(6, updatedInventoryItem.getObs());
         psinventory.setString(7, updatedInventoryItem.getContainerAlias());
         psinventory.setString(8, updatedInventoryItem.getPn());
-        psinventory.setInt(9, updatedInventoryItem.getId());
-        psinventory.setString(10, updatedInventoryItem.getOldpn());
-        psinventory.setString(11, updatedInventoryItem.getOldalias());
+        psinventory.setBoolean(9, updatedInventoryItem.isForm_status());
+        psinventory.setInt(10, updatedInventoryItem.getId());
+        psinventory.setString(11, updatedInventoryItem.getOldpn());
+        psinventory.setString(12, updatedInventoryItem.getOldalias());
         psinventory.execute();
         psinventory.close();        
 

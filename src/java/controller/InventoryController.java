@@ -21,7 +21,7 @@ import service.AlternateService;
 
 public class InventoryController {
 
-    // VARIAVEIS
+    // VARIAVEIS    
     // Total de itens no inventário
     private int inventoryTotal;
     // Total de itens em falta no inventário
@@ -34,6 +34,8 @@ public class InventoryController {
     private String selectedContainer;
     // Armazena item do inventário
     private InventoryBean inventoryBean = new InventoryBean();
+    // Armazena item a ser adicionado no inventário
+    private InventoryBean newInventoryItem = new InventoryBean();
     // Armazena informações do container selecionado
     private ContainerBean containerBean = new ContainerBean();
     // Armazena informações do PN selecionado
@@ -179,11 +181,13 @@ public class InventoryController {
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN selecionado para exibição de alternados: '" + inventoryItem.getPn()+ "'.");
         setAlternateItems(alternateService.loadAlternateItems(inventoryItem.getPn()));
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Dados de PNs alternados carregados.");
-    }
+    }    
+   
 
     // CONSTRUTOR
     public InventoryController() throws SQLException, ExceptionDAO {
-
+               
+        
         // Executa e carrega tabela de inventário
         loadAllInventory();
 
@@ -212,12 +216,12 @@ public class InventoryController {
     }
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">
-    public InventoryBean getInventoryBasicBean() {
+    public InventoryBean getInventoryBean() {
         return inventoryBean;
     }
 
-    public void setInventoryBasicBean(InventoryBean inventoryBasicBean) {
-        this.inventoryBean = inventoryBasicBean;
+    public void setInventoryBean(InventoryBean inventoryBean) {
+        this.inventoryBean = inventoryBean;
     }
 
     public List<InventoryBean> getInventory() {
@@ -348,6 +352,15 @@ public class InventoryController {
         this.alternateItems = alternateItems;
     }
 
+    public InventoryBean getNewInventoryItem() {
+        return newInventoryItem;
+    }
+
+    public void setNewInventoryItem(InventoryBean newInventoryItem) {
+        this.newInventoryItem = newInventoryItem;
+    }
+
+  
     public List<SelectItem> getConditionFilterOptions() {
         return conditionFilterOptions;
     }

@@ -44,6 +44,11 @@ a:hover {
     color: #007DC5 !important;
 } 
 
+body {
+    background-image: url("../img/background.png");
+    background-repeat: repeat;    
+}
+
 /*
     FIXES
 */

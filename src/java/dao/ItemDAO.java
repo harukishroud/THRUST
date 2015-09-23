@@ -41,8 +41,53 @@ public class ItemDAO {
         rs.close();
         ps.close();
         conn.close();
-        
+
         return itemInfo;
+    }
+
+    // DAO 02 - checkItemExistance()
+    //          verifica existência do PN informado no banco de dados.
+    public boolean checkItemExistance(String pn) throws SQLException {
+        boolean checkStatus = false;
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        System.out.println("[DATABASE][ITEMDAO] Buscando por PN '" + pn + "' no banco de dados...");
+
+        String sql = "SELECT * FROM items WHERE PN = '" + pn + "'";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            System.out.println("[DATABASE][ITEMDAO] O PN informado já existe.");
+            checkStatus = true;
+        } else {
+        System.out.println("[DATABASE][ITEMDAO] O PN '" + pn + "' não existe no banco de dados.");
+        }
+        
+        return checkStatus;
+    }
+
+    // DAO 03 - addNewItem()
+    //          Adiciona novo PN ao banco de dados.
+    public void addNewItem(ItemBean newItem) throws SQLException {
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        System.out.println("[DATABASE][ITEMDAO] Preparando para inserir novo PN no banco de dados...");
+        System.out.println("[DATABASE][ITEMDAO] Adicionando PN '" + newItem.getPn() + "', DESC. '" + newItem.getDescription() + "'...");
+
+        String sql = "INSERT INTO items(PN, DESCRIPTION) VALUES (?,?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ps.setString(1, newItem.getPn());
+        ps.setString(2, newItem.getDescription());
+        ps.execute();
+        ps.close();
+        conn.close();
+
+        System.out.println("[DATABASE][ITEMDAO] PN '" + newItem.getPn() + "', de DESC. '" + newItem.getDescription() + "' adicionado com sucesso!");
+
     }
 
 }

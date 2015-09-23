@@ -186,5 +186,55 @@ public class InventoryDAO {
 
         return inventoryOwnerList;
     }   
+    
+    // DAO 06 - addNewInventoryItem()
+    //          Adiciona novo item ao inventário.
+    public void addNewInventoryItem(InventoryBean newInventoryItem) throws SQLException {
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        System.out.println("[DATABASE][INVENTORYDAO] Preparando para inserir novo item ao inventário...");
+
+        String sql = "INSERT INTO inventory(items_PN,container_ALIAS,QUANTITY,ITEMCONDITION,PRICE,ITEM_STATUS,ITEM_FROM,OBS,FORM_STATUS) VALUES (?,?,?,?,?,?,?,?,?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+
+        ps.setString(1, newInventoryItem.getPn());
+        ps.setString(2, newInventoryItem.getContainerAlias());
+        ps.setInt(3, newInventoryItem.getQuantity());
+        ps.setString(4, newInventoryItem.getCondition());
+        ps.setFloat(5, newInventoryItem.getPrice());
+        ps.setString(6, newInventoryItem.getStatus());
+        ps.setString(7, newInventoryItem.getFrom());
+        ps.setString(8, newInventoryItem.getObs());
+        ps.setBoolean(9, newInventoryItem.isForm_status());
+        ps.execute();
+        ps.close();
+        conn.close();
+
+        System.out.println("[DATABASE][INVENTORYDAO] item adicionado com sucesso!");
+    }
+    
+    // DAO 07 - checkInventoryItemExistance()
+    //          verifica existência do PN informado no banco de dados.
+    public boolean checkInventoryItemExistance(String pn) throws SQLException {
+        boolean checkStatus = false;
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        System.out.println("[DATABASE][ITEMDAO] Buscando por item de PN '" + pn + "' no inventário...");
+
+        String sql = "SELECT * FROM inventory WHERE items_PN = '" + pn + "'";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        if (rs.next()) {
+            System.out.println("[DATABASE][ITEMDAO] O PN informado já existe no inventário.");
+            checkStatus = true;
+        }
+
+        System.out.println("[DATABASE][ITEMDAO] O PN '" + pn + "' não existe no inventário.");
+
+        return checkStatus;
+    }
 
 }

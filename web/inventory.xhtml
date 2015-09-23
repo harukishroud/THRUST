@@ -25,16 +25,16 @@
 
     <h:body>
         <!-- MENU -->
-        <ui:include src="masterheader.xhtml" />     
-
+        <ui:include src="masterheader.xhtml" />                 
 
         <div class="container">
 
-            <div class="row topgap-m">
-                <!-- PANELS -->
+            <div class="row topgap-m">                
 
                 <!-- INVENTÁRIO -->
                 <h:form id="inventoryScreen">
+                    <!-- Updater -->
+                    <p:poll interval="60"  listener="#{inventoryController.loadAllInventory()}" update="inventoryTable" />
                     <div class="panel panel-default">
                         <!-- Panel Header -->
                         <div class="panel-heading">
@@ -402,7 +402,7 @@
                     </div>
                 </div>
             </div>
-            
+
             <!-- New Item Modal -->
             <div class="modal fade" id="newInventoryItemModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
@@ -415,11 +415,16 @@
                                 </h3>
                             </div>
                             <div class="modal-body">
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="newItemMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
+                                            showSummary="false"/>
                                 <div class="row">
                                     <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-cogs sidegap-s"></i>Item</h4>
                                     <div class="form-group col-xs-6">
                                         <label for="PN">PN</label>                              
-                                        <p:inputText class="form-control" size="30" value="#{inventoryController.newInventoryItem.pn}" />
+                                        <p:inputText class="form-control" size="30" value="#{inventoryController.newInventoryItem.pn}">
+                                            <f:validateLength minimum="1" maximum="25"/>
+                                        </p:inputText>
                                         <span class="help-block">Caso o PN não exista no banco de dados o mesmo será adicionado automaticamente.</span>
                                     </div>
                                     <div class="form-group col-xs-6">
@@ -481,7 +486,7 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <h:commandButton value="Adicionar" class="btn btn-success" action="#{inventoryController.updateInventoryItem()}" onclick="$('#editInventoryItemModal').modal('hide');">
+                                <h:commandButton value="Adicionar" class="btn btn-success" action="#{inventoryController.addInventoryItem()}" type="submit">
                                 </h:commandButton>
                             </div>
                         </h:form>

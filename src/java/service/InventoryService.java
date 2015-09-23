@@ -94,5 +94,35 @@ public class InventoryService {
         return inventoryOwnerList;        
     }   
     
+    // SERVICE 06 - addNewInventoryItem()
+    //              Executa o DAO responsável por adicionar novo item ao banco.
+    public void addNewInventoryItem(InventoryBean newInventoryItem) throws SQLException {
+        InventoryDAO inventoryDAO = new InventoryDAO();
+        
+        try {
+            inventoryDAO.addNewInventoryItem(newInventoryItem);
+            System.out.println("[DATABASE][ITEMSERVICE] Item adicionado com succeso ao inventário!");
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível adicionar"
+                    + "o item ao inventário.");
+        }
+    }
+    
+    // SERVICE 07 - checkInventoryItemExistance()
+    //              Executa o DAO que busca pela existência do PN informado no -
+    //              banco de dados.
+    public boolean checkInventoryItemExistance(String pn) throws SQLException {
+        boolean checkStatus = false;
+        InventoryDAO inventoryDAO = new InventoryDAO();
+
+        try {
+            checkStatus = inventoryDAO.checkInventoryItemExistance(pn);
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível executar"
+                    + "a checagem do item informado.");
+        }
+
+        return checkStatus;
+    }
     
 }

@@ -18,7 +18,8 @@
 
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>
-
+        
+        
         <script src="js/jquery-2.1.4.js"></script>
         <script src="js/bootstrap.js"></script>
     </h:head>
@@ -32,7 +33,7 @@
             <div class="row topgap-m">                
 
                 <!-- INVENTÁRIO -->
-                <h:form id="inventoryScreen">
+                <h:form id="inventoryScreen" >
                     <!-- Updater -->
                     <p:poll interval="60"  listener="#{inventoryController.loadAllInventory()}" update="inventoryTable" />
                     <div class="panel panel-default">
@@ -53,10 +54,11 @@
                                                    var="inventoryItem"
                                                    paginator="true"
                                                    paginatorPosition="bottom"
-                                                   rows="20"                                                   
+                                                   rows="15"                                                   
                                                    scrollable="false" 
                                                    rowStyleClass="#{inventoryItem.quantity == '0' ? 'no-item' : ''}"
-                                                   reorderableColumns="true"                                                  
+                                                   reorderableColumns="true" 
+                                                   
                                                    
                                                    >
                                         <ace:column id="pn" headerText="PN" sortBy="#{inventoryItem.pn}" filterBy="#{inventoryItem.pn}" filterMatchMode="contains" >
@@ -486,7 +488,8 @@
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <h:commandButton value="Adicionar" class="btn btn-success" action="#{inventoryController.addInventoryItem()}" type="submit">
+                                <h:commandButton  value="Adicionar" class="btn btn-success" action="#{inventoryController.addInventoryItem()}" type="submit">
+                                    
                                 </h:commandButton>
                             </div>
                         </h:form>

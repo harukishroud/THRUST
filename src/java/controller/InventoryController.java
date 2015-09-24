@@ -232,9 +232,8 @@ public class InventoryController {
         }
 
         newItem = new ItemBean();
-        newInventoryItem = new InventoryBean();
+        newInventoryItem = new InventoryBean();     
         
-        RequestContext.getCurrentInstance().update("inventoryTable");
         
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Processo finalizado.");
     }

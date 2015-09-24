@@ -56,10 +56,10 @@
                                                    rows="20"                                                   
                                                    scrollable="false" 
                                                    rowStyleClass="#{inventoryItem.quantity == '0' ? 'no-item' : ''}"
-                                                   reorderableColumns="true"                                               
+                                                   reorderableColumns="true"                                                  
+                                                   
                                                    >
-                                        <ace:column id="pn" headerText="PN" sortBy="#{inventoryItem.pn}"
-                                                    filterBy="#{inventoryItem.pn}" filterMatchMode="contains" >
+                                        <ace:column id="pn" headerText="PN" sortBy="#{inventoryItem.pn}" filterBy="#{inventoryItem.pn}" filterMatchMode="contains" >
                                             <p:commandLink ajax="false" value="#{inventoryItem.pn}" style="font-weight:bold;font-size:16px;font-family: rajdhani;" 
                                                            actionListener="#{inventoryController.loadItemDetails(inventoryItem)}" onclick="$('#itemDetailsModal').modal('show');"/>
                                         </ace:column>

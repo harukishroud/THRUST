@@ -15,6 +15,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
 import org.icefaces.ace.component.textentry.TextEntry;
+import org.primefaces.context.RequestContext;
 import service.InventoryService;
 import service.ContainerService;
 import service.ItemService;
@@ -232,6 +233,8 @@ public class InventoryController {
 
         newItem = new ItemBean();
         newInventoryItem = new InventoryBean();
+        
+        RequestContext.getCurrentInstance().update("inventoryTable");
         
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Processo finalizado.");
     }

@@ -12,7 +12,7 @@ import db.ConnectionBuilder;
 
 public class InventoryDAO {
 
-    // DAO 01 - loadBasicInventory()
+    // DAO 01 - loadInventory()
     //          Carrega todos os itens da tabela inventário com informações
     //          básicas.
     public List<InventoryBean> loadInventory() throws ExceptionDAO, SQLException {

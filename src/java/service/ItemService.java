@@ -61,4 +61,21 @@ public class ItemService {
                     + "o PN informado ao banco de dados.");
         }
     }
+    
+    // SERVICE 04 - loadItems()
+    //              Executa DAO responsável por carregar todos os PNs do banco -
+    //              de dados.
+    public List<ItemBean> loadItems() throws SQLException, ExceptionDAO {
+        List<ItemBean> PNs = new ArrayList<ItemBean>();
+        ItemDAO itemDAO = new ItemDAO();
+        
+        try {
+            PNs = itemDAO.loadItems();
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível carregar"
+                    + "as informações de PNs.");
+        }
+        
+        return PNs;
+    }
 }

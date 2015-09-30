@@ -1,0 +1,165 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      >
+
+    <h:head>
+        <title>PNs | THRUST</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
+        <link href="css/style.css" rel="stylesheet"/>
+
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+        <link href="css/font-awesome.css" rel="stylesheet"/>        
+
+        <script src="js/jquery-2.1.4.js"></script>
+        <script src="js/bootstrap.js"></script>
+    </h:head>
+
+    <h:body>
+        <!-- MENU -->
+        <ui:include src="masterheader.xhtml" />                 
+
+        <div class="container">
+
+            <div class="row topgap-m">                
+
+                <!-- INVENTÁRIO -->
+                <h:form id="pnScreen" >
+                    <!-- Updater -->
+                    <p:poll interval="60"  listener="#{pnsController.loadItems()}" update="pnTable" />
+                    <div class="panel panel-default">
+                        <!-- Panel Header -->
+                        <div class="panel-heading">
+                            <h4 style="line-height: 1px;"><i class="fa fa-cogs sidegap-s" style="color:grey"></i> <b>Gerenciador de PNs</b></h4>
+                            <h:commandButton id="insertNew" value="Inserir Novo PN" 
+                                             class="btn btn-success" style="float:right;margin:-35px;margin-right:0px;" onclick="$('#newPNModal').modal('show');"/>                          
+                        </div>
+
+                        <!-- Panel Body -->
+                        <div class="panel-body">
+                            <div class="row clearfix" style="max-height:auto;">
+                                <!-- INVENTORY TABLE -->
+                                <div class="table-responsive">
+                                    <ace:dataTable id="pnTable"
+                                                   value="#{pnsController.PNs}"
+                                                   var="pn"
+                                                   paginator="true"
+                                                   paginatorPosition="bottom"
+                                                   rows="15"                                                   
+                                                   scrollable="false" 
+                                                   reorderableColumns="true"                                           
+                                                   >
+                                        <ace:column id="pn" headerText="PN" sortBy="#{pn.pn}" filterBy="##{pn.pn}" filterMatchMode="contains" >
+                                            <b><h:outputText id="pnCell" value="#{pn.pn}"/></b>
+                                        </ace:column>
+                                        <ace:column id="description" headerText="Descrição" sortBy="#{pn.description}"
+                                                    filterBy="#{pn.description}" filterMatchMode="contains">
+                                            <h:outputText id="descriptionCell" value="#{pn.description}"/>
+                                        </ace:column>
+                                        <ace:column id="width" headerText="Largura">                                            
+                                            <h:outputText value="#{pn.size_w}"/>
+                                        </ace:column>
+                                        <ace:column id="height" headerText="Altura">                                            
+                                            <h:outputText value="#{pn.size_h}"/>
+                                        </ace:column>
+                                        <ace:column id="depth" headerText="Profundidade">                                            
+                                            <h:outputText value="#{pn.size_d}"/>
+                                        </ace:column>
+                                        <ace:column id="weight" headerText="Peso">                                            
+                                            <h:outputText value="#{pn.weight}"/>
+                                        </ace:column>                                                                              
+                                        <ace:column style="width:120px;">
+                                            <h:commandLink  class="btn btn-default btn-xs" 
+                                                            onclick="$('#editItemModal').modal('show');" >
+                                                <f:param name="selectedItem" value="#{pn.pn}" />
+                                                <i class="fa fa-pencil-square sidegap-xs"></i> Editar
+                                            </h:commandLink> 
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </div>
+                            </div>                        
+                        </div>
+                        <!-- Panel Footer -->
+                        <div class="panel-footer">                        
+                        </div>
+                    </div>
+                </h:form>              
+
+            </div>
+
+            <!-- MODALS -->
+
+            <!-- New PN Modal -->
+            <div class="modal fade" id="newPNModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="newPNForm">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel3" style="font-weight: bold;">
+                                    <i class="fa fa-plus sidegap-s"></i> Adicionar novo PN</h3>
+                            </div>
+                            <div class="modal-body">
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="newItemMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
+                                            showSummary="false" />
+                                <div class="row">
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
+                                    <div class="form-group col-xs-4">
+                                        <label for="itemPN">PN</label>                              
+                                        <p:inputText class="form-control" size="30" value="#{pnsController.newPN.pn}" >
+                                            <f:validateLength minimum="1" maximum="25"/>
+                                        </p:inputText>
+                                    </div>
+                                    <div class="form-group col-xs-8">
+                                        <label for="itemDescription">Descrição</label>                              
+                                        <p:inputText  class="form-control" size="30" value="#{pnsController.newPN.description}" />
+                                    </div>                                
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-object-group sidegap-s"></i>Especificações</h4>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemHeight">Altura</label>                              
+                                        <h:inputText  class="form-control" size="30" value="#{pnsController.newPN.size_h}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemWidth">Largura</label>                              
+                                        <h:inputText  class="form-control" size="30" value="#{pnsController.newPN.size_w}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemDepth">Profundidade</label>                              
+                                        <h:inputText class="form-control" size="30" value="#{pnsController.newPN.size_d}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemWeight">Peso</label>                              
+                                        <h:inputText  class="form-control" size="30" value="#{pnsController.newPN.weight}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>                                
+                                </div>                                                           
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <h:commandButton  value="Adicionar" class="btn btn-success" action="#{pnsController.addPN()}" type="submit">
+
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>           
+        </div>
+    </h:body>
+</html>

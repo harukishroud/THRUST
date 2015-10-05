@@ -350,41 +350,41 @@
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h3 class="modal-title" id="myModalLabel3" style="font-weight: bold;">
-                                    <i class="fa fa-cog sidegap-s"></i> Detalhes de <span style="color:#007DC5;">#{inventoryController.itemBean.pn}</span></h3>
+                                    <i class="fa fa-cog sidegap-s"></i> Detalhes de <span style="color:#007DC5;">#{inventoryController.PN.pn}</span></h3>
                             </div>
                             <div class="modal-body">
                                 <div class="row">
                                     <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
                                     <div class="form-group col-xs-4">
                                         <label for="itemPN">PN</label>                              
-                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.pn}" />
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.PN.pn}" />
                                     </div>
                                     <div class="form-group col-xs-8">
                                         <label for="itemDescription">Descrição</label>                              
-                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.description}" />
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.PN.description}" />
                                     </div>                                
                                     <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-object-group sidegap-s"></i>Especificações</h4>
                                     <div class="form-group col-xs-3">
                                         <label for="ItemHeight">Altura</label>                              
-                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.size_h}" />
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.PN.size_h}" />
                                     </div>
                                     <div class="form-group col-xs-3">
                                         <label for="ItemWidth">Largura</label>                              
-                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.size_w}" />
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.PN.size_w}" />
                                     </div>
                                     <div class="form-group col-xs-3">
                                         <label for="ItemDepth">Profundidade</label>                              
-                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.size_d}" />
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.PN.size_d}" />
                                     </div>
                                     <div class="form-group col-xs-3">
                                         <label for="ItemWeight">Peso</label>                              
-                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.itemBean.weight}" />
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{inventoryController.PN.weight}" />
                                     </div>                                
                                 </div>
                                 <div class="row">
                                     <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-retweet sidegap-s"></i>Alternados</h4>
                                     <ace:dataTable id="alternateTable"
-                                                   value="#{inventoryController.alternateItems}"
+                                                   value="#{inventoryController.alternatePNs}"
                                                    var="alternateItem"
                                                    paginator="true"
                                                    paginatorPosition="bottom"

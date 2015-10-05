@@ -11,20 +11,20 @@ import dao.AlternateDAO;
 
 public class AlternateService {
     
-    // SERVICE 01 - loadAlternateItems()
+    // SERVICE 01 - loadAlternatePNs()
     //              Executa DAO que pesquisa PNs alternados para o PN seleciona-
     //              ado.
-    public List<AlternateBean> loadAlternateItems(String pn) throws SQLException, ExceptionDAO {
+    public List<AlternateBean> loadAlternatePNs(String PN) throws SQLException, ExceptionDAO {
         AlternateDAO alternateDAO = new AlternateDAO();
-        List<AlternateBean> alternateItems = new ArrayList<AlternateBean>();
+        List<AlternateBean> alternatePNs = new ArrayList<AlternateBean>();
         
         try {
-            alternateItems = alternateDAO.loadAlternateItems(pn);
+            alternatePNs = alternateDAO.loadAlternatePNs(PN);
         } catch (SQLException ex) {
-            System.out.println("[DATABASE][CONTAINERSERVICE] ERRO: Não foi possível carregar"
-                    + "as informações de PNs alternados.");
+            System.out.println("[DATABASE][ALTERNATESERVICE] ERRO: Não foi possível carregar"
+                    + "as informações de PNs alternados para '" + PN + "'.");
         }
         
-        return alternateItems;
+        return alternatePNs;
     }
 }

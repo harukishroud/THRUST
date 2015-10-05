@@ -15,67 +15,81 @@ import db.sql.QueryType;
 
 public class ItemService {
 
-    // SERVICE 01 - loadItemInfo()
-    //              Executa DAO que carrega as informações do PN selecionado.
-    public ItemBean loadItemInfo(String pn) throws SQLException {
-        ItemBean itemInfo = new ItemBean();
+    // SERVICE 01 - loadPNDetails()
+    //              Executa DAO que carrega detalhes do PN selecionado.
+    public ItemBean loadPNDetails(String PN) throws SQLException {
+        ItemBean pnDetails = new ItemBean();
         ItemDAO itemDAO = new ItemDAO();
 
         try {
-            itemInfo = itemDAO.loadItemInfo(pn);
+            pnDetails = itemDAO.loadPNDetails(PN);
         } catch (SQLException ex) {
             System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível carregar"
-                    + "as informações do PN.");
+                    + "detalhes do PN '" + PN + "'.");
         }
 
-        return itemInfo;
+        return pnDetails;
     }
 
-    // SERVICE 02 - checkItemExistance()
+    // SERVICE 02 - checkPNExistance()
     //              Executa o DAO que busca pela existência do PN informado no -
     //              banco de dados.
-    public boolean checkItemExistance(String pn) throws SQLException {
+    public boolean checkPNExistance(String PN) throws SQLException {
         boolean checkStatus = false;
         ItemDAO itemDAO = new ItemDAO();
 
         try {
-            checkStatus = itemDAO.checkItemExistance(pn);
+            checkStatus = itemDAO.checkPNExistance(PN);
         } catch (SQLException ex) {
             System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível executar"
-                    + "a checagem do PN informado.");
+                    + "a verificação de existência do PN '" + PN + "'.");
         }
 
         return checkStatus;
     }
 
-    // SERVICE 03 - addNewItem()
+    // SERVICE 03 - addPN()
     //              Executa o DAO responsável por adicionar novo item ao banco.
-    public void addNewItem(ItemBean newItem) throws SQLException {
+    public void addPN(ItemBean newPN) throws SQLException {
         ItemDAO itemDAO = new ItemDAO();
         
         try {
-            itemDAO.addNewItem(newItem);
-            System.out.println("[DATABASE][ITEMSERVICE] PN '" + newItem.getPn() + "' adicionado com succeso ao banco de dados!");
+            itemDAO.addPN(newPN);
         } catch (SQLException ex) {
             System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível adicionar"
-                    + "o PN informado ao banco de dados.");
+                    + "o PN '" + newPN.getPn() + "' ao banco de dados.");
         }
     }
     
-    // SERVICE 04 - loadItems()
+    // SERVICE 04 - loadPNs()
     //              Executa DAO responsável por carregar todos os PNs do banco -
     //              de dados.
-    public List<ItemBean> loadItems() throws SQLException, ExceptionDAO {
+    public List<ItemBean> loadPNs() throws SQLException, ExceptionDAO {
         List<ItemBean> PNs = new ArrayList<ItemBean>();
         ItemDAO itemDAO = new ItemDAO();
         
         try {
-            PNs = itemDAO.loadItems();
+            PNs = itemDAO.loadPNs();
         } catch (SQLException ex) {
             System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível carregar"
-                    + "as informações de PNs.");
+                    + "a lista de PNs.");
         }
         
         return PNs;
     }
+
+    // SERVICE 05 - updatePN()
+    //              Executa DAO que atualiza as informações do PN editado.
+    public ItemBean updatePN(ItemBean updatedPN){
+        ItemDAO itemDAO = new ItemDAO();
+        
+        try {
+            return itemDAO.updatePN(updatedPN);
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível atualizar"
+                    + "as informações do PN '" + updatedPN.getPn() + "'.");
+            return null;
+        }
+    }
+
 }

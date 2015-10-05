@@ -48,9 +48,9 @@ public class InventoryController {
     // Armazena informações do container selecionado
     private ContainerBean containerBean = new ContainerBean();
     // Armazena informações do PN selecionado
-    private ItemBean itemBean = new ItemBean();
+    private ItemBean PN = new ItemBean();
     // Armazena informações do PN a ser adicionado no banco de dados
-    private ItemBean newItem = new ItemBean();
+    private ItemBean newPN = new ItemBean();
     // Armazena inventário
     private List<InventoryBean> inventory = new ArrayList<InventoryBean>();
     // Armazena inventário filtrado
@@ -62,7 +62,7 @@ public class InventoryController {
     // Armazena container com espaço disponível no inventário
     private List<ContainerBean> inventoryAvailableContainerList = new ArrayList<ContainerBean>();
     // Armazena PNs Alternados para o PN selecionado
-    private List<AlternateBean> alternateItems = new ArrayList<AlternateBean>();
+    private List<AlternateBean> alternatePNs = new ArrayList<AlternateBean>();
     // Lista de condições para filtro do inventário
     private List<SelectItem> conditionFilterOptions = new ArrayList<SelectItem>();
     // Lista de containers existentes no inventário para o filtro
@@ -190,50 +190,56 @@ public class InventoryController {
     //      Carrega os detalhes do PN selecionado.
     public void loadItemDetails(InventoryBean inventoryItem) throws SQLException, ExceptionDAO {
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN selecionado para exibição de detalhes: '" + inventoryItem.getPn() + "'.");
-        itemBean = itemService.loadItemInfo(inventoryItem.getPn());
-        loadAlternateItems(inventoryItem);
+        PN = itemService.loadPNDetails(inventoryItem.getPn());
+        loadAlternatePNs(inventoryItem);
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Dados do PN carregados.");
     }
 
-    // 09 - loadAlternateItems()
+    // 09 - loadAlternatePNs()
     //      Pesquisa PNs alternados para o PN selecionado.
-    public void loadAlternateItems(InventoryBean inventoryItem) throws SQLException, ExceptionDAO {
+    public void loadAlternatePNs(InventoryBean inventoryItem) throws SQLException, ExceptionDAO {
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN selecionado para exibição de alternados: '" + inventoryItem.getPn() + "'.");
-        setAlternateItems(alternateService.loadAlternateItems(inventoryItem.getPn()));
-        System.out.println("[SYSTEM][INVENTORYCONTROLLER] Dados de PNs alternados carregados.");
+        setAlternatePNs(alternateService.loadAlternatePNs(inventoryItem.getPn()));
+        System.out.println("[SYSTEM][INVENTORYCONTROLLER] Dados de PNs alternados para '" + inventoryItem.getPn() + "' carregados.");
     }
 
     // 10 - addInventoryItem()
     //      Adiciona novo item ao inventário.
     public void addInventoryItem() throws SQLException, ExceptionDAO {
+        // # 01 - PN
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Iniciando verificação do PN...");
-        itemCheckStatus = itemService.checkItemExistance(newInventoryItem.getPn());
+        // Verifica a existência do PN informado no banco de dados
+        itemCheckStatus = itemService.checkPNExistance(newInventoryItem.getPn());
+        // Caso o PN não exista o mesmo é adicionado ao banco de dados
         if (itemCheckStatus == false) {
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo PN ao banco de dados...");
-            newItem.setPn(newInventoryItem.getPn());
-            newItem.setDescription(newInventoryItem.getDescription());
-            itemService.addNewItem(newItem);
+            newPN.setPn(newInventoryItem.getPn());
+            newPN.setDescription(newInventoryItem.getDescription());
+            itemService.addPN(newPN);
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN inserido com sucesso no banco de dados!");
-
+        // Caso o PN exista o processo de novo PN é anulado
         } else {
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] O PN informado já existe. Pulando inserção do PN informado...");
-
         }
+        // # 02 - INVENTÁRIO
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Iniciando verificação do item...");
+        // Verifica a existência do PN informado no inventário
         inventoryItemCheckStatus = inventoryService.checkInventoryItemExistance(newInventoryItem.getPn());
+        // Caso o PN não exista no inventário o mesmo é adicionado com os dados informados
         if (inventoryItemCheckStatus == false) {
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo item ao banco de dados...");
             inventoryService.addNewInventoryItem(newInventoryItem);
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item inserido com sucesso no inventário!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newInventoryItem.getPn() + "' foi adicionado ao inventário com sucesso!"));
+        // Caso o PN exista no inventário uma mensagem de erro é exibida e o processo anulado
         } else {
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] O item informado já existe no inventário.");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "O item de PN '" + newInventoryItem.getPn() + "' já existe no inventário."));
         }
-
-        newItem = new ItemBean();
-        newInventoryItem = new InventoryBean();     
         
+        // Limpa Beans
+        newPN = new ItemBean();
+        newInventoryItem = new InventoryBean();            
         
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Processo finalizado.");
     }
@@ -381,20 +387,20 @@ public class InventoryController {
         this.inventoryAvailableContainerList = inventoryAvailableContainerList;
     }
 
-    public ItemBean getItemBean() {
-        return itemBean;
+    public ItemBean getPN() {
+        return PN;
     }
 
-    public void setItemBean(ItemBean itemBean) {
-        this.itemBean = itemBean;
+    public void setPN(ItemBean PN) {
+        this.PN = PN;
     }
 
-    public List<AlternateBean> getAlternateItems() {
-        return alternateItems;
+    public List<AlternateBean> getAlternatePNs() {
+        return alternatePNs;
     }
 
-    public void setAlternateItems(List<AlternateBean> alternateItems) {
-        this.alternateItems = alternateItems;
+    public void setAlternatePNs(List<AlternateBean> alternatePNs) {
+        this.alternatePNs = alternatePNs;
     }
 
     public InventoryBean getNewInventoryItem() {
@@ -413,12 +419,12 @@ public class InventoryController {
         this.itemCheckStatus = itemCheckStatus;
     }
 
-    public ItemBean getNewItem() {
-        return newItem;
+    public ItemBean getNewPN() {
+        return newPN;
     }
 
-    public void setNewItem(ItemBean newItem) {
-        this.newItem = newItem;
+    public void setNewPN(ItemBean newPN) {
+        this.newPN = newPN;
     }
 
     public boolean isInventoryItemCheckStatus() {

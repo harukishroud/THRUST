@@ -34,13 +34,19 @@
                 <!-- INVENTÁRIO -->
                 <h:form id="pnScreen" >
                     <!-- Updater -->
-                    <p:poll interval="60"  listener="#{pnsController.loadItems()}" update="pnTable" />
+                    <p:poll interval="60"  listener="#{pnsController.loadPNsList()}" update="pnTable" />
                     <div class="panel panel-default">
                         <!-- Panel Header -->
                         <div class="panel-heading">
-                            <h4 style="line-height: 1px;"><i class="fa fa-cogs sidegap-s" style="color:grey"></i> <b>Gerenciador de PNs</b></h4>
-                            <h:commandButton id="insertNew" value="Inserir Novo PN" 
-                                             class="btn btn-success" style="float:right;margin:-35px;margin-right:0px;" onclick="$('#newPNModal').modal('show');"/>                          
+                            <h4 style="line-height: 1px;">
+                                <i class="fa fa-cogs sidegap-s" style="color:grey"></i> <b>Gerenciador de PNs</b>                                
+                            </h4> 
+                            <button type="button" style="float:right;margin:-35px;margin-right:125px;" class="btn btn-default" onclick="$('#newPNModal').modal('show');">
+                                <i class="fa fa-plus sidegap-xs"></i> Adicionar PN
+                            </button>
+                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newPNModal').modal('show');">
+                                <i class="fa fa-random sidegap-xs"></i> Adicionar Alt.
+                            </button>
                         </div>
 
                         <!-- Panel Body -->
@@ -77,9 +83,9 @@
                                             <h:outputText value="#{pn.weight}"/>
                                         </ace:column>                                                                              
                                         <ace:column style="width:120px;">
-                                            <h:commandLink  class="btn btn-default btn-xs" 
-                                                            onclick="$('#editItemModal').modal('show');" >
-                                                <f:param name="selectedItem" value="#{pn.pn}" />
+                                            <h:commandLink  class="btn btn-default btn-xs" actionListener="#{pnsController.setEditPN(pn)}"
+                                                            onclick="$('#editPNModal').modal('show');" >
+                                                <f:param name="selectedPN" value="#{pn.pn}" />
                                                 <i class="fa fa-pencil-square sidegap-xs"></i> Editar
                                             </h:commandLink> 
                                         </ace:column>
@@ -108,7 +114,7 @@
                                     <i class="fa fa-plus sidegap-s"></i> Adicionar novo PN</h3>
                             </div>
                             <div class="modal-body">
-                                <p:messages rendered="#{not empty facesContext.messageList}" id="newItemMessageBox" class="alert" 
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="newPNMessageBox" class="alert" 
                                             styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
                                             showSummary="false" />
                                 <div class="row">
@@ -159,7 +165,68 @@
                         </h:form>
                     </div>
                 </div>
-            </div>           
+            </div>   
+
+            <!-- Edit PN Modal -->
+            <div class="modal fade" id="editPNModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="editPNForm">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" style="font-weight: bold;">
+                                    <i class="fa fa-pencil-square-o sidegap-s"></i>Editar <span style="color:#007DC5;">#{pnsController.PN.pn}</span></h3>
+                            </div>
+                            <div class="modal-body">
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="editPNMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
+                                            showSummary="false" />
+                                <div class="row">
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
+                                    <div class="form-group col-xs-4">
+                                        <label for="itemPN">PN</label>                              
+                                        <p:inputText class="form-control" disabled="true" size="30" value="#{pnsController.PN.pn}" />                                            
+                                    </div>
+                                    <div class="form-group col-xs-8">
+                                        <label for="itemDescription">Descrição</label>                              
+                                        <p:inputText  class="form-control" size="30" value="#{pnsController.PN.description}" />
+                                    </div>                                
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-object-group sidegap-s"></i>Especificações</h4>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemHeight">Altura</label>                              
+                                        <h:inputText  class="form-control" size="30" value="#{pnsController.PN.size_h}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemWidth">Largura</label>                              
+                                        <h:inputText  class="form-control" size="30" value="#{pnsController.PN.size_w}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemDepth">Profundidade</label>                              
+                                        <h:inputText class="form-control" size="30" value="#{pnsController.PN.size_d}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>
+                                    <div class="form-group col-xs-3">
+                                        <label for="ItemWeight">Peso</label>                              
+                                        <h:inputText  class="form-control" size="30" value="#{pnsController.PN.weight}" >
+                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
+                                        </h:inputText>
+                                    </div>                                
+                                </div>                                                           
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <h:commandButton  value="Salvar Alterações" class="btn btn-success" action="#{pnsController.updatePN()}" onclick="$('#editPNModal').modal('hide');">
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
         </div>
     </h:body>
 </html>

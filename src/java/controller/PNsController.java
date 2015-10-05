@@ -19,6 +19,8 @@ public class PNsController {
     // VARIAVEIS
     // Armazena lista de PNs
     private List<ItemBean> PNs = new ArrayList<ItemBean>();
+    // Armazena dados de PN para edição ou visualização
+    private ItemBean PN = new ItemBean();
     // Armazena PN a ser adicionado
     private ItemBean newPN = new ItemBean();
     // Armazena resultado da verificação de existência do PN no banco de dados
@@ -28,35 +30,63 @@ public class PNsController {
     ItemService itemService = new ItemService();
 
     // MÉTODOS
-    // 01 - loadItems()
-    //      Carrega todos os items existentes no banco de dados.
-    public void loadItems() throws SQLException, ExceptionDAO {
-        setPNs(itemService.loadItems());
+    // 01 - loadPNsList()
+    //      Carrega todos os PNs existentes no banco de dados.
+    public void loadPNsList() throws SQLException, ExceptionDAO {
+        setPNs(itemService.loadPNs());
     }
 
     // 02 - addPN()
     //      Adiciona novo PN ao banco de dados.
     public void addPN() throws SQLException, ExceptionDAO {
         // Verifica existência do PN
-        pnCheckStatus = itemService.checkItemExistance(newPN.getPn());
+        pnCheckStatus = itemService.checkPNExistance(newPN.getPn());
+        // Adiciona PN caso o mesmo não exista no banco de dados
         if (pnCheckStatus == false) {
-            itemService.addNewItem(newPN);
+            itemService.addPN(newPN);
             System.out.println("[SYSTEM][PNSCONTROLLER] PN inserido com sucesso no banco de dados!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newPN.getPn() + "' foi adicionado com sucesso!"));
-
+        // Cancela o processo e exibe erro caso o PN já exista
         } else {
             System.out.println("[SYSTEM][PNSCONTROLLER] O PN informado já existe!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "O item de PN '" + newPN.getPn() + "' já existe no banco de dados."));
         }
-
+        // Limpa Bean do PN e encerra o processo
         newPN = new ItemBean();
         System.out.println("[SYSTEM][PNSCONTROLLER] Processo finalizado.");
+    }
+    
+    // 03 - setEditPN()
+    //      Define o PN a ser editado antes do método 04 ser executado.    
+    public void setEditPN(ItemBean selectedPN) {
+        System.out.println("[SYSTEM][PNSCONTROLLER] PN selecionado para edição: '" + selectedPN.getPn() + "'.");
+        PN = selectedPN;
+    }
+    
+    // 04 - updatePN()
+    //      Atualiza o PN selecionado.
+    public void updatePN() {
+        if (itemService.updatePN(PN) != null) {
+            PN = new ItemBean();
+            System.out.println("[SYSTEM][PNSCONTROLLER] PN atualizado com sucesso!");
+        } else {
+            System.out.println("[SYSTEM][PNSCONTROLLER] ERRO: Falha ao atualizar o PN!");
+        }
+    }
+    
+    
 
+    public ItemBean getPN() {
+        return PN;
+    }
+
+    public void setPN(ItemBean PN) {
+        this.PN = PN;
     }
 
     // CONSTRUTOR
     public PNsController() throws SQLException, ExceptionDAO {
-        loadItems();
+        loadPNsList();
     }
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">

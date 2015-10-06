@@ -27,4 +27,35 @@ public class AlternateService {
         
         return alternatePNs;
     }
+    
+    // SERVICE 02 - checkAlternatePNExistance()
+    //              Executa o DAO que busca pela existência do PN informado no -
+    //              banco de dados.
+    public boolean checkAlternatePNExistance(AlternateBean altPNInfo) throws SQLException {
+        boolean checkStatus = false;
+        AlternateDAO alternateDAO = new AlternateDAO();
+
+        try {
+            checkStatus = alternateDAO.checkAlternatePNExistance(altPNInfo);
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][ALTERNATESERVICE] ERRO: Não foi possível executar"
+                    + "a verificação de existência do PN Alternado'" + altPNInfo.getAlt_pn() + "'.");
+        }
+
+        return checkStatus;
+    }
+    
+    // SERVICE 03 - addAlternatePN()
+    //              Executa o DAO responsável por adicionar o novo Alternado ao
+    //              banco de dados.
+    public void addAlternatePN(AlternateBean newAltInfo) throws SQLException {
+        AlternateDAO alternateDAO = new AlternateDAO();
+        
+        try {
+            alternateDAO.addAlternatePN(newAltInfo);
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível adicionar"
+                    + "o PN Alternado'" + newAltInfo.getAlt_pn() + "' ao banco de dados.");
+        }
+    }
 }

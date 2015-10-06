@@ -31,7 +31,7 @@
 
             <div class="row topgap-m">                
 
-                <!-- INVENTÁRIO -->
+                <!-- PNs LIST -->
                 <h:form id="pnScreen" >
                     <!-- Updater -->
                     <p:poll interval="60"  listener="#{pnsController.loadPNsList()}" update="pnTable" />
@@ -44,7 +44,7 @@
                             <button type="button" style="float:right;margin:-35px;margin-right:125px;" class="btn btn-default" onclick="$('#newPNModal').modal('show');">
                                 <i class="fa fa-plus sidegap-xs"></i> Adicionar PN
                             </button>
-                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newPNModal').modal('show');">
+                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newAltModal').modal('show');">
                                 <i class="fa fa-random sidegap-xs"></i> Adicionar Alt.
                             </button>
                         </div>
@@ -227,6 +227,47 @@
                     </div>
                 </div>
             </div> 
+
+            <!-- New Alt Modal -->
+            <div class="modal fade" id="newAltModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="newAltForm">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel3" style="font-weight: bold;">
+                                    <i class="fa fa-random sidegap-s"></i> Adicionar PN Alternado</h3>
+                            </div>
+                            <div class="modal-body">
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="newPNMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
+                                            showSummary="false" />
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label for="itemPN">PN</label>                              
+                                        <p:inputText class="form-control" size="30" value="#{pnsController.newAlt.items_pn}" >
+                                            <f:validateLength minimum="1" maximum="25"/>
+                                        </p:inputText>
+                                    </div>
+                                                                     
+                                    <div class="form-group col-xs-6">
+                                        <label for="itemAlt">Alternado</label>                              
+                                        <p:inputText  class="form-control" size="30" value="#{pnsController.newAlt.alt_pn}">
+                                            <f:validateLength minimum="1" maximum="25"/>
+                                        </p:inputText>
+                                    </div>
+                                </div>                                                           
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <h:commandButton  value="Adicionar" class="btn btn-success" action="#{pnsController.addAlternatePN()}" type="submit">
+
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
         </div>
     </h:body>
 </html>

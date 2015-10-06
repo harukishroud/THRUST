@@ -10,6 +10,9 @@ public class ContainerBean {
     private String to;
     private boolean full_status;
     private int flag;
+    
+    // Aditional Info
+    private int itemsTotal;
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">
     public String getAlias() {
@@ -58,6 +61,14 @@ public class ContainerBean {
 
     public void setTo(String to) {
         this.to = to;
+    }
+
+    public int getItemsTotal() {
+        return itemsTotal;
+    }
+
+    public void setItemsTotal(int itemsTotal) {
+        this.itemsTotal = itemsTotal;
     }
 
     public boolean isFull_status() {

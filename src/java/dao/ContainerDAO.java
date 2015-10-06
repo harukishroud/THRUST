@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import bean.ContainerBean;
-import db.sql.QueryBuilder;
 import db.ConnectionBuilder;
 
 public class ContainerDAO {
@@ -72,7 +71,7 @@ public class ContainerDAO {
 
         return containerTotal;
     }
-    
+
     // DAO 03 - createListAvailableContainers()
     //          Cria lista de containers com armazenamento disponível.
     public List<ContainerBean> createListAvailableContainers() throws SQLException, ExceptionDAO {
@@ -97,6 +96,60 @@ public class ContainerDAO {
         conn.close();
 
         return inventoryAvailableContainerList;
+    }
+
+    // DAO 04 - loadAllContainers()
+    //          Carrega todos os containers disponíveis no banco de dados.
+    public List<ContainerBean> loadAllContainers() throws SQLException, ExceptionDAO {
+        List<ContainerBean> containers = new ArrayList<ContainerBean>();
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+        int containerTotal = 0;
+
+        System.out.println("[DATABASE][CONTAINERDAO] Carregando todos os containers existentes no"
+                + "banco de dados...");
+
+        // Carrega dados da VIEW 'container_standardview'
+        String sql = "SELECT * FROM container_standardview";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        while (rs.next()) {
+            ContainerBean container = new ContainerBean();
+            container.setAlias(rs.getString("ALIAS"));
+            container.setColor(rs.getString("COLOR"));
+            container.setFlag(rs.getInt("FLAG"));
+            container.setFull_status(rs.getBoolean("FULL_STATUS"));
+            container.setFrom(rs.getString("FROM"));
+            container.setOldAlias(rs.getString("ALIAS"));
+            container.setTo(rs.getString("TO"));
+            container.setType(rs.getString("TYPE"));
+
+            // Conta o número de items existentes no container carregado
+            String sqlCount = "SELECT PN FROM inventory_standardview WHERE ALIAS = '" + container.getAlias() + "'";
+            PreparedStatement psCount = conn.prepareStatement(sqlCount);
+            ResultSet rsCount = psCount.executeQuery();
+
+            while (rsCount.next()) {
+                containerTotal = containerTotal + 1;
+            }
+
+            // Define total de items no container carregado
+            container.setItemsTotal(containerTotal);
+
+            // Zera o contador de items para o próximo container
+            containerTotal = 0;
+
+            containers.add(container);
+        }
+
+        System.out.println("[DATABASE][CONTAINERDAO] Containers carregados com sucesso!");
+
+        rs.close();
+        ps.close();
+        conn.close();
+
+        return containers;
     }
 
 }

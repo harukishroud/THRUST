@@ -18,8 +18,8 @@
 
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>
-        
-        
+
+
         <script src="js/jquery-2.1.4.js"></script>
         <script src="js/bootstrap.js"></script>
     </h:head>
@@ -58,8 +58,8 @@
                                                    scrollable="false" 
                                                    rowStyleClass="#{inventoryItem.quantity == '0' ? 'no-item' : ''}"
                                                    reorderableColumns="true" 
-                                                   
-                                                   
+
+
                                                    >
                                         <ace:column id="pn" headerText="PN" sortBy="#{inventoryItem.pn}" filterBy="#{inventoryItem.pn}" filterMatchMode="contains" >
                                             <p:commandLink ajax="false" value="#{inventoryItem.pn}" style="font-weight:bold;font-size:16px;font-family: rajdhani;" 
@@ -267,16 +267,12 @@
                                     <div class="form-group col-xs-4">
                                         <label for="ContainerColor">Cor</label>                              
                                         <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('VERMELHO')}">
-                                            <div class="input-group">                                           
-                                                <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
-                                                <span class="input-group-addon" style="width:64px;height:34px;background:red"></span>
-                                            </div>
+                                            <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                            <span class="input-group-addon" style="width:64px;height:34px;background:red"></span>
                                         </p:outputPanel>
                                         <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('AZUL CLARO')}">
-                                            <div class="input-group">                                           
-                                                <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
-                                                <span class="input-group-addon" style="width:64px;height:34px;background:lightskyblue;"></span>
-                                            </div>                                    
+                                            <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                            <span class="input-group-addon" style="width:64px;height:34px;background:lightskyblue;"></span>
                                         </p:outputPanel>
                                         <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('AZUL ESCURO')}">
                                             <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
@@ -309,7 +305,11 @@
                                         <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('ROXO')}">
                                             <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
                                             <span class="input-group-addon" style="width:64px;height:34px;background:darkslateblue;"></span>
-                                        </p:outputPanel>                                    
+                                        </p:outputPanel>    
+                                        <p:outputPanel rendered="#{inventoryController.containerBean.color.equals('MARROM')}">
+                                            <span class="input-group-addon">#{inventoryController.containerBean.color}</span>
+                                            <span class="input-group-addon" style="width:64px;height:34px;background:brown;"></span>
+                                        </p:outputPanel>
                                     </div>
                                 </div>
                                 <div class="row">
@@ -489,7 +489,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                                 <h:commandButton  value="Adicionar" class="btn btn-success" action="#{inventoryController.addInventoryItem()}" type="submit">
-                                    
+
                                 </h:commandButton>
                             </div>
                         </h:form>

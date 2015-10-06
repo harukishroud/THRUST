@@ -49,6 +49,12 @@ body {
     background-repeat: repeat;    
 }
 
+.addradius {
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
 /*
     FIXES
 */
@@ -56,7 +62,7 @@ body {
 .oneradio_fix {
     font-weight: normal !important;
     margin-right:10px;
-    
+
 }
 
 .gerenalfont_fix {
@@ -108,7 +114,7 @@ body {
 */
 
 .ui-datatable thead th, .ui-datatable tbody td, .ui-datatable tfoot td {
-border-width: 0px;
+    border-width: 0px;
 }
 
 .ui-widget-header {

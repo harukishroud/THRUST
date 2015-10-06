@@ -7,7 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import bean.InventoryBean;
-import db.sql.QueryBuilder;
 import db.ConnectionBuilder;
 
 public class InventoryDAO {

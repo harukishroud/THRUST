@@ -224,18 +224,18 @@ public class InventoryController {
         // # 02 - INVENTÁRIO
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Iniciando verificação do item...");
         // Verifica a existência do PN informado no inventário
-        inventoryItemCheckStatus = inventoryService.checkInventoryItemExistance(newInventoryItem.getPn());
+        // inventoryItemCheckStatus = inventoryService.checkInventoryItemExistance(newInventoryItem.getPn());
         // Caso o PN não exista no inventário o mesmo é adicionado com os dados informados
-        if (inventoryItemCheckStatus == false) {
+        // if (inventoryItemCheckStatus == false) {
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo item ao banco de dados...");
             inventoryService.addNewInventoryItem(newInventoryItem);
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item inserido com sucesso no inventário!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newInventoryItem.getPn() + "' foi adicionado ao inventário com sucesso!"));
         // Caso o PN exista no inventário uma mensagem de erro é exibida e o processo anulado
-        } else {
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] O item informado já existe no inventário.");
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "O item de PN '" + newInventoryItem.getPn() + "' já existe no inventário."));
-        }
+        // } else {
+        //    System.out.println("[SYSTEM][INVENTORYCONTROLLER] O item informado já existe no inventário.");
+        //    FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "O item de PN '" + newInventoryItem.getPn() + "' já existe no inventário."));
+        // }
         
         // Limpa Beans
         newPN = new ItemBean();

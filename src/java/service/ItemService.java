@@ -8,10 +8,7 @@ import java.util.logging.Logger;
 import bean.ItemBean;
 import dao.ExceptionDAO;
 import dao.ItemDAO;
-import db.sql.QueryBuilder;
-import db.sql.QueryGender;
-import db.sql.QueryOperation;
-import db.sql.QueryType;
+
 
 public class ItemService {
 

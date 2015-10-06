@@ -57,5 +57,23 @@ public class ContainerService {
         }               
         return inventoryAvailableContainerList;        
     }
+    
+    // SERVICE 04 - loadAllContainers()
+    //              Executa o DAO que carrega todos os containers existentes.
+    public List<ContainerBean> loadAllContainers() throws ExceptionDAO {
+        List<ContainerBean> containers = new ArrayList<ContainerBean>();
+        ContainerDAO containerDAO = new ContainerDAO();
+        
+        try {
+            containers = containerDAO.loadAllContainers();            
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][CONTAINERDAO] ERRO: Não foi possível carregar"
+                    + "a lista de containers.");
+        }
+        
+        return containers;
+    }
+    
+    
 
 }

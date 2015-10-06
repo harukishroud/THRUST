@@ -1,0 +1,182 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core"
+      >
+
+    <h:head>
+        <title>Containers | THRUST</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
+        <link href="css/style.css" rel="stylesheet"/>
+
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+        <link href="css/font-awesome.css" rel="stylesheet"/>        
+
+        <script src="js/jquery-2.1.4.js"></script>
+        <script src="js/bootstrap.js"></script>
+    </h:head>
+
+    <h:body>
+        <!-- MENU -->
+        <ui:include src="masterheader.xhtml" />                 
+
+        <div class="container">
+
+            <div class="row topgap-m">                
+
+                <!-- CONTAINERS -->
+                <h:form id="pnScreen" >
+                    <!-- Updater -->
+                    <p:poll interval="60"  listener="#{containerController.loadContainers()}" update="containersTable" />
+                    <div class="panel panel-default">
+                        <!-- Panel Header -->
+                        <div class="panel-heading">
+                            <h4 style="line-height: 1px;">
+                                <i class="fa fa-cubes sidegap-s" style="color:grey"></i> <b>Gerenciador de Containers</b>                                
+                            </h4>                             
+                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newAltModal').modal('show');">
+                                <i class="fa fa-cube sidegap-xs"></i> Novo Container
+                            </button>
+                        </div>
+
+                        <!-- Panel Body -->
+                        <div class="panel-body">
+                            <div class="row clearfix" style="max-height:auto;">
+                                <!-- INVENTORY TABLE -->
+                                <div class="table-responsive">
+                                    <ace:dataTable id="containersTable"
+                                                   value="#{containerController.containers}"
+                                                   var="container"
+                                                   paginator="true"
+                                                   paginatorPosition="bottom"
+                                                   rows="15"                                                   
+                                                   scrollable="false" 
+                                                   reorderableColumns="true"                                           
+                                                   >
+                                        <ace:column id="aliasCol" headerText="Container" sortBy="#{container.alias}" filterBy="#{container.alias}" filterMatchMode="contains" >
+                                            <b><h:outputText id="aliasCell" value="#{container.alias}"/></b>
+                                        </ace:column>
+                                        <ace:column id="typeCol" headerText="Tipo" sortBy="#{container.type}" filterBy="#{container.type}" filterMatchMode="contains" filterOptions="#{containerController.containerTypes}">
+                                            <p:outputPanel rendered="#{container.type.equals('CONTAINER PLÁSTICO')}">
+                                                <i class="fa fa-archive sidegap-xs"></i><h:outputText  style="font-size:12px;" value="#{container.type}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.type.equals('CAIXA DE PAPELÃO')}">
+                                                <i class="fa fa-cube sidegap-xs"></i><h:outputText  style="font-size:12px;" value="#{container.type}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.type.equals('CAIXA ARQUIVO')}">
+                                                <i class="fa fa-folder sidegap-xs"></i><h:outputText  style="font-size:12px;" value="#{container.type}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.type.equals('SEPARADOR PLÁSTICO')}">
+                                                <i class="fa fa-inbox sidegap-xs"></i><h:outputText  style="font-size:12px;" value="#{container.type}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.type.equals('PRATELEIRA')}">
+                                                <i class="fa fa-minus sidegap-xs"></i><h:outputText  style="font-size:12px;" value="#{container.type}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.type.equals('OUTROS')}">
+                                                <i class="fa fa-question-circle sidegap-xs"></i><h:outputText  style="font-size:12px;" value="#{container.type}"/>
+                                            </p:outputPanel>                                            
+                                        </ace:column>
+                                        <ace:column  id="colorCol" headerText="Cor" >
+                                            <p:outputPanel rendered="#{container.color.equals('VERMELHO')}">
+
+                                                <span class="label" style="background:red">&nbsp;&nbsp;&nbsp;</span>
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('AZUL CLARO')}">
+
+                                                <span class="label" style="background:lightskyblue;">&nbsp;&nbsp;&nbsp;</span>
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('AZUL ESCURO')}">
+
+                                                <span class="label" style="background:darkblue;">&nbsp;&nbsp;&nbsp;</span>    
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('VERDE')}">
+
+                                                <span class="label" style="background:lightgreen;">&nbsp;&nbsp;&nbsp;</span>   
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('CINZA')}">
+
+                                                <span class="label" style="background:grey;">&nbsp;&nbsp;&nbsp;</span>     
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('PRETO')}">
+
+                                                <span class="label" style="background:black;">&nbsp;&nbsp;&nbsp;</span> 
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('LARANJA')}">
+
+                                                <span class="label" style="background:orange;">&nbsp;&nbsp;&nbsp;</span>
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('AZUL')}">
+
+                                                <span class="label" style="background:blue;">&nbsp;&nbsp;&nbsp;</span> 
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('AMARELO')}">
+
+                                                <span class="label" style="background:yellow;">&nbsp;&nbsp;&nbsp;</span> 
+
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.color.equals('ROXO')}">
+
+                                                <span class="label" style="background:darkslateblue;">&nbsp;&nbsp;&nbsp;</span>
+                                            </p:outputPanel>    
+                                            <p:outputPanel rendered="#{container.color.equals('MARROM')}">
+
+                                                <span class="label" style="background:brown;">&nbsp;&nbsp;&nbsp;</span>
+
+                                            </p:outputPanel>
+                                        </ace:column>  
+                                        <ace:column id="fromCol" headerText="Proprietário"  filterBy="#{container.from}" filterMatchMode="contains" >
+                                            <b><h:outputText id="fromCell" value="#{container.from}"/></b>
+                                        </ace:column>
+                                        <ace:column id="toCol" headerText="Para" filterBy="#{container.to}" filterMatchMode="contains" >
+                                            <b><h:outputText id="toCell" value="#{container.to}"/></b>
+                                        </ace:column>
+                                        <ace:column id="countCol" headerText="Items" sortBy="#{container.itemsTotal}">
+                                            <b><h:outputText id="countCell" value="#{container.itemsTotal}"/></b>
+                                        </ace:column>
+                                        <ace:column id="statusCol" headerText="Status" sortBy="#{container.full_status}">
+                                            <p:outputPanel rendered="#{container.full_status.equals(false)}">
+                                                <i style="color:green" class="fa fa-check sidegap-xs"></i>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{container.full_status.equals(true)}">
+                                                <i style="color:red" class="fa fa-ban sidegap-xs"></i>
+                                            </p:outputPanel>
+                                        </ace:column>
+                                        <ace:column style="width:100px;">
+                                            <h:commandLink  class="btn btn-default btn-xs sidegap-xs" 
+                                                            onclick="$('#editPNModal').modal('show');" >
+                                                <i class="fa fa-pencil-square sidegap-xs"></i> Editar
+                                            </h:commandLink>                                             
+                                        </ace:column>
+                                    </ace:dataTable>
+                                </div>
+                            </div>                        
+                        </div>
+                        <!-- Panel Footer -->
+                        <div class="panel-footer">                        
+                        </div>
+                    </div>
+                </h:form>              
+
+            </div>
+
+            <!-- MODALS -->
+
+
+        </div>
+    </h:body>
+</html>

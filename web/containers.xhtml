@@ -157,8 +157,8 @@
                                             </p:outputPanel>
                                         </ace:column>
                                         <ace:column style="width:100px;">
-                                            <h:commandLink  class="btn btn-default btn-xs sidegap-xs" 
-                                                            onclick="$('#editPNModal').modal('show');" >
+                                            <h:commandLink  class="btn btn-default btn-xs sidegap-xs" actionListener="#{containerController.setEditContainer(container)}" 
+                                                            onclick="$('#containerEditModal').modal('show');" >
                                                 <i class="fa fa-pencil-square sidegap-xs"></i> Editar
                                             </h:commandLink>                                             
                                         </ace:column>
@@ -175,7 +175,74 @@
             </div>
 
             <!-- MODALS -->
+            
+            <!-- Container Edit Modal -->
+            <div class="modal fade" id="containerEditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="containerEditForm">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
+                                    <i class="fa fa-pencil-square-o sidegap-s"></i> Editar <span style="color:#007DC5;">#{containerController.containerBean.alias}</span></h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row">
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerAlias">Alias</label>                              
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{containerController.containerBean.alias}" />
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerFrom">De</label>                              
+                                        <p:inputText class="form-control" size="30" value="#{containerController.containerBean.from}" />
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerTo">Para</label>                              
+                                        <p:inputText  class="form-control" size="30" value="#{containerController.containerBean.to}" />
+                                    </div>
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-asterisk sidegap-s"></i>Aparência</h4>
+                                    <div class="form-group col-xs-8">
+                                        <label for="ContainerType">Tipo</label>                              
+                                        <h:selectOneMenu class="form-control" value="#{containerController.containerBean.type}" style="margin-top:-5px;padding:3px;height:35px;" >                                    
+                                            <f:selectItems var="containerType" value="#{containerController.containerTypes}" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerColor">Cor</label>                              
+                                        <h:selectOneMenu class="form-control" value="#{containerController.containerBean.color}" style="margin-top:-5px;padding:3px;height:35px;" >                                    
+                                            <f:selectItems var="containerColor" value="#{containerController.containerColors}" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-cog sidegap-s"></i>Status</h4>
 
+                                    <div class="form-group col-xs-8">
+                                        <label for="ContainerStatus">Status de Armazenamento</label>                                    
+                                        <div style="font-weight: normal;">
+                                            <h:selectOneRadio value="#{containerController.containerBean.full_status}" styleClass="oneradio_fix" enabledClass="oneradio_fix">
+                                                <f:selectItem itemLabel="Indisponível" itemValue="true" class="form-control"/>
+                                                <f:selectItem itemLabel="Disponível" itemValue="false" class="form-control"/>
+                                            </h:selectOneRadio>                                        
+                                        </div> 
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerTotalItems">Total de Items</label>                              
+                                        <p:inputText disabled="true" class="form-control" size="30" value="#{containerController.containerBean.itemsTotal}"/>
+                                    </div>                          
+                                </div>                            
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>  
+                                <h:commandButton value="Salvar Alterações" class="btn btn-primary" action="#{containerController.updateContainer()}" onclick="$('#containerEditModal').modal('hide');">
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+   
 
         </div>
     </h:body>

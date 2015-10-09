@@ -30,10 +30,10 @@ public class ContainerDAO {
             containerInfo.setAlias(rs.getString("ALIAS"));
             containerInfo.setColor(rs.getString("COLOR"));
             containerInfo.setFlag(rs.getInt("FLAG"));
-            containerInfo.setFrom(rs.getString("FROM"));
+            containerInfo.setFrom(rs.getString("CONTAINER_FROM"));
             containerInfo.setFull_status(rs.getBoolean("FULL_STATUS"));
             containerInfo.setOldAlias(rs.getString("ALIAS"));
-            containerInfo.setTo(rs.getString("TO"));
+            containerInfo.setTo(rs.getString("CONTAINER_TO"));
             containerInfo.setType(rs.getString("TYPE"));
         }
 
@@ -120,9 +120,9 @@ public class ContainerDAO {
             container.setColor(rs.getString("COLOR"));
             container.setFlag(rs.getInt("FLAG"));
             container.setFull_status(rs.getBoolean("FULL_STATUS"));
-            container.setFrom(rs.getString("FROM"));
+            container.setFrom(rs.getString("CONTAINER_FROM"));
             container.setOldAlias(rs.getString("ALIAS"));
-            container.setTo(rs.getString("TO"));
+            container.setTo(rs.getString("CONTAINER_TO"));
             container.setType(rs.getString("TYPE"));
 
             // Conta o número de items existentes no container carregado
@@ -152,4 +152,57 @@ public class ContainerDAO {
         return containers;
     }
 
+    // DAO 05 - updateContainer()
+    //          Atualiza dados do container editado.
+    public ContainerBean updateContainer(ContainerBean updatedContainer) throws SQLException {
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+        
+        System.out.println("[DATABASE][CONTAINERDAO] Iniciando...");
+        
+        String sql = "UPDATE container SET TYPE=?, COLOR=?, CONTAINER_FROM=?, CONTAINER_TO=?, FULL_STATUS=? WHERE ALIAS=?";        
+       
+        System.out.println("[DATABASE][CONTAINERDAO] Atualizando Container '" + updatedContainer.getAlias() + "' ...");
+        PreparedStatement ps = conn.prepareStatement(sql);
+        
+        ps.setString(1, updatedContainer.getType());
+        ps.setString(2, updatedContainer.getColor());
+        ps.setString(3, updatedContainer.getFrom());
+        ps.setString(4, updatedContainer.getTo());
+        ps.setBoolean(5, updatedContainer.isFull_status());
+        ps.setString(6, updatedContainer.getAlias());       
+        
+        ps.execute();
+        ps.close();
+        
+        conn.close();
+        
+        System.out.println("[DATABASE][CONTAINERDAO] Container '" + updatedContainer.getAlias() + "' atualizado com sucesso!");
+        
+        return updatedContainer;        
+    }
+    
+    // DAO 06 - checkContainerExistance()
+    //           Verifica existência do Container informado.
+    public boolean checkContainerExistance(String containerAlias)throws SQLException {
+        boolean checkStatus = false;
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+        
+        System.out.println("[DATABASE][CONTAINERDAO] Buscando por Container '" + containerAlias + "' no banco de dados...");
+        
+        String sql = "SELECT * FROM container WHERE ALIAS = '" + containerAlias + "'";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+        
+        // Caso o Container exista
+        if (rs.next()) {
+            System.out.println("[DATABASE][CONTAINERDAO] O Container informado já existe.");
+            checkStatus = true;            
+        } else
+        // Caso o Container NÃO exista
+            System.out.println("[DATABASE][CONTAINERDAO] O Container '" + containerAlias + "' não existe no banco de dados.");
+        
+        return checkStatus;
+    }
 }

@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import bean.InventoryBean;
+import bean.MoveAllFromToBean;
 import db.ConnectionBuilder;
 
 public class InventoryDAO {
@@ -42,10 +43,10 @@ public class InventoryDAO {
             inventoryItem.setForm_link(rs.getString("FORM_LINK"));
             inventoryItem.setForm_status(rs.getBoolean("FORM_STATUS"));
             inventoryItem.setObs(rs.getString("OBS"));
-            inventoryItem.setContainerfull_status(rs.getBoolean("CONTAINER_STATUS"));            
+            inventoryItem.setContainerfull_status(rs.getBoolean("CONTAINER_STATUS"));
             inventoryItem.setOldpn(rs.getString("PN"));
             inventoryItem.setOldalias(rs.getString("ALIAS"));
-            
+
             inventory.add(inventoryItem);
         }
 
@@ -67,11 +68,11 @@ public class InventoryDAO {
         Connection conn = connection.getConnection();
 
         System.out.println("[DATABASE][INVENTORYDAO] Iniciando...");
-        
+
         String sqlitems = "UPDATE items SET DESCRIPTION=? WHERE PN=?";
 
         System.out.println("[DATABASE][INVENTORYDAO] Atualizando tabela 'items'...");
-        PreparedStatement psitems = conn.prepareStatement(sqlitems);       
+        PreparedStatement psitems = conn.prepareStatement(sqlitems);
         psitems.setString(1, updatedInventoryItem.getDescription());
         psitems.setString(2, updatedInventoryItem.getOldpn());
         psitems.execute();
@@ -95,7 +96,7 @@ public class InventoryDAO {
         psinventory.setString(11, updatedInventoryItem.getOldpn());
         psinventory.setString(12, updatedInventoryItem.getOldalias());
         psinventory.execute();
-        psinventory.close();        
+        psinventory.close();
 
         conn.close();
 
@@ -131,7 +132,7 @@ public class InventoryDAO {
 
         return inventoryContainerList;
     }
-    
+
     // DAO 04 - countFaultInventoryItens()
     //          Conta items em falta no inventário.
     public List<InventoryBean> countFaultInventoryItens() throws SQLException, ExceptionDAO {
@@ -157,8 +158,8 @@ public class InventoryDAO {
         conn.close();
 
         return inventoryFaultList;
-    } 
-    
+    }
+
     // DAO 05 - createListInventoryOwner()
     //          Busca por proprietários existentes no inventários.
     public List<InventoryBean> createListInventoryOwners() throws SQLException, ExceptionDAO {
@@ -184,8 +185,8 @@ public class InventoryDAO {
         conn.close();
 
         return inventoryOwnerList;
-    }   
-    
+    }
+
     // DAO 06 - addNewInventoryItem()
     //          Adiciona novo item ao inventário.
     public void addNewInventoryItem(InventoryBean newInventoryItem) throws SQLException {
@@ -212,28 +213,51 @@ public class InventoryDAO {
 
         System.out.println("[DATABASE][INVENTORYDAO] item adicionado com sucesso!");
     }
-    
+
     // DAO 07 - checkInventoryItemExistance()
     //          verifica existência do PN informado no banco de dados.
-    public boolean checkInventoryItemExistance(String pn) throws SQLException {
+    public boolean checkInventoryItemExistance(InventoryBean item) throws SQLException {
         boolean checkStatus = false;
         ConnectionBuilder connection = new ConnectionBuilder();
         Connection conn = connection.getConnection();
 
-        System.out.println("[DATABASE][ITEMDAO] Buscando por item de PN '" + pn + "' no inventário...");
+        System.out.println("[DATABASE][INVENTORYDAO] Buscando por item de PN '" + item.getPn() + "' de condição '" + item.getCondition() + "' no inventário...");
 
-        String sql = "SELECT * FROM inventory WHERE items_PN = '" + pn + "'";
+        String sql = "SELECT * FROM inventory WHERE items_PN = '" + item.getPn() + "' and ITEMCONDITION = '" + item.getCondition() + "'";
         PreparedStatement ps = conn.prepareStatement(sql);
         ResultSet rs = ps.executeQuery();
 
         if (rs.next()) {
-            System.out.println("[DATABASE][ITEMDAO] O PN informado já existe no inventário.");
+            System.out.println("[DATABASE][INVENTORYDAO] O PN informado já existe no inventário com a condição '" + item.getCondition() + "'.");
             checkStatus = true;
         }
 
-        System.out.println("[DATABASE][ITEMDAO] O PN '" + pn + "' não existe no inventário.");
+        System.out.println("[DATABASE][INVENTORYDAO] O PN '" +  item.getPn()  + "' não existe no inventário com a condição '" + item.getCondition() + "'.");
 
         return checkStatus;
     }
 
+    // DAO 08 - moveAllFromTo()
+    //          Move todos os itens de um Container A para um Container B.
+    public void moveAllFromTo(MoveAllFromToBean moveInfo) throws SQLException {
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        System.out.println("[DATABASE][INVENTORYDAO] Preparando para mover items de '" + moveInfo.getContainerA()
+                + "' para '" + moveInfo.getContainerB() + "' ...");
+
+        String sql = "UPDATE inventory SET container_ALIAS=? WHERE container_ALIAS=?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, moveInfo.getContainerB());
+        ps.setString(2, moveInfo.getContainerA());
+        
+        System.out.println(ps);
+        ps.execute();
+        ps.close();
+        
+        conn.close();
+
+        System.out.println("[DATABASE][INVENTORYDAO] Items movidos de '" + moveInfo.getContainerA() + "' para '" + moveInfo.getContainerB() + "' com sucesso!");
+
+    }
 }

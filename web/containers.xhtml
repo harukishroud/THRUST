@@ -23,7 +23,8 @@
         <script src="js/bootstrap.js"></script>
     </h:head>
 
-    <h:body>
+    <h:body> 
+
         <!-- MENU -->
         <ui:include src="masterheader.xhtml" />                 
 
@@ -32,25 +33,30 @@
             <div class="row topgap-m">                
 
                 <!-- CONTAINERS -->
-                <h:form id="pnScreen" >
+                <h:form id="containerScreen" >
+
                     <!-- Updater -->
                     <p:poll interval="60"  listener="#{containerController.loadContainers()}" update="containersTable" />
+                    
+                    <p:ajaxStatus oncomplete="#{containerController.loadContainers()}"/>
+
                     <div class="panel panel-default">
                         <!-- Panel Header -->
                         <div class="panel-heading">
                             <h4 style="line-height: 1px;">
                                 <i class="fa fa-cubes sidegap-s" style="color:grey"></i> <b>Gerenciador de Containers</b>                                
                             </h4>                             
-                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newAltModal').modal('show');">
+                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newContainerModal').modal('show');">
                                 <i class="fa fa-cube sidegap-xs"></i> Novo Container
-                            </button>
+                            </button>   
                         </div>
 
                         <!-- Panel Body -->
                         <div class="panel-body">
                             <div class="row clearfix" style="max-height:auto;">
-                                <!-- INVENTORY TABLE -->
+                                <!-- CONTAINER TABLE -->
                                 <div class="table-responsive">
+
                                     <ace:dataTable id="containersTable"
                                                    value="#{containerController.containers}"
                                                    var="container"
@@ -156,13 +162,18 @@
                                                 <i style="color:red" class="fa fa-ban sidegap-xs"></i>
                                             </p:outputPanel>
                                         </ace:column>
-                                        <ace:column style="width:100px;">
+                                        <ace:column style="width:120px;">
                                             <h:commandLink  class="btn btn-default btn-xs sidegap-xs" actionListener="#{containerController.setEditContainer(container)}" 
                                                             onclick="$('#containerEditModal').modal('show');" >
                                                 <i class="fa fa-pencil-square sidegap-xs"></i> Editar
-                                            </h:commandLink>                                             
+                                            </h:commandLink> 
+                                            <h:commandLink  class="btn btn-default btn-xs sidegap-xs" actionListener="#{containerController.setEditContainer(container)}" 
+                                                            onclick="$('#removeContainerModal').modal('show');" >
+                                                <i class="fa fa-trash"></i>
+                                            </h:commandLink> 
                                         </ace:column>
                                     </ace:dataTable>
+
                                 </div>
                             </div>                        
                         </div>
@@ -170,12 +181,13 @@
                         <div class="panel-footer">                        
                         </div>
                     </div>
+
                 </h:form>              
 
             </div>
 
             <!-- MODALS -->
-            
+
             <!-- Container Edit Modal -->
             <div class="modal fade" id="containerEditModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
@@ -236,13 +248,112 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>  
                                 <h:commandButton value="Salvar Alterações" class="btn btn-primary" action="#{containerController.updateContainer()}" onclick="$('#containerEditModal').modal('hide');">
+
                                 </h:commandButton>
                             </div>
                         </h:form>
                     </div>
                 </div>
             </div>
-   
+
+            <!-- New Container Modal -->
+            <div class="modal fade" id="newContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" >
+                <div class="modal-dialog" role="document" >
+                    <div class="modal-content">
+                        <h:form id="newContainerForm">
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
+                                    <i class="fa fa-plus sidegap-s"></i> Novo Container</h3>
+                            </div>
+                            <div class="modal-body">
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="newContainerMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
+                                            showSummary="false"/>
+                                <div class="row">
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerAlias">Alias</label>                              
+                                        <p:inputText class="form-control" size="30" value="#{containerController.newContainerBean.alias}" />
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerFrom">De</label>                              
+                                        <p:inputText class="form-control" size="30" value="#{containerController.newContainerBean.from}" />
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerTo">Para</label>                              
+                                        <p:inputText  class="form-control" size="30" value="#{containerController.newContainerBean.to}" />
+                                    </div>
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-asterisk sidegap-s"></i>Aparência</h4>
+                                    <div class="form-group col-xs-8">
+                                        <label for="ContainerType">Tipo</label>                              
+                                        <h:selectOneMenu class="form-control" value="#{containerController.newContainerBean.type}" style="margin-top:-5px;padding:3px;height:35px;" >                                    
+                                            <f:selectItems var="containerType" value="#{containerController.containerTypes}" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="ContainerColor">Cor</label>                              
+                                        <h:selectOneMenu class="form-control" value="#{containerController.newContainerBean.color}" style="margin-top:-5px;padding:3px;height:35px;" >                                    
+                                            <f:selectItems var="containerColor" value="#{containerController.containerColors}" />
+                                        </h:selectOneMenu>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-cog sidegap-s"></i>Status</h4>
+
+                                    <div class="form-group col-xs-8">
+                                        <label for="ContainerStatus">Status de Armazenamento</label>                                    
+                                        <div style="font-weight: normal;">
+                                            <h:selectOneRadio value="#{containerController.newContainerBean.full_status}" styleClass="oneradio_fix" enabledClass="oneradio_fix">
+                                                <f:selectItem itemLabel="Indisponível" itemValue="true" class="form-control"/>
+                                                <f:selectItem itemLabel="Disponível" itemValue="false" class="form-control"/>
+                                            </h:selectOneRadio>                                        
+                                        </div> 
+                                    </div>
+
+                                </div>                            
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>  
+                                <h:commandButton value="Adicionar Container" class="btn btn-success"  action="#{containerController.newContainer()}" type="submit" >
+                                    <ace:ajax listener="#{containerController.loadContainers()}" execute="@all" render="@all"/>
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Remove Container Modal -->
+            <div class="modal fade" id="removeContainerModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="removeContainerForm">   
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
+                                    <i style="color:red" class="fa fa-warning sidegap-s"></i> Atenção</h3>
+                            </div>
+                            <div class="modal-body" style="text-align:center;">
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="removeContainerMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:10px;font-weight: normal"
+                                            showSummary="false"/>
+                                <h4>O Container <b>#{containerController.containerBean.alias}</b> será <span style="color:red;">removido permanentemente</span> do banco de dados se optar por continuar
+                                    com a remoção.</h4>
+
+                                <h3>Deseja realmente remover o container <b>#{containerController.containerBean.alias}</b>?</h3>
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <h:commandButton value="Remover #{containerController.containerBean.alias}" class="btn btn-danger"  action="#{containerController.removeContainer()}"> 
+                                    
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div>           
+
 
         </div>
     </h:body>

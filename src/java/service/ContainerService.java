@@ -104,5 +104,35 @@ public class ContainerService {
         
         return checkStatus;
     } 
+    
+    // SERVICE 07 - newContainer()
+    //              Executa o DAO responsável por adicionar um novo container ao
+    //              banco de dados.
+    public void newContainer(ContainerBean newContainer) throws SQLException {
+        ContainerDAO containerDAO = new ContainerDAO();
+        
+        try {
+            containerDAO.newContainer(newContainer);
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][CONTAINERSERVICE] ERRO: Não foi possível adicionar o"
+                    + " Container '" + newContainer.getAlias() + "' ao banco de dados.");
+        }
+    }
+    
+    // SERVICE 08 - removeContainer()
+    //              Executa o DAO que remove o container do banco de dados.
+    public void removeContainer(String containerAlias) throws SQLException {
+        ContainerDAO containerDAO = new ContainerDAO();
+        
+        try {
+            containerDAO.removeContainer(containerAlias);
+            System.out.println("[DATABASE][CONTAINERSERVICE] Container '"
+            + containerAlias + "' removido do banco de dados.");
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][CONTAINERSERVICE] ERRO: Não foi possível remover o Container '"
+            + containerAlias + "' do banco de dados.");
+        }
+    }
+    
 
 }

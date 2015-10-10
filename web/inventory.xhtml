@@ -36,12 +36,19 @@
                 <h:form id="inventoryScreen" >
                     <!-- Updater -->
                     <p:poll interval="60"  listener="#{inventoryController.loadAllInventory()}" update="inventoryTable" />
+
+                    <p:ajaxStatus oncomplete="#{inventoryController.loadAllInventory()}"/>
+
                     <div class="panel panel-default">
                         <!-- Panel Header -->
                         <div class="panel-heading">
                             <h4 style="line-height: 1px;"><i class="fa fa-list sidegap-s" style="color:grey"></i> <b>Inventário</b></h4>
-                            <h:commandButton id="insertNew" value="Inserir Novo Item" 
-                                             class="btn btn-success" style="float:right;margin:-35px;margin-right:0px;" onclick="$('#newInventoryItemModal').modal('show');"/>                          
+                            <button class="btn btn-default" style="float:right;margin:-35px;margin-right:150px;" onclick="$('#moveAllFromToModal').modal('show');">       
+                                <i class="fa fa-arrows-h sidegap-xs"></i> Mover A para B
+                            </button>
+                            <button class="btn btn-default" style="float:right;margin:-35px;margin-right:0px;" onclick="$('#newInventoryItemModal').modal('show');">       
+                                <i class="fa fa-plus sidegap-xs"></i> Inserir Novo Item
+                            </button>
                         </div>
 
                         <!-- Panel Body -->
@@ -496,6 +503,50 @@
                     </div>
                 </div>
             </div>
+
+            <!-- Move All From To -->
+            <div class="modal fade" id="moveAllFromToModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="removeContainerForm">   
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
+                                    <i class="fa fa-arrows-h sidegap-s"></i>Mover A - B</h3>
+                            </div>
+                            <div class="modal-body">
+                                <div class="row" style="text-align:center;">
+                                    <p>Mover A - B realiza a transferência de todos os items de um <b>Container A</b> para um <b>Container B</b>.</p>
+                                    <h4><i class="fa fa-warning sidegap-xs" style="color:red"></i><b>Atenção:</b> Esta ação não pode ser desfeita!</h4>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-xs-6">
+                                        <label for="A">Container A</label>                              
+                                        <h:selectOneMenu class="form-control" value="#{inventoryController.moveInfo.containerA}">                                        
+                                            <f:selectItems value="#{inventoryController.availableContainers}"   />                                       
+                                        </h:selectOneMenu>
+                                        <span id="helpBlock" class="help-block">Items deste container serão movidos para o <b>Container B</b>.</span>
+                                    </div> 
+                                    <div class="form-group col-xs-6">
+                                        <label for="A">Container B</label>                              
+                                        <h:selectOneMenu class="form-control" value="#{inventoryController.moveInfo.containerB}">                                        
+                                            <f:selectItems value="#{inventoryController.availableContainers}"   />                                       
+                                        </h:selectOneMenu>
+                                        <span id="helpBlock" class="help-block">Este receberá os items do <b>Container A</b>.</span>
+                                    </div> 
+                                </div>                                
+                            </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <h:commandButton value="Mover Items" class="btn btn-warning" action="#{inventoryController.moveAllFromTo()}"  onclick="$('#moveAllFromToModal').modal('hide');"> 
+
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+
         </div>
     </h:body>
 </html>

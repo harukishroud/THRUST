@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import bean.InventoryBean;
+import bean.MoveAllFromToBean;
 import dao.ExceptionDAO;
 import dao.InventoryDAO;
 
@@ -97,9 +98,9 @@ public class InventoryService {
         
         try {
             inventoryDAO.addNewInventoryItem(newInventoryItem);
-            System.out.println("[DATABASE][ITEMSERVICE] Item adicionado com succeso ao inventário!");
+            System.out.println("[DATABASE][INVENTORYSERVICE] Item adicionado com succeso ao inventário!");
         } catch (SQLException ex) {
-            System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível adicionar"
+            System.out.println("[DATABASE][INVENTORYSERVICE] ERRO: Não foi possível adicionar"
                     + "o item ao inventário.");
         }
     }
@@ -107,18 +108,31 @@ public class InventoryService {
     // SERVICE 07 - checkInventoryItemExistance()
     //              Executa o DAO que busca pela existência do PN informado no -
     //              banco de dados.
-    public boolean checkInventoryItemExistance(String pn) throws SQLException {
+    public boolean checkInventoryItemExistance(InventoryBean item) throws SQLException {
         boolean checkStatus = false;
         InventoryDAO inventoryDAO = new InventoryDAO();
 
         try {
-            checkStatus = inventoryDAO.checkInventoryItemExistance(pn);
+            checkStatus = inventoryDAO.checkInventoryItemExistance(item);
         } catch (SQLException ex) {
-            System.out.println("[DATABASE][ITEMSERVICE] ERRO: Não foi possível executar"
+            System.out.println("[DATABASE][INVENTORYSERVICE] ERRO: Não foi possível executar"
                     + "a checagem do item informado.");
         }
 
         return checkStatus;
+    }
+    
+    // SERVICE 08 - moveAllFromTo()
+    //              Executa DAO que move todos os items do container A pra o co-
+    //              ntainer B.
+    public void moveAllFromTo(MoveAllFromToBean moveInfo) throws SQLException {
+        InventoryDAO inventoryDAO = new InventoryDAO();
+        
+        try {
+            inventoryDAO.moveAllFromTo(moveInfo);
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][INVENTORYSERVICE] ERRO: Não foi possível realizar o procedimento.");            
+        }
     }
     
 }

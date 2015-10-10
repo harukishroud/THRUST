@@ -35,6 +35,9 @@
                 <h:form id="pnScreen" >
                     <!-- Updater -->
                     <p:poll interval="60"  listener="#{pnsController.loadPNsList()}" update="pnTable" />
+
+                    <p:ajaxStatus oncomplete="#{pnsController.loadPNsList()}"/>
+
                     <div class="panel panel-default">
                         <!-- Panel Header -->
                         <div class="panel-heading">
@@ -249,7 +252,7 @@
                                             <f:validateLength minimum="1" maximum="25"/>
                                         </p:inputText>
                                     </div>
-                                                                     
+
                                     <div class="form-group col-xs-6">
                                         <label for="itemAlt">Alternado</label>                              
                                         <p:inputText  class="form-control" size="30" value="#{pnsController.newAlt.alt_pn}">

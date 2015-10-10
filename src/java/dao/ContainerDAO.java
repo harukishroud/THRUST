@@ -107,7 +107,7 @@ public class ContainerDAO {
         int containerTotal = 0;
 
         System.out.println("[DATABASE][CONTAINERDAO] Carregando todos os containers existentes no"
-                + "banco de dados...");
+                + " banco de dados...");
 
         // Carrega dados da VIEW 'container_standardview'
         String sql = "SELECT * FROM container_standardview";
@@ -183,7 +183,7 @@ public class ContainerDAO {
     }
     
     // DAO 06 - checkContainerExistance()
-    //           Verifica existência do Container informado.
+    //          Verifica existência do Container informado.
     public boolean checkContainerExistance(String containerAlias)throws SQLException {
         boolean checkStatus = false;
         ConnectionBuilder connection = new ConnectionBuilder();
@@ -204,5 +204,50 @@ public class ContainerDAO {
             System.out.println("[DATABASE][CONTAINERDAO] O Container '" + containerAlias + "' não existe no banco de dados.");
         
         return checkStatus;
+    }
+    
+    // DAO 07 - newContainer()
+    //          Cria novo Container no banco de dados.
+    public void newContainer(ContainerBean newContainer) throws SQLException {
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+        
+        System.out.println("[DATABASE][CONTAINERDAO] Preparando para adicionar o container '" 
+        + newContainer.getAlias() + "' ao banco de dados...");
+        
+        String sql = "INSERT INTO container (ALIAS,TYPE,COLOR,CONTAINER_FROM,CONTAINER_TO,FULL_STATUS)"
+                + "VALUES (?,?,?,?,?,?)";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        
+        ps.setString(1, newContainer.getAlias());
+        ps.setString(2, newContainer.getType());
+        ps.setString(3, newContainer.getColor());
+        ps.setString(4, newContainer.getFrom());
+        ps.setString(5, newContainer.getTo());
+        ps.setBoolean(6, newContainer.isFull_status());
+        ps.execute();
+        ps.close();
+        conn.close();
+        
+        System.out.println("[DATABASE][CONTAINERDAO] Container '" + newContainer.getAlias() + "' adicionado"
+        + " com sucesso ao banco de dados!");
+    }
+    
+    // DAO 08 - removeContainer()
+    //          Remove Container do banco de dados.
+    public void removeContainer(String containerAlias) throws SQLException {
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+        
+        System.out.println("[DATABASE][CONTAINERDAO] Preparando para remover o Container '" + containerAlias + "' "
+                + "do banco de dados...");
+        
+        String sql = "DELETE FROM container WHERE ALIAS = '" + containerAlias + "'";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.execute();
+        ps.close();
+        conn.close();
+        
+        System.out.println("[DATABASE][CONTAINERDAO] O Container '" + containerAlias + "' foi removido do banco de dados.");
     }
 }

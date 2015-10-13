@@ -12,6 +12,7 @@ import bean.InventoryBean;
 import bean.ContainerBean;
 import bean.ItemBean;
 import bean.MoveAllFromToBean;
+import java.io.IOException;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -252,7 +253,8 @@ public class InventoryController {
     public void moveAllFromTo() throws SQLException, ExceptionDAO {
         inventoryService.moveAllFromTo(moveInfo);
     }
-
+    
+   
     // CONSTRUTOR
     public InventoryController() throws SQLException, ExceptionDAO {
 

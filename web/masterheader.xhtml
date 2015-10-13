@@ -28,7 +28,11 @@
                     <!-- Collect the nav links, forms, and other content for toggling -->
                     <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1" >
                         <ul class="nav navbar-nav">
-                            <li><a href="#"><i class="fa fa-th-list sidegap-xs"></i> Inventário</a></li>
+                            <li>
+                                <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
+                                    <i class="fa fa-th-list sidegap-xs"></i> Inventário
+                                </h:commandLink>
+                            </li>
                             <li><a href="#"><i class="fa fa-calculator sidegap-xs"></i> Cotação</a></li>
                             <li><a href="#"><i class="fa fa-file-text-o sidegap-xs"></i> Packing List</a></li>
                             <li><a href="#"><i class="fa fa-history sidegap-xs"></i> Log</a></li>

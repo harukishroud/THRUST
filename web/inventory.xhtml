@@ -557,7 +557,10 @@
                                 <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
                                     <i class="fa fa-random sidegap-s"></i>Mover Items</h3>
                             </div>
-                            <div class="modal-body">                                
+                            <div class="modal-body">        
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="moveItemMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
+                                            showSummary="false"/>
                                 <div class="row">
 
                                     <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-list sidegap-s"></i>Inventário</h4>
@@ -632,7 +635,7 @@
                                     
                                     <div class="form-group col-xs-12" style="margin-top:10px;">
                                 <label>Mover para Container</label>                              
-                                <h:selectOneMenu class="form-control" value="#{inventoryController.moveInfo.containerB}">                                        
+                                <h:selectOneMenu class="form-control" value="#{selectedInventoryItem.movealias}">                                        
                                     <f:selectItems value="#{inventoryController.availableContainers}"   />                                       
                                 </h:selectOneMenu>
                                 <span id="helpBlock" class="help-block">Este container receberá os items da lista de <b>items selecionados</b>.</span>

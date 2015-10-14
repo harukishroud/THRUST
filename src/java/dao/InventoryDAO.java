@@ -232,7 +232,7 @@ public class InventoryDAO {
             checkStatus = true;
         }
 
-        System.out.println("[DATABASE][INVENTORYDAO] O PN '" +  item.getPn()  + "' não existe no inventário com a condição '" + item.getCondition() + "'.");
+        System.out.println("[DATABASE][INVENTORYDAO] O PN '" + item.getPn() + "' não existe no inventário com a condição '" + item.getCondition() + "'.");
 
         return checkStatus;
     }
@@ -250,14 +250,40 @@ public class InventoryDAO {
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, moveInfo.getContainerB());
         ps.setString(2, moveInfo.getContainerA());
+
+        System.out.println(ps);
+        ps.execute();
+        ps.close();
+
+        conn.close();
+
+        System.out.println("[DATABASE][INVENTORYDAO] Items movidos de '" + moveInfo.getContainerA() + "' para '" + moveInfo.getContainerB() + "' com sucesso!");
+
+    }
+
+    // DAO 09 - moveItemTo()
+    //          Move item(s) para um Container selecionado.
+    public void moveItemTo(InventoryBean item) throws SQLException {
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        System.out.println("[DATABASE][INVENTORYDAO] Preparando para mover item '" + item.getPn()
+                + "' para '" + item.getMovealias() + "' ...");
+
+        String sql = "UPDATE inventory SET container_ALIAS = ? WHERE items_PN = ? AND ITEMCONDITION = ?";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ps.setString(1, item.getMovealias());
+        ps.setString(2, item.getPn());
+        ps.setString(3, item.getCondition());
         
         System.out.println(ps);
         ps.execute();
         ps.close();
         
         conn.close();
-
-        System.out.println("[DATABASE][INVENTORYDAO] Items movidos de '" + moveInfo.getContainerA() + "' para '" + moveInfo.getContainerB() + "' com sucesso!");
+        
+        System.out.println("[DATABASE][INVENTORYDAO] Item '" + item.getPn()
+                + "' movido para '" + item.getMovealias() + "' com sucesso!");     
 
     }
 }

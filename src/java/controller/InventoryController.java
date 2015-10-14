@@ -47,6 +47,8 @@ public class InventoryController {
     private InventoryBean inventoryBean = new InventoryBean();
     // Armazena item a ser adicionado no inventário
     private InventoryBean newInventoryItem = new InventoryBean();
+    // Armazena informações do item a ser movido
+    private InventoryBean selectedInventoryItem = new InventoryBean();
     // Armazena informações do container selecionado
     private ContainerBean containerBean = new ContainerBean();
     // Armazena informações do PN selecionado
@@ -274,6 +276,9 @@ public class InventoryController {
         }
         
     }
+    
+    // 13 - moveSelectedItems()
+    //      Move todos os items selecionados para o container selecionado.
             
    
     // CONSTRUTOR
@@ -481,6 +486,14 @@ public class InventoryController {
 
     public void setInventoryMoveList(List<InventoryBean> inventoryMoveList) {
         this.inventoryMoveList = inventoryMoveList;
+    }
+
+    public InventoryBean getSelectedInventoryItem() {
+        return selectedInventoryItem;
+    }
+
+    public void setSelectedInventoryItem(InventoryBean selectedInventoryItem) {
+        this.selectedInventoryItem = selectedInventoryItem;
     }
 
     public List<SelectItem> getConditionFilterOptions() {

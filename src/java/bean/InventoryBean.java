@@ -15,8 +15,11 @@ public class InventoryBean {
     private boolean form_status;
     private String form_link;
     private boolean containerfull_status;
+    
+    // FUNCÕES
     private String oldpn;
     private String oldalias;
+    private String movealias;
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">
     public String getPn() {
@@ -129,6 +132,14 @@ public class InventoryBean {
 
     public void setOldpn(String oldpn) {
         this.oldpn = oldpn;
+    }
+
+    public String getMovealias() {
+        return movealias;
+    }
+
+    public void setMovealias(String movealias) {
+        this.movealias = movealias;
     }
 
     public String getOldalias() {

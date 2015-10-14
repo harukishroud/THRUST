@@ -135,4 +135,17 @@ public class InventoryService {
         }
     }
     
+    // SERVICE 09 - moveItemTo()
+    //              Executa DAO que move o item indicado para um Container sele-
+    //              cionado.
+    public void moveItemTo(InventoryBean item) throws SQLException {
+        InventoryDAO inventoryDAO = new InventoryDAO();
+        
+        try {
+            inventoryDAO.moveItemTo(item);
+        } catch (SQLException ex) {
+            System.out.println("[DATABASE][INVENTORYSERVICE] ERRO: Não foi possível realizar a mudança do item '" + item.getPn() + "'.");
+        }
+    }
+    
 }

@@ -33,16 +33,36 @@
                                     <i class="fa fa-th-list sidegap-xs"></i> Inventário
                                 </h:commandLink>
                             </li>
-                            <li><a href="#"><i class="fa fa-calculator sidegap-xs"></i> Cotação</a></li>
-                            <li><a href="#"><i class="fa fa-file-text-o sidegap-xs"></i> Packing List</a></li>
-                            <li><a href="#"><i class="fa fa-history sidegap-xs"></i> Log</a></li>
+                            <li> 
+                                <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
+                                <i class="fa fa-calculator sidegap-xs"></i> Cotação
+                                </h:commandLink>
+                            </li>
+                            <li>
+                                <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
+                                <i class="fa fa-file-text-o sidegap-xs"></i> Packing List
+                                </h:commandLink>
+                            </li>
+                            <li>
+                                <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
+                                <i class="fa fa-history sidegap-xs"></i> Log
+                                </h:commandLink>
+                            </li>
 
                             <li class="dropdown">
                                 <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
                                     <i class="fa fa-wrench sidegap-xs"></i> Gerenciar<span class="caret countersidegap-s"></span></a>
                                 <ul class="dropdown-menu">
-                                    <li><a href="#"><i class="fa fa-gears sidegap-xs"></i> PNs</a></li>
-                                    <li><a href="#"><i class="fa fa-cubes sidegap-xs"></i> Containers</a></li>                                    
+                                    <li>
+                                        <h:commandLink actionListener="#{mainController.goTo('/pns.xhtml')}">
+                                        <i class="fa fa-gears sidegap-xs"></i> PNs
+                                        </h:commandLink>
+                                    </li>
+                                    <li>
+                                        <h:commandLink actionListener="#{mainController.goTo('/containers.xhtml')}">
+                                        <i class="fa fa-cubes sidegap-xs"></i> Containers
+                                        </h:commandLink>
+                                    </li>                                    
                                     <li role="separator" class="divider"></li>
                                     <li><a href="#"><i class="fa fa-sliders sidegap-xs"></i> Configurações</a></li>
                                 </ul>

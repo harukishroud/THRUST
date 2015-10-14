@@ -43,8 +43,11 @@
                         <!-- Panel Header -->
                         <div class="panel-heading">
                             <h4 style="line-height: 1px;"><i class="fa fa-list sidegap-s" style="color:grey"></i> <b>Inventário</b></h4>
+                            <button class="btn btn-default" style="float:right;margin:-35px;margin-right:298px;" onclick="$('#moveItemsModal').modal('show');">       
+                                <i class="fa fa-random sidegap-xs"></i> Mover Items
+                            </button>
                             <button class="btn btn-default" style="float:right;margin:-35px;margin-right:150px;" onclick="$('#moveAllFromToModal').modal('show');">       
-                                <i class="fa fa-arrows-h sidegap-xs"></i> Mover A para B
+                                <i class="fa fa-th-large sidegap-xs"></i> Mover Container
                             </button>
                             <button class="btn btn-default" style="float:right;margin:-35px;margin-right:0px;" onclick="$('#newInventoryItemModal').modal('show');">       
                                 <i class="fa fa-plus sidegap-xs"></i> Inserir Novo Item
@@ -65,8 +68,6 @@
                                                    scrollable="false" 
                                                    rowStyleClass="#{inventoryItem.quantity == '0' ? 'no-item' : ''}"
                                                    reorderableColumns="true" 
-
-
                                                    >
                                         <ace:column id="pn" headerText="PN" sortBy="#{inventoryItem.pn}" filterBy="#{inventoryItem.pn}" filterMatchMode="contains" >
                                             <p:commandLink ajax="false" value="#{inventoryItem.pn}" style="font-weight:bold;font-size:16px;font-family: rajdhani;" 
@@ -504,21 +505,17 @@
                 </div>
             </div>
 
-            <!-- Move All From To -->
+            <!-- Move Container -->
             <div class="modal fade" id="moveAllFromToModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <h:form id="removeContainerForm">   
+                        <h:form id="moveContainerForm">   
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
-                                    <i class="fa fa-arrows-h sidegap-s"></i>Mover A - B</h3>
+                                    <i class="fa fa-th-large sidegap-s"></i>Mover Container</h3>
                             </div>
-                            <div class="modal-body">
-                                <div class="row" style="text-align:center;">
-                                    <p>Mover A - B realiza a transferência de todos os items de um <b>Container A</b> para um <b>Container B</b>.</p>
-                                    <h4><i class="fa fa-warning sidegap-xs" style="color:red"></i><b>Atenção:</b> Esta ação não pode ser desfeita!</h4>
-                                </div>
+                            <div class="modal-body">                                
                                 <div class="row">
                                     <div class="form-group col-xs-6">
                                         <label for="A">Container A</label>                              
@@ -534,8 +531,122 @@
                                         </h:selectOneMenu>
                                         <span id="helpBlock" class="help-block">Este receberá os items do <b>Container A</b>.</span>
                                     </div> 
-                                </div>                                
+                                </div>        
+                                <div class="alert alert-danger" role="alert" style="text-align: center;">
+                                    <h5><i class="fa fa-warning sidegap-xs" style="color:red"></i><b>Atenção:</b> Esta ação não pode ser desfeita!</h5>
+                                </div>
                             </div>
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <h:commandButton value="Mover Items" class="btn btn-warning" action="#{inventoryController.moveAllFromTo()}"  onclick="$('#moveAllFromToModal').modal('hide');"> 
+
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+
+            <!-- Move Items -->
+            <div class="modal fade" id="moveItemsModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="moveItemsForm">   
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
+                                    <i class="fa fa-random sidegap-s"></i>Mover Items</h3>
+                            </div>
+                            <div class="modal-body">                                
+                                <div class="row">
+
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-list sidegap-s"></i>Inventário</h4>
+
+                                    <ace:dataTable id="inventoryItemSelectionTable"
+                                                   value="#{inventoryController.inventory}"
+                                                   var="selectionItem"                                             
+                                                   scrollable="true" 
+                                                   scrollHeight="200"
+                                                   >
+                                        <ace:column id="selectionPn" headerText="PN" sortBy="#{selectionItem.pn}" filterBy="#{selectionItem.pn}" filterMatchMode="contains">
+                                            <h:outputText style="font-weight:bold;font-size:16px;font-family: rajdhani;" id="selectionPnCell" value="#{selectionItem.pn}"/>
+                                        </ace:column>
+                                        <ace:column id="selectionCondition" headerText="Cond." sortBy="#{selectionItem.condition}"
+                                                    filterOptions="#{inventoryController.conditionFilterOptions}" filterBy="#{selectionItem.condition}" filterMatchMode="contains">
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('OH')}">
+                                                <h:outputText  style="font-size:12px;" class="label label-default" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('PMA')}">
+                                                <h:outputText style="font-size:12px;" class="label label-warning" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('AR')}">
+                                                <h:outputText style="font-size:12px;" class="label label-info" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('NEW')}">
+                                                <h:outputText style="font-size:12px;" class="label label-success" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('SV')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('RP')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('RB')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success"  value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                        </ace:column>
+                                        <ace:column id="selectionQuantity" headerText="Qnt." sortBy="#{selectionItem.quantity}" filterBy="#{selectionItem.quantity}" filterMatchMode="exact">
+                                            <h:outputText id="selectionQuantityCell" value="#{selectionItem.quantity}"/>
+                                        </ace:column>
+                                        <ace:column id="selectionContainer" headerText="Em" sortBy="#{selectionItem.containerAlias}"
+                                                    filterBy="#{selectionItem.containerAlias}" filterMatchMode="contains" filterOptions="#{inventoryController.containerFilterOptions}">
+                                            <i class="fa fa-archive sidegap-s" style="color:grey"></i>
+                                            <h:outputText id="selectionContainerCell" value="#{selectionItem.containerAlias}"/>
+                                        </ace:column> 
+                                        <ace:column style="width:50px;">
+                                            <h:commandLink  class="btn btn-default btn-xs" actionListener="#{inventoryController.addToMove(selectionItem)}">
+                                                <f:param name="selectedInventoryItem" value="#{inventoryItem.pn}" />
+                                                <i class="fa fa-check"></i>
+                                            </h:commandLink> 
+                                        </ace:column>
+                                    </ace:dataTable>
+
+
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-check-square-o sidegap-s"></i>Items Selecionados</h4>   
+
+                                    <ace:dataTable id="selectedItemsTable"
+                                                   value="#{inventoryController.inventoryMoveList}"
+                                                   var="selectedInventoryItem"                                                                                                                                                             
+                                                   scrollable="true"                                                        
+                                                   >
+                                        <ace:column id="selectedPn">
+                                            <h:outputText id="selectedPnCell" style="font-weight: bold;" value="#{selectedInventoryItem.pn}"/>
+                                        </ace:column>
+                                        <ace:column id="selectedCondition">
+                                            <h:outputText id="selectedConditionCell" value="#{selectedInventoryItem.condition}"/>
+                                        </ace:column>
+                                        <ace:column id="selectedContainer">
+                                            <h:outputText id="selectedContainerCell" value="#{selectedInventoryItem.containerAlias}"/>
+                                        </ace:column>
+                                    </ace:dataTable>
+                                    
+                                    <div class="form-group col-xs-12" style="margin-top:10px;">
+                                <label>Mover para Container</label>                              
+                                <h:selectOneMenu class="form-control" value="#{inventoryController.moveInfo.containerB}">                                        
+                                    <f:selectItems value="#{inventoryController.availableContainers}"   />                                       
+                                </h:selectOneMenu>
+                                <span id="helpBlock" class="help-block">Este container receberá os items da lista de <b>items selecionados</b>.</span>
+                            </div>
+                            
+                            <div class="form-group col-xs-12">
+                                <div class="alert alert-danger" role="alert" style="text-align: center;">
+                                    <h5><i class="fa fa-warning sidegap-xs" style="color:red"></i><b>Atenção:</b> Esta ação não pode ser desfeita!</h5>
+                                </div>
+                            </div>
+                                </div> 
+                                
+                            </div> 
+                            
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                                 <h:commandButton value="Mover Items" class="btn btn-warning" action="#{inventoryController.moveAllFromTo()}"  onclick="$('#moveAllFromToModal').modal('hide');"> 

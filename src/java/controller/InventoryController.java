@@ -67,6 +67,8 @@ public class InventoryController {
     private List<ContainerBean> inventoryAvailableContainerList = new ArrayList<ContainerBean>();
     // Armazena PNs Alternados para o PN selecionado
     private List<AlternateBean> alternatePNs = new ArrayList<AlternateBean>();
+    // Armazena items a serem movidos
+    private List<InventoryBean> inventoryMoveList = new ArrayList<InventoryBean>();
     // Lista de condições para filtro do inventário
     private List<SelectItem> conditionFilterOptions = new ArrayList<SelectItem>();
     // Lista de containers existentes no inventário para o filtro
@@ -254,6 +256,25 @@ public class InventoryController {
         inventoryService.moveAllFromTo(moveInfo);
     }
     
+    // 12 - addToMove()
+    //      Adiciona item selecionado à lista de mover
+    public void addToMove(InventoryBean inventoryItem) throws ExceptionDAO {
+        boolean selectedItemCheckStatus = false;     
+        
+        for (int i = 0; i < inventoryMoveList.size(); i++) {              
+            if (inventoryMoveList.get(i).getPn().equals(inventoryItem.getPn())) {                
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] O Item '" + inventoryItem.getPn() + "' já existe na lista de mudança.");
+                selectedItemCheckStatus = true;
+            }            
+        }
+        
+        if (selectedItemCheckStatus == false) {        
+          inventoryMoveList.add(inventoryItem); 
+          System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item '" + inventoryItem.getPn() + "' adicionado à lista de mudança.");
+        }
+        
+    }
+            
    
     // CONSTRUTOR
     public InventoryController() throws SQLException, ExceptionDAO {
@@ -452,6 +473,14 @@ public class InventoryController {
 
     public void setInventoryItemCheckStatus(boolean inventoryItemCheckStatus) {
         this.inventoryItemCheckStatus = inventoryItemCheckStatus;
+    }
+
+    public List<InventoryBean> getInventoryMoveList() {
+        return inventoryMoveList;
+    }
+
+    public void setInventoryMoveList(List<InventoryBean> inventoryMoveList) {
+        this.inventoryMoveList = inventoryMoveList;
     }
 
     public List<SelectItem> getConditionFilterOptions() {

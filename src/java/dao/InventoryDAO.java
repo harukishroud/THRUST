@@ -270,20 +270,36 @@ public class InventoryDAO {
         System.out.println("[DATABASE][INVENTORYDAO] Preparando para mover item '" + item.getPn()
                 + "' para '" + item.getMovealias() + "' ...");
 
-        String sql = "UPDATE inventory SET container_ALIAS = ? WHERE items_PN = ? AND ITEMCONDITION = ?";
-        PreparedStatement ps = conn.prepareStatement(sql);
-        ps.setString(1, item.getMovealias());
-        ps.setString(2, item.getPn());
-        ps.setString(3, item.getCondition());
-        
-        System.out.println(ps);
-        ps.execute();
-        ps.close();
-        
-        conn.close();
-        
-        System.out.println("[DATABASE][INVENTORYDAO] Item '" + item.getPn()
-                + "' movido para '" + item.getMovealias() + "' com sucesso!");     
+        if (item.getCondition() == null) {            
+            String sql = "UPDATE inventory SET container_ALIAS = ? WHERE items_PN = ? AND ITEMCONDITION IS NULL";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, item.getMovealias());
+            ps.setString(2, item.getPn());            
+
+            System.out.println(ps);
+            ps.execute();
+            ps.close();
+
+            conn.close();
+
+            System.out.println("[DATABASE][INVENTORYDAO] Item '" + item.getPn()
+                    + "' movido para '" + item.getMovealias() + "' com sucesso!");
+        } else {            
+            String sql = "UPDATE inventory SET container_ALIAS = ? WHERE items_PN = ? AND ITEMCONDITION = ?";
+            PreparedStatement ps = conn.prepareStatement(sql);
+            ps.setString(1, item.getMovealias());
+            ps.setString(2, item.getPn());
+            ps.setString(3, item.getCondition());
+
+            System.out.println(ps);
+            ps.execute();
+            ps.close();
+
+            conn.close();
+
+            System.out.println("[DATABASE][INVENTORYDAO] Item '" + item.getPn()
+                    + "' movido para '" + item.getMovealias() + "' com sucesso!");
+        }
 
     }
 }

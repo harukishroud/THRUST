@@ -635,7 +635,7 @@
                                     
                                     <div class="form-group col-xs-12" style="margin-top:10px;">
                                 <label>Mover para Container</label>                              
-                                <h:selectOneMenu class="form-control" value="#{selectedInventoryItem.movealias}">                                        
+                                <h:selectOneMenu class="form-control" value="#{inventoryController.selectedMoveItemsContainer}">                                        
                                     <f:selectItems value="#{inventoryController.availableContainers}"   />                                       
                                 </h:selectOneMenu>
                                 <span id="helpBlock" class="help-block">Este container receberá os items da lista de <b>items selecionados</b>.</span>
@@ -652,7 +652,7 @@
                             
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <h:commandButton value="Mover Items" class="btn btn-warning" action="#{inventoryController.moveAllFromTo()}"  onclick="$('#moveAllFromToModal').modal('hide');"> 
+                                <h:commandButton value="Mover Items" class="btn btn-warning" action="#{inventoryController.moveSelectedItems()}" type="submit"> 
 
                                 </h:commandButton>
                             </div>

@@ -35,10 +35,9 @@
                 <!-- INVENTÁRIO -->
                 <h:form id="inventoryScreen" >
                     <!-- Updater -->
-                    <p:poll interval="60"  listener="#{inventoryController.loadAllInventory()}" update="inventoryTable" />
-
-                    <p:ajaxStatus oncomplete="#{inventoryController.loadAllInventory()}"/>
-
+                    <p:poll interval="60"  listener="#{inventoryController.loadAllInventory()}" update="inventoryTable" />                    
+                    <p:ajaxStatus  oncomplete="#{inventoryController.loadAllInventory()}" />
+                    
                     <div class="panel panel-default">
                         <!-- Panel Header -->
                         <div class="panel-heading">
@@ -653,7 +652,7 @@
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
                                 <h:commandButton value="Mover Items" class="btn btn-warning" action="#{inventoryController.moveSelectedItems()}" type="submit"> 
-
+                                    
                                 </h:commandButton>
                             </div>
                         </h:form>

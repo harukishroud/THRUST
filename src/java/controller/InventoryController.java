@@ -218,38 +218,45 @@ public class InventoryController {
     public void addInventoryItem() throws SQLException, ExceptionDAO {
         // # 01 - PN
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Iniciando verificação do PN...");
-        // Verifica a existência do PN informado no banco de dados
-        itemCheckStatus = itemService.checkPNExistance(newInventoryItem.getPn());
-        // Caso o PN não exista o mesmo é adicionado ao banco de dados
-        if (itemCheckStatus == false) {
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo PN ao banco de dados...");
-            newPN.setPn(newInventoryItem.getPn());
-            newPN.setDescription(newInventoryItem.getDescription());
-            itemService.addPN(newPN);
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN inserido com sucesso no banco de dados!");
-            // Caso o PN exista o processo de novo PN é anulado
-        } else {
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] O PN informado já existe. Pulando inserção do PN informado...");
-        }
-        // # 02 - INVENTÁRIO
-        System.out.println("[SYSTEM][INVENTORYCONTROLLER] Iniciando verificação do item...");
-        // Verifica a existência do PN informado no inventário
-        inventoryItemCheckStatus = inventoryService.checkInventoryItemExistance(newInventoryItem);
-        // Caso o PN não exista no inventário o mesmo é adicionado com os dados informados
-        if (inventoryItemCheckStatus == false) {
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo item ao banco de dados...");
-            inventoryService.addNewInventoryItem(newInventoryItem);
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item inserido com sucesso no inventário!");
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newInventoryItem.getPn() + "' e condição '" + newInventoryItem.getCondition() + "' foi adicionado ao inventário com sucesso!"));
-            // Caso o PN exista no inventário uma mensagem de erro é exibida e o processo anulado
-        } else {
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] O item informado já existe no inventário.");
-            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "O item de PN '" + newInventoryItem.getPn() + "' e condição '" + newInventoryItem.getCondition() + "' já existe no inventário."));
-        }
+        // Verifica se foi selecionado um container para adição do item        
+        if (newInventoryItem.getContainerAlias() != null) {
+            // Verifica a existência do PN informado no banco de dados
+            itemCheckStatus = itemService.checkPNExistance(newInventoryItem.getPn());
+            // Caso o PN não exista o mesmo é adicionado ao banco de dados
+            if (itemCheckStatus == false) {
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo PN ao banco de dados...");
+                newPN.setPn(newInventoryItem.getPn());
+                newPN.setDescription(newInventoryItem.getDescription());
+                itemService.addPN(newPN);
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN inserido com sucesso no banco de dados!");
+                // Caso o PN exista o processo de novo PN é anulado
+            } else {
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] O PN informado já existe. Pulando inserção do PN informado...");
+            }
+            // # 02 - INVENTÁRIO
+            System.out.println("[SYSTEM][INVENTORYCONTROLLER] Iniciando verificação do item...");
+            // Verifica a existência do PN informado no inventário
+            inventoryItemCheckStatus = inventoryService.checkInventoryItemExistance(newInventoryItem);
+            // Caso o PN não exista no inventário o mesmo é adicionado com os dados informados
+            if (inventoryItemCheckStatus == false) {
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo item ao banco de dados...");
+                inventoryService.addNewInventoryItem(newInventoryItem);
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item inserido com sucesso no inventário!");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newInventoryItem.getPn() + "' e condição '" + newInventoryItem.getCondition() + "' foi adicionado ao inventário com sucesso!"));
+                // Caso o PN exista no inventário uma mensagem de erro é exibida e o processo anulado
+            } else {
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] O item informado já existe no inventário.");
+                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "O item de PN '" + newInventoryItem.getPn() + "' e condição '" + newInventoryItem.getCondition() + "' já existe no inventário."));
+            }
 
-        // Limpa Beans
-        newPN = new ItemBean();
-        newInventoryItem = new InventoryBean();
+            // Limpa Beans
+            newPN = new ItemBean();
+            newInventoryItem = new InventoryBean();
+
+        } else {
+            System.out.println("[SYSTEM][INVENTORYCONTROLLER] ERRO: Não foi selecionado um container para adição do item.");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Por favor selecione um container para adicionar o novo item."));
+        }
 
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Processo finalizado.");
     }
@@ -289,26 +296,24 @@ public class InventoryController {
         if (inventoryMoveList.isEmpty()) {
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] ERRO: Não é possível executar a ação pois a lista de items selecionados está vazia.");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Não é possível executar a ação pois a lista de items selecionados está vazia!"));
+        } else // Verifica se o container de destino foi selecionado
+        if (selectedMoveItemsContainer == null) {
+            System.out.println("[SYSTEM][INVENTORYCONTROLLER] ERRO: Não é possível executar a ação pois não foi selecionado um container de destino.");
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Não é possível executar a ação pois não foi selecionado um container de destino!"));
         } else {
-            // Verifica se o container de destino foi selecionado
-            if (selectedMoveItemsContainer == null) {
-                System.out.println("[SYSTEM][INVENTORYCONTROLLER] ERRO: Não é possível executar a ação pois não foi selecionado um container de destino.");
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Não é possível executar a ação pois não foi selecionado um container de destino!"));
-            } else {
-                // Se a lista possuir um item ou mais e o container estiver selecionado a ação procede
-                for (int i = 0; i < inventoryMoveList.size(); i++) {                    
-                    // Define o container selecionado ao item da lista
-                    inventoryMoveList.get(i).setMovealias(selectedMoveItemsContainer);
-                    // Move item
-                    inventoryService.moveItemTo(inventoryMoveList.get(i));
-                    System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item '" + inventoryMoveList.get(i).getPn() + "' movido para '" + selectedMoveItemsContainer + "'.");
-                }
-                FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Processo finalizado! Verifique se os items foram movidos para o local correspondente."));
+            // Se a lista possuir um item ou mais e o container estiver selecionado a ação procede
+            for (int i = 0; i < inventoryMoveList.size(); i++) {
+                // Define o container selecionado ao item da lista
+                inventoryMoveList.get(i).setMovealias(selectedMoveItemsContainer);
+                // Move item
+                inventoryService.moveItemTo(inventoryMoveList.get(i));
+                System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item '" + inventoryMoveList.get(i).getPn() + "' movido para '" + selectedMoveItemsContainer + "'.");
             }
+            FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Processo finalizado! Verifique se os items foram movidos para o local correspondente."));
         }
 
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Processo finalizado.");
-        
+
         // Limpa lista de items selecionados e container selecionado
         inventoryMoveList = new ArrayList<InventoryBean>();
         selectedMoveItemsContainer = null;

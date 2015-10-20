@@ -23,7 +23,6 @@ import service.UserService;
 public class UserController {
 
     // VARIÁVEIS
-  
     /* Login */
     private String username;
     private String password;
@@ -65,16 +64,36 @@ public class UserController {
             session.setAttribute("currentActiveUserID", currentUser.getId());
             session.setAttribute("currentActiveUserAccessLevel", currentUser.getAccesslevel());
             System.out.println("[SYSTEM][USERCONTROLLER] Login realizado com sucesso!");
-            /* Prepara dados para nova session */
-            currentSession.setStatus(false);
-            currentSession.setUser_id(currentUser.getId());           
-            currentSession.setStartTime(new Date());
-            /* Cria nova session no banco de dados e substitui dados do atual 'currentSession' pelo atualizado com SESSIONID */
-            currentSession = sessionService.newSession(currentSession);
-            /* Define atributos de session */
-            session.setAttribute("currentSessionID", currentSession.getSession_id());
-            /* Redireciona para 'index.xhtml' */
-            FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
+            /* Verifica existência de session em aberto para o usuário */
+            boolean checkStatus = sessionService.checkForOpenSession(currentUser.getId());
+            
+            /* Caso não exista session em aberto */
+            if (checkStatus == false) {
+                System.out.println("[SYSTEM][USERCONTROLLER] Criando nova session...");
+                /* Prepara dados para nova session */
+                currentSession.setStatus(false);
+                currentSession.setUser_id(currentUser.getId());
+                currentSession.setStartTime(new Date());
+                /* Cria nova session no banco de dados e substitui dados do atual 'currentSession' pelo atualizado com SESSIONID */
+                currentSession = sessionService.newSession(currentSession);
+                /* Define atributos de session */
+                session.setAttribute("currentSessionID", currentSession.getSession_id());
+                /* Redireciona para 'index.xhtml' */
+                FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");                
+                System.out.println("[SYSTEM][USERCONTROLLER] Nova session criada com sucesso!");
+            
+            /* Caso não exista session em aberto */
+            } else {
+                System.out.println("[SYSTEM][USERCONTROLLER] Session em aberto encontrada! Recuperando dados...");
+                /* Carrega dados da session em aberto */
+                currentSession = sessionService.loadOpenSession(currentUser.getId());
+                /* Define atributos de session */
+                session.setAttribute("currentSessionID", currentSession.getSession_id());
+                /* Redireciona para 'index.xhtml' */
+                FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
+                System.out.println("[SYSTEM][USERCONTROLLER] Session recuperada com sucesso!");
+            }
+
         } else {
             /* Se usuário não encontrado ou inválido */
             currentUser = new UserBean();
@@ -137,7 +156,6 @@ public class UserController {
     public void setCurrentSession(SessionBean currentSession) {
         this.currentSession = currentSession;
     }
- 
 
     public SessionBean getSessionBean() {
         return sessionBean;

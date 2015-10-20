@@ -16,6 +16,7 @@ import java.io.IOException;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
+import javax.servlet.http.HttpSession;
 import org.icefaces.ace.component.textentry.TextEntry;
 import org.primefaces.context.RequestContext;
 import service.InventoryService;
@@ -29,6 +30,7 @@ import service.AlternateService;
 public class InventoryController {
 
     // VARIAVEIS    
+   
     // Total de itens no inventário
     private int inventoryTotal;
     // Total de itens em falta no inventário
@@ -261,6 +263,7 @@ public class InventoryController {
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Processo finalizado.");
     }
 
+
     // 11 - moveAllFromTo()
     //      Move items de um Container A para um Container B
     public void moveAllFromTo() throws SQLException, ExceptionDAO {
@@ -320,8 +323,9 @@ public class InventoryController {
     }
 
     // CONSTRUTOR
-    public InventoryController() throws SQLException, ExceptionDAO {
-
+    public InventoryController() throws SQLException, ExceptionDAO, IOException, InterruptedException {
+        
+           
         // Executa e carrega tabela de inventário
         loadAllInventory();
 
@@ -337,7 +341,8 @@ public class InventoryController {
         conditionFilterOptions.add(new SelectItem("SV"));    // SERVICABLE
         conditionFilterOptions.add(new SelectItem("RP"));    // REPAIRED
         conditionFilterOptions.add(new SelectItem("RB"));    // REBUILT
-
+        
+        
     }
 
     // LISTENERS

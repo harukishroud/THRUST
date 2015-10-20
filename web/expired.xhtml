@@ -1,0 +1,46 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
+    <h:head>
+        <title>Seção Expirada | THRUST</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
+        <link href="css/style.css" rel="stylesheet"/>
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+        <link href="css/font-awesome.css" rel="stylesheet"/>
+
+        <script src="js/bootstrap.js"></script>
+    </h:head>
+    <h:body>
+        <div class="vertical-center">
+
+            <div class="container" style="max-width: 400px;">
+                <div class="row">
+                    <div class="col-sm-12">
+                        <img src="img/logo.png" class="img-responsive center-block" style="max-height:150px;"/>
+                        <div class="gap"></div>
+                    </div>
+                </div>                
+                <div class="row">
+                    <div class="col-sm-12">
+                        <div class="panel panel-default" style="">
+                            <h:form id="expForm">
+                                <div class="panel-body">
+                                 Seção Expirada!                                       
+                                </div>
+                                <div class="panel-footer">
+                                    <h:commandButton class="btn btn-default" value="Login" action="#{mainController.goTo('/login.xhtml')}"/>                                    
+                                </div>
+                            </h:form>
+                        </div>
+
+                    </div> 
+                </div>                
+            </div>
+
+        </div>
+    </h:body>
+</html>

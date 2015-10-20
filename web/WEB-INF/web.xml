@@ -8,7 +8,6 @@
         <param-name>primefaces.THEME</param-name>
         <param-value>none</param-value>
     </context-param>
-    
     <context-param>
         <param-name>primefaces.FONT_AWESOME</param-name>
         <param-value>true</param-value>
@@ -23,16 +22,32 @@
             <file-size-threshold>0</file-size-threshold>
         </multipart-config>
     </servlet>
-    
     <servlet-mapping>
         <servlet-name>Faces Servlet</servlet-name>
         <url-pattern>*.xhtml</url-pattern>
         <url-pattern>/icefaces/*</url-pattern>
     </servlet-mapping>
     <session-config>
-        <session-timeout>30</session-timeout>
+        <session-timeout>1</session-timeout>
     </session-config>
     <welcome-file-list>
         <welcome-file>faces/index.xhtml</welcome-file>
     </welcome-file-list>
+    <listener>
+        <listener-class>
+            listener.SessionListener
+        </listener-class>
+    </listener>
+    <filter>
+        <filter-name>SecurityFilter</filter-name>
+        <filter-class>security.SecurityFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SecurityFilter</filter-name>
+        <servlet-name>Faces Servlet</servlet-name>
+    </filter-mapping>
+    <error-page>
+        <exception-type>javax.faces.application.ViewExpiredException</exception-type>
+        <location>/expired.xhtml</location>
+    </error-page>
 </web-app>

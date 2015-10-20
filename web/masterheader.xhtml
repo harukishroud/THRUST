@@ -6,6 +6,7 @@
         <title>Dashboard | THRUST</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
+        <meta http-equiv="refresh" content="#{facesContext.externalContext.sessionMaxInactiveInterval};url=#{request.contextPath}/expired.xhtml"></meta>
         <link href="css/style.css" rel="stylesheet"/>
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>
@@ -35,17 +36,17 @@
                             </li>
                             <li> 
                                 <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
-                                <i class="fa fa-calculator sidegap-xs"></i> Cotação
+                                    <i class="fa fa-calculator sidegap-xs"></i> Cotação
                                 </h:commandLink>
                             </li>
                             <li>
                                 <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
-                                <i class="fa fa-file-text-o sidegap-xs"></i> Packing List
+                                    <i class="fa fa-file-text-o sidegap-xs"></i> Packing List
                                 </h:commandLink>
                             </li>
                             <li>
                                 <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
-                                <i class="fa fa-history sidegap-xs"></i> Log
+                                    <i class="fa fa-history sidegap-xs"></i> Log
                                 </h:commandLink>
                             </li>
 
@@ -55,12 +56,12 @@
                                 <ul class="dropdown-menu">
                                     <li>
                                         <h:commandLink actionListener="#{mainController.goTo('/pns.xhtml')}">
-                                        <i class="fa fa-gears sidegap-xs"></i> PNs
+                                            <i class="fa fa-gears sidegap-xs"></i> PNs
                                         </h:commandLink>
                                     </li>
                                     <li>
                                         <h:commandLink actionListener="#{mainController.goTo('/containers.xhtml')}">
-                                        <i class="fa fa-cubes sidegap-xs"></i> Containers
+                                            <i class="fa fa-cubes sidegap-xs"></i> Containers
                                         </h:commandLink>
                                     </li>                                    
                                     <li role="separator" class="divider"></li>
@@ -71,7 +72,7 @@
 
                         <ul class="nav navbar-nav navbar-right">
                             <li><a href="#"><i class="fa fa-user sidegap-s"></i><span class="twblue">#{mainController.currentUser}</span></a></li>
-                            <li><a href="#"><i class="fa fa-sign-out sidegap-xs"></i> Sair do Sistema</a></li>                        
+                            <li><h:commandLink actionListener="#{userController.doLogout()}"><i class="fa fa-sign-out sidegap-xs"></i> Sair do Sistema</h:commandLink></li>                        
                         </ul>
                     </div><!-- /.navbar-collapse -->
                 </div><!-- /.container-fluid -->

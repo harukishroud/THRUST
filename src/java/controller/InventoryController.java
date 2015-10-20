@@ -11,8 +11,10 @@ import dao.ExceptionDAO;
 import bean.InventoryBean;
 import bean.ContainerBean;
 import bean.ItemBean;
+import bean.LogBean;
 import bean.MoveAllFromToBean;
 import java.io.IOException;
+import java.util.Date;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
 import javax.faces.event.AjaxBehaviorEvent;
@@ -23,6 +25,7 @@ import service.InventoryService;
 import service.ContainerService;
 import service.ItemService;
 import service.AlternateService;
+import service.LogService;
 
 @ManagedBean(name = "inventoryController")
 @ViewScoped
@@ -30,7 +33,8 @@ import service.AlternateService;
 public class InventoryController {
 
     // VARIAVEIS    
-   
+    // HTTP Session
+    private HttpSession session;
     // Total de itens no inventário
     private int inventoryTotal;
     // Total de itens em falta no inventário
@@ -61,6 +65,8 @@ public class InventoryController {
     private ItemBean newPN = new ItemBean();
     // Armazena dados de Mover A-B
     private MoveAllFromToBean moveInfo = new MoveAllFromToBean();
+    // Armazena detalhes de LOG
+    private LogBean log = new LogBean();
     // Armazena inventário
     private List<InventoryBean> inventory = new ArrayList<InventoryBean>();
     // Armazena inventário filtrado
@@ -89,6 +95,7 @@ public class InventoryController {
     ContainerService containerService = new ContainerService();
     ItemService itemService = new ItemService();
     AlternateService alternateService = new AlternateService();
+    LogService logService = new LogService();
 
     // MÉTODOS    
     // 01 - loadAllInventory()
@@ -117,8 +124,13 @@ public class InventoryController {
 
     // 03 - updateInventoryItem()
     //      Atualiza o item no inventário.
-    public void updateInventoryItem() {
+    public void updateInventoryItem() throws ExceptionDAO, SQLException {
         if (inventoryService.updateInventoryItem(inventoryBean) != null) {
+            /* Registra LOG */
+            newLog("Alteração", "Alteração do Item '" + inventoryBean.getPn() + "'. Condição: '" + inventoryBean.getCondition() + "' | Container: '"
+                    + inventoryBean.getContainerAlias() + "' | Quantidade: '" + inventoryBean.getQuantity() + "' EA. | Preço: '" + inventoryBean.getPrice() + "' |"
+                    + " De: '" + inventoryBean.getFrom() + "' | Form Status: '" + inventoryBean.isForm_status() + "'.");
+            /* Limpa bean 'inventoryBean' */
             inventoryBean = new InventoryBean();
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item atualizado com sucesso!");
         } else {
@@ -231,6 +243,8 @@ public class InventoryController {
                 newPN.setDescription(newInventoryItem.getDescription());
                 itemService.addPN(newPN);
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN inserido com sucesso no banco de dados!");
+                /* Registra LOG */
+                newLog("Inserção", "Cadastro do PN '" + newInventoryItem.getPn() + "'.");
                 // Caso o PN exista o processo de novo PN é anulado
             } else {
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] O PN informado já existe. Pulando inserção do PN informado...");
@@ -244,6 +258,9 @@ public class InventoryController {
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] Preparando para adicionar novo item ao banco de dados...");
                 inventoryService.addNewInventoryItem(newInventoryItem);
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item inserido com sucesso no inventário!");
+                /* Registra LOG */
+                newLog("Inserção", "Cadastro do Item '" + newInventoryItem.getPn() + "' de Condição '" + newInventoryItem.getCondition() + "' em '"
+                        + newInventoryItem.getContainerAlias() + "' com '" + newInventoryItem.getQuantity() + "' EA.");
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newInventoryItem.getPn() + "' e condição '" + newInventoryItem.getCondition() + "' foi adicionado ao inventário com sucesso!"));
                 // Caso o PN exista no inventário uma mensagem de erro é exibida e o processo anulado
             } else {
@@ -263,11 +280,12 @@ public class InventoryController {
         System.out.println("[SYSTEM][INVENTORYCONTROLLER] Processo finalizado.");
     }
 
-
     // 11 - moveAllFromTo()
     //      Move items de um Container A para um Container B
     public void moveAllFromTo() throws SQLException, ExceptionDAO {
         inventoryService.moveAllFromTo(moveInfo);
+        /* Registra LOG */
+        newLog("Transferência", "Transferência de todos os itens do container'" + moveInfo.getContainerA() + "' para o container '" + moveInfo.getContainerB() + "'.");
     }
 
     // 12 - addToMove()
@@ -311,6 +329,8 @@ public class InventoryController {
                 // Move item
                 inventoryService.moveItemTo(inventoryMoveList.get(i));
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item '" + inventoryMoveList.get(i).getPn() + "' movido para '" + selectedMoveItemsContainer + "'.");
+                /* Registra LOG */
+                newLog("Transferência", "Tranferência do Item '" + inventoryMoveList.get(i).getPn() + "' para o container '" + selectedMoveItemsContainer + "'.");
             }
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Processo finalizado! Verifique se os items foram movidos para o local correspondente."));
         }
@@ -322,12 +342,31 @@ public class InventoryController {
         selectedMoveItemsContainer = null;
     }
 
+    // 14 - newLog()
+    //      Insere um novo registro de atividade (log) no banco de dados.
+    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+        /* Prepara bean 'log' para novo registro */
+        log = new LogBean();
+        /* Define dados gerais do log */
+        log.setSession_id((int) session.getAttribute("currentSessionID"));
+        log.setUser_id((int) session.getAttribute("currentActiveUserID"));
+        log.setTime(new Date());
+        /* Define tipo e detalhes do log */
+        log.setType(type);
+        log.setDetails(detail);
+        /* Insere log no banco de dados */
+        logService.newLog(log);
+    }
+
     // CONSTRUTOR
     public InventoryController() throws SQLException, ExceptionDAO, IOException, InterruptedException {
-        
-           
+
         // Executa e carrega tabela de inventário
         loadAllInventory();
+
+        // Carrega dados da session
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        session = (HttpSession) ctx.getExternalContext().getSession(true);
 
         // Define o tipo de exportação padrão do inventário atual
         this.exportType = "csv";
@@ -341,8 +380,7 @@ public class InventoryController {
         conditionFilterOptions.add(new SelectItem("SV"));    // SERVICABLE
         conditionFilterOptions.add(new SelectItem("RP"));    // REPAIRED
         conditionFilterOptions.add(new SelectItem("RB"));    // REBUILT
-        
-        
+
     }
 
     // LISTENERS
@@ -405,6 +443,14 @@ public class InventoryController {
 
     public int getInventoryFaultTotal() {
         return inventoryFaultTotal;
+    }
+
+    public HttpSession getSession() {
+        return session;
+    }
+
+    public void setSession(HttpSession session) {
+        this.session = session;
     }
 
     public void setInventoryFaultTotal(int inventoryFaultTotal) {
@@ -545,6 +591,14 @@ public class InventoryController {
 
     public void setSelectedMoveItemsContainer(String selectedMoveItemsContainer) {
         this.selectedMoveItemsContainer = selectedMoveItemsContainer;
+    }
+
+    public LogBean getLog() {
+        return log;
+    }
+
+    public void setLog(LogBean log) {
+        this.log = log;
     }
 
     public List<SelectItem> getConditionFilterOptions() {

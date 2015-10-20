@@ -1,18 +1,22 @@
 package controller;
 
 import bean.ContainerBean;
+import bean.LogBean;
 import dao.ExceptionDAO;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.faces.model.SelectItem;
+import javax.servlet.http.HttpSession;
 import org.omnifaces.util.Ajax;
 import org.primefaces.context.RequestContext;
 import service.ContainerService;
+import service.LogService;
 
 @ManagedBean(name = "containerController")
 @ViewScoped
@@ -20,6 +24,10 @@ import service.ContainerService;
 public class ContainerController {
 
     // VARIAVEIS
+    // HTTP Session
+    private HttpSession session;
+    // Armazena detalhes de LOG
+    private LogBean log = new LogBean();
     // Armazena Containers
     private List<ContainerBean> containers = new ArrayList<ContainerBean>();
     // Armazena Cores de Containers
@@ -35,6 +43,7 @@ public class ContainerController {
 
     // SERVIÇOS
     ContainerService containerService = new ContainerService();
+    LogService logService = new LogService();
 
     // MÉTODOS
     // 01 - loadContainers()
@@ -52,8 +61,12 @@ public class ContainerController {
 
     // 03 - updateContainer()
     //      Atualiza o container editado.
-    public void updateContainer() {
+    public void updateContainer() throws ExceptionDAO, SQLException {
         if (containerService.updateContainer(containerBean) != null) {
+            /* Registra LOG */
+            newLog("Alteração", "Alteração do container '" + containerBean.getAlias() + "'. Cor: '" + containerBean.getColor() + "' |"
+                    + " Tipo: '" + containerBean.getType() + "' | Para: '" + containerBean.getTo() + "' | De: '" + containerBean.getFrom() + "' |"
+                    + " Status: '" + containerBean.isFull_status() + "'.");
             containerBean = new ContainerBean();
             System.out.println("[SYSTEM][CONTAINERCONTROLLER] Container atualizado com sucesso!");
         } else {
@@ -69,6 +82,10 @@ public class ContainerController {
         // Adiciona Container caso o mesmo não exista no banco de dados
         if (containerCheckStatus == false) {
             containerService.newContainer(newContainerBean);
+            /* Registra LOG */
+            newLog("Inserção", "Cadastro do container '" + newContainerBean.getAlias() + "' de cor '" + newContainerBean.getColor() + "' do"
+                    + " tipo '" + newContainerBean.getType() + "' para '" + newContainerBean.getTo() + "' de '" + newContainerBean.getFrom() + "' com"
+                    + " status '" + newContainerBean.isFull_status() + "'.");
             System.out.println("[SYSTEM][CONTAINERCONTROLLER] Container inserido com sucesso no banco de dados!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O Container '" + newContainerBean.getAlias() + "' foi adicionado com sucesso!"));
             // Cancela o processo e exibe erro caso já exista
@@ -86,6 +103,10 @@ public class ContainerController {
     public void removeContainer() throws SQLException, ExceptionDAO {
         if (containerBean.getItemsTotal() == 0) {
             containerService.removeContainer(containerBean.getAlias());
+            /* Registra LOG */
+            newLog("Exclusão", "Exclusão do container '" + containerBean.getAlias() + "' de cor '" + containerBean.getColor() + "' do"
+                    + " tipo '" + containerBean.getType() + "' para '" + containerBean.getTo() + "' de '" + containerBean.getFrom() + "' com"
+                    + " status '" + containerBean.isFull_status() + "'.");
             System.out.println("[SYSTEM][CONTAINERCONTROLLER] Container removido com sucesso do banco de dados!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O Container '" + containerBean.getAlias() + "' foi removido permamentemente."));
             containerBean = new ContainerBean();
@@ -96,9 +117,31 @@ public class ContainerController {
         }
     }
 
+    // 06 - newLog()
+    //      Insere um novo registro de atividade (log) no banco de dados.
+    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+        /* Prepara bean 'log' para novo registro */
+        setLog(new LogBean());
+        /* Define dados gerais do log */
+        getLog().setSession_id((int) getSession().getAttribute("currentSessionID"));
+        getLog().setUser_id((int) getSession().getAttribute("currentActiveUserID"));
+        getLog().setTime(new Date());
+        /* Define tipo e detalhes do log */
+        getLog().setType(type);
+        getLog().setDetails(detail);
+        /* Insere log no banco de dados */
+        logService.newLog(getLog());
+    }
+
     // CONSTRUTOR
     public ContainerController() throws SQLException, ExceptionDAO {
+
+        // Executa e carrega tabela de containers
         loadContainers();
+
+        // Carrega dados da session
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        session = (HttpSession) ctx.getExternalContext().getSession(true);
 
         // Adiciona tipos de containers à lista
         containerTypes.add(new SelectItem(""));
@@ -163,6 +206,22 @@ public class ContainerController {
 
     public void setContainerCheckStatus(boolean containerCheckStatus) {
         this.containerCheckStatus = containerCheckStatus;
+    }
+
+    public HttpSession getSession() {
+        return session;
+    }
+
+    public void setSession(HttpSession session) {
+        this.session = session;
+    }
+
+    public LogBean getLog() {
+        return log;
+    }
+
+    public void setLog(LogBean log) {
+        this.log = log;
     }
 
     public List<SelectItem> getContainerTypes() {

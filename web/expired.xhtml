@@ -8,6 +8,7 @@
         <title>Seção Expirada | THRUST</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
+        <meta http-equiv="refresh" content="#{facesContext.externalContext.sessionMaxInactiveInterval};url=#{request.contextPath}/expired.xhtml"></meta>
         <link href="css/style.css" rel="stylesheet"/>
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>
@@ -19,8 +20,8 @@
 
             <div class="container" style="max-width: 400px;">
                 <div class="row">
-                    <div class="col-sm-12">
-                        <img src="img/logo.png" class="img-responsive center-block" style="max-height:150px;"/>
+                    <div class="col-sm-12" style="text-align:center;">
+                        <i class="fa fa-frown-o fa-5x twblue"></i>
                         <div class="gap"></div>
                     </div>
                 </div>                
@@ -28,8 +29,10 @@
                     <div class="col-sm-12">
                         <div class="panel panel-default" style="">
                             <h:form id="expForm">
-                                <div class="panel-body">
-                                 Seção Expirada!                                       
+                                <div class="panel-body" style="text-align: center;">
+                                    <h3 style="font-weight: bold;">Ops! Acho que temos um problema!</h3>  
+                                    <p>Sua seção expirou e foi encerrada por motivos de segurança devido sua inatividade <small>(60 min.)</small></p>
+                                    <p>Para continuar utilizando o <b><span class="twblue">THRUST</span></b> efetue seu login novamente.</p>
                                 </div>
                                 <div class="panel-footer">
                                     <h:commandButton class="btn btn-default" value="Login" action="#{mainController.goTo('/login.xhtml')}"/>                                    

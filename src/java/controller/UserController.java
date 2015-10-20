@@ -1,5 +1,6 @@
 package controller;
 
+import bean.LogBean;
 import bean.SessionBean;
 import bean.UserBean;
 import dao.ExceptionDAO;
@@ -14,6 +15,7 @@ import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+import service.LogService;
 import service.SessionService;
 import service.UserService;
 
@@ -37,6 +39,13 @@ public class UserController {
     private UserBean currentUser = new UserBean();
     /* Armazena dados da session atual */
     private SessionBean currentSession = new SessionBean();
+    /* Armazena detalhes de LOG */
+    private LogBean log = new LogBean();
+
+    /* Inicia Services */
+    UserService userService = new UserService();
+    SessionService sessionService = new SessionService();
+    LogService logService = new LogService();
 
     // MÉTODOS
     // 01 - doLogin ()
@@ -46,9 +55,6 @@ public class UserController {
         currentUser = new UserBean();
         currentSession = new SessionBean();
 
-        /* Inicia Services */
-        UserService userService = new UserService();
-        SessionService sessionService = new SessionService();
 
         /* Inicia Session */
         FacesContext ctx = FacesContext.getCurrentInstance();
@@ -66,7 +72,7 @@ public class UserController {
             System.out.println("[SYSTEM][USERCONTROLLER] Login realizado com sucesso!");
             /* Verifica existência de session em aberto para o usuário */
             boolean checkStatus = sessionService.checkForOpenSession(currentUser.getId());
-            
+
             /* Caso não exista session em aberto */
             if (checkStatus == false) {
                 System.out.println("[SYSTEM][USERCONTROLLER] Criando nova session...");
@@ -78,17 +84,21 @@ public class UserController {
                 currentSession = sessionService.newSession(currentSession);
                 /* Define atributos de session */
                 session.setAttribute("currentSessionID", currentSession.getSession_id());
+                /* Registra LOG */
+                newLog("Acesso", "Login efetuado. Seção iniciada.");
                 /* Redireciona para 'index.xhtml' */
-                FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");                
+                FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
                 System.out.println("[SYSTEM][USERCONTROLLER] Nova session criada com sucesso!");
-            
-            /* Caso não exista session em aberto */
+
+                /* Caso exista session em aberto */
             } else {
                 System.out.println("[SYSTEM][USERCONTROLLER] Session em aberto encontrada! Recuperando dados...");
                 /* Carrega dados da session em aberto */
                 currentSession = sessionService.loadOpenSession(currentUser.getId());
                 /* Define atributos de session */
                 session.setAttribute("currentSessionID", currentSession.getSession_id());
+                /* Registra LOG */
+                newLog("Acesso", "Login recuperado. Seção iniciada.");
                 /* Redireciona para 'index.xhtml' */
                 FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
                 System.out.println("[SYSTEM][USERCONTROLLER] Session recuperada com sucesso!");
@@ -101,6 +111,38 @@ public class UserController {
             System.out.println("[SYSTEM][USERCONTROLLER] ERRO: Usuário não encontrado. Verifique os dados de acesso.");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Usuário não encontrado! Verifique seus dados de acesso."));
         }
+    }
+
+    // 02 - newLog()
+    //      Insere um novo registro de atividade (log) no banco de dados.
+    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+        /* Inicia Session */
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        session = (HttpSession) ctx.getExternalContext().getSession(true);
+
+        /* Prepara bean 'log' para novo registro */
+        log = new LogBean();
+        /* Define dados gerais do log */
+        log.setSession_id((int) session.getAttribute("currentSessionID"));
+        log.setUser_id((int) session.getAttribute("currentActiveUserID"));
+        log.setTime(new Date());
+        /* Define tipo e detalhes do log */
+        log.setType(type);
+        log.setDetails(detail);
+        /* Insere log no banco de dados */
+        logService.newLog(log);
+    }
+
+    // 03 - doLogout()
+    //      Efetua logout e encerra session.
+    public void doLogout() throws IOException {
+        /* Recupera session */
+        FacesContext ctx = FacesContext.getCurrentInstance();
+        session = (HttpSession) ctx.getExternalContext().getSession(true);       
+        /* Invalida session no navegador */
+        session.invalidate();
+        /* Redireciona para 'login.xhtml' */
+        FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/login.xhtml");
     }
 
     // CONSTRUTOR
@@ -155,6 +197,14 @@ public class UserController {
 
     public void setCurrentSession(SessionBean currentSession) {
         this.currentSession = currentSession;
+    }
+
+    public LogBean getLog() {
+        return log;
+    }
+
+    public void setLog(LogBean log) {
+        this.log = log;
     }
 
     public SessionBean getSessionBean() {

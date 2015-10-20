@@ -1,6 +1,6 @@
 package bean;
 
-import java.sql.Date;
+import java.util.Date;
 
 public class LogBean {
     private int id;

@@ -27,29 +27,35 @@ public class ClientDAO {
         /* Prepara SQL e carrega dados da VIEW 'client_standardview' */
         String sql = "SELECT * FROM client";
         PreparedStatement ps = conn.prepareStatement(sql);
+        System.out.println("@@@@ PASS 01");
         ResultSet rs = ps.executeQuery();
-
+        System.out.println("@@@@ PASS 02");
         while (rs.next()) {
             /* Cria e limpa bean 'client' que armazena dados do cliente */
             ClientBean client = new ClientBean();
+            System.out.println("@@@@ PASS 03");
             /* Define dados do cliente */
             client.setId(rs.getInt("ID"));
             client.setCompany(rs.getString("COMPANY"));
             client.setAddress(rs.getString("ADDRESS"));
             client.setCity(rs.getString("CITY"));
+            System.out.println("@@@@ PASS 04");
             client.setDistrict(rs.getString("DISTRICT"));
             client.setCountry(rs.getString("COUNTRY"));
             client.setState(rs.getString("STATE"));
             client.setComp(rs.getString("COMP"));
+            System.out.println("@@@@ PASS 05");
             client.setContact_name(rs.getString("CONTACT_NAME"));
             client.setContact_no(rs.getString("CONTACT_NO"));
-            client.setCnpj(rs.getInt("CNPJ"));
+            client.setCnpj(rs.getLong("CNPJ"));
             client.setInsc_est(rs.getInt("INSC_EST"));
+            System.out.println("@@@@ PASS 06");
             client.setInsc_mun(rs.getInt("INSC_MUN"));
             client.setObs(rs.getString("OBS"));
             client.setContact_mail(rs.getString("CONTACT_MAIL"));
             /* Adiciona cliente à lista 'clientList' */
             clientList.add(client);
+            System.out.println("@@@@ PASS 07");
         }
 
         /* Encerra SQL e conexão */
@@ -89,7 +95,7 @@ public class ClientDAO {
         ps.setString(8, client.getContact_name());
         ps.setString(9, client.getContact_no());
         ps.setString(10, client.getContact_mail());
-        ps.setInt(11, client.getCnpj());
+        ps.setLong(11, client.getCnpj());
         ps.setInt(12, client.getInsc_est());
         ps.setInt(13, client.getInsc_mun());
         ps.setString(14, client.getObs());
@@ -135,7 +141,7 @@ public class ClientDAO {
             client.setComp(rs.getString("COMP"));
             client.setContact_name(rs.getString("CONTACT_NAME"));
             client.setContact_no(rs.getString("CONTACT_NO"));
-            client.setCnpj(rs.getInt("CNPJ"));
+            client.setCnpj(rs.getLong("CNPJ"));
             client.setInsc_est(rs.getInt("INSC_EST"));
             client.setInsc_mun(rs.getInt("INSC_MUN"));
             client.setObs(rs.getString("OBS"));
@@ -179,7 +185,7 @@ public class ClientDAO {
         ps.setString(8, updatedClient.getContact_name());
         ps.setString(9, updatedClient.getContact_no());        
         ps.setString(10, updatedClient.getContact_mail());
-        ps.setInt(11, updatedClient.getCnpj());
+        ps.setLong(11, updatedClient.getCnpj());
         ps.setInt(12, updatedClient.getInsc_est());
         ps.setInt(13, updatedClient.getInsc_mun());
         ps.setString(14, updatedClient.getObs());

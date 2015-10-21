@@ -12,7 +12,7 @@ public class ClientBean {
     private String contact_no;
     private String contact_name;
     private String contact_mail;
-    private int cnpj;
+    private long cnpj;
     private int insc_est;
     private int insc_mun;
     private String obs;
@@ -98,11 +98,11 @@ public class ClientBean {
         this.contact_mail = contact_mail;
     }
 
-    public int getCnpj() {
+    public long getCnpj() {
         return cnpj;
     }
 
-    public void setCnpj(int cnpj) {
+    public void setCnpj(long cnpj) {
         this.cnpj = cnpj;
     }
 

@@ -40,7 +40,7 @@ public class ClientController {
     /* Inicia serviços */
     private ClientService clientService = new ClientService();
     private LogService logService = new LogService();
-    
+
     // MÉTODOS
     
     ////////////////////////////////////////////////////////////////////////////
@@ -49,6 +49,11 @@ public class ClientController {
     public void loadAllClients() throws SQLException, ExceptionDAO {
         System.out.println("[CONTROLLER][CLIENT][loadAllClients] Carregando lista de clientes...");
         clients = clientService.loadAllClients();
+        if (clients.isEmpty()) {
+            System.out.println("OH SHIT! LIST IS EMPTY FOR WTF REASON!");
+        } else {
+            System.out.println("HERE WE GO!");
+        }
         ////////////////////////////////////////////////////////////////////////
     }
 
@@ -72,7 +77,7 @@ public class ClientController {
                     + " | Bairro: " + client.getDistrict() + " | Complemento: " + client.getComp() + " | País: " + client.getCountry()
                     + " | Nome Contato: " + client.getContact_name() + " | Número Contato: " + client.getContact_no() + " |"
                     + " CPNJ: " + client.getCnpj() + " | Inscrição Estadual: " + client.getInsc_est() + " | Inscrição Muncipal: "
-                    + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() +".");
+                    + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() + ".");
 
             System.out.println("[CONTROLLER][CLIENT][updateClient] Cliente '" + client.getCompany() + "' atualizado com sucesso!");
 
@@ -83,20 +88,20 @@ public class ClientController {
         }
         ////////////////////////////////////////////////////////////////////////
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // 04 - newClient()
     //      Cadastra novo cliente no banco de dados.
     public void newClient() throws SQLException, ExceptionDAO {
         clientService.newClient(newClient);
         /* Registra LOG */
-        newLog("Inserção","Cadastro do cliente '" + newClient.getCompany() + "'.","Nome: " + newClient.getCompany() + " | "
-                    + "Endereço: " + newClient.getAddress() + " | Cidade: " + newClient.getCity() + " | Estado: " + newClient.getState()
-                    + " | Bairro: " + newClient.getDistrict() + " | Complemento: " + newClient.getComp() + " | País: " + newClient.getCountry()
-                    + " | Nome Contato: " + newClient.getContact_name() + " | Número Contato: " + newClient.getContact_no() + " |"
-                    + " CPNJ: " + newClient.getCnpj() + " | Inscrição Estadual: " + newClient.getInsc_est() + " | Inscrição Muncipal: "
-                    + newClient.getInsc_mun() + " | Email Contato: " + newClient.getContact_mail() + " | OBS: " + newClient.getObs() +".");
-        
+        newLog("Inserção", "Cadastro do cliente '" + newClient.getCompany() + "'.", "Nome: " + newClient.getCompany() + " | "
+                + "Endereço: " + newClient.getAddress() + " | Cidade: " + newClient.getCity() + " | Estado: " + newClient.getState()
+                + " | Bairro: " + newClient.getDistrict() + " | Complemento: " + newClient.getComp() + " | País: " + newClient.getCountry()
+                + " | Nome Contato: " + newClient.getContact_name() + " | Número Contato: " + newClient.getContact_no() + " |"
+                + " CPNJ: " + newClient.getCnpj() + " | Inscrição Estadual: " + newClient.getInsc_est() + " | Inscrição Muncipal: "
+                + newClient.getInsc_mun() + " | Email Contato: " + newClient.getContact_mail() + " | OBS: " + newClient.getObs() + ".");
+
         System.out.println("[CONTROLLER][CLIENT][newClient] Cliente '" + newClient.getCompany() + "' cadastrado com sucesso!");
         /* Feedback */
         FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O Cliente '" + newClient.getCompany() + "' foi cadastrado com sucesso!"));
@@ -104,20 +109,20 @@ public class ClientController {
         newClient = new ClientBean();
         ////////////////////////////////////////////////////////////////////////
     }
-    
+
     ////////////////////////////////////////////////////////////////////////////
     // 05 - removeClient()
     //      Remove cliente informado do banco de dados permanentemente.
     public void removeClient() throws SQLException, ExceptionDAO {
         clientService.removeClient(client.getId());
         /* Registra LOG */
-        newLog("Exclusão","Exclusão do cliente '" + client.getCompany() + "'.","Nome: " + client.getCompany() + " | "
-                    + "Endereço: " + client.getAddress() + " | Cidade: " + client.getCity() + " | Estado: " + client.getState()
-                    + " | Bairro: " + client.getDistrict() + " | Complemento: " + client.getComp() + " | País: " + client.getCountry()
-                    + " | Nome Contato: " + client.getContact_name() + " | Número Contato: " + client.getContact_no() + " |"
-                    + " CPNJ: " + client.getCnpj() + " | Inscrição Estadual: " + client.getInsc_est() + " | Inscrição Muncipal: "
-                    + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() +".");
-    
+        newLog("Exclusão", "Exclusão do cliente '" + client.getCompany() + "'.", "Nome: " + client.getCompany() + " | "
+                + "Endereço: " + client.getAddress() + " | Cidade: " + client.getCity() + " | Estado: " + client.getState()
+                + " | Bairro: " + client.getDistrict() + " | Complemento: " + client.getComp() + " | País: " + client.getCountry()
+                + " | Nome Contato: " + client.getContact_name() + " | Número Contato: " + client.getContact_no() + " |"
+                + " CPNJ: " + client.getCnpj() + " | Inscrição Estadual: " + client.getInsc_est() + " | Inscrição Muncipal: "
+                + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() + ".");
+
         System.out.println("[CONTROLLER][CLIENT][removeClient] Cliente '" + client.getCompany() + "' removido com sucesso!");
         /* Limpa bean 'client' para novo uso */
         client = new ClientBean();
@@ -147,13 +152,11 @@ public class ClientController {
 
         /* Carrega lista de clientes */
         loadAllClients();
-        
+
         /* Carrega dados da session */
         FacesContext ctx = FacesContext.getCurrentInstance();
         session = (HttpSession) ctx.getExternalContext().getSession(true);
     }
-
-    
 
     // <editor-fold desc="GET and SET" defaultstate="collasped">
     public HttpSession getSession() {

@@ -5,6 +5,7 @@ import java.util.Date;
 public class LogBean {
     private int id;
     private String type;
+    private String header;
     private String details;
     private Date time;
     private int session_id;
@@ -25,6 +26,14 @@ public class LogBean {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getHeader() {
+        return header;
+    }
+
+    public void setHeader(String header) {
+        this.header = header;
     }
 
     public String getDetails() {

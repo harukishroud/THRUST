@@ -85,7 +85,7 @@ public class UserController {
                 /* Define atributos de session */
                 session.setAttribute("currentSessionID", currentSession.getSession_id());
                 /* Registra LOG */
-                newLog("Acesso", "Login efetuado. Seção iniciada.");
+                newLog("Acesso", "Login efetuado. Seção iniciada.","");
                 /* Redireciona para 'index.xhtml' */
                 FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
                 System.out.println("[SYSTEM][USERCONTROLLER] Nova session criada com sucesso!");
@@ -98,7 +98,7 @@ public class UserController {
                 /* Define atributos de session */
                 session.setAttribute("currentSessionID", currentSession.getSession_id());
                 /* Registra LOG */
-                newLog("Acesso", "Login recuperado. Seção iniciada.");
+                newLog("Acesso", "Login recuperado. Seção iniciada.","");
                 /* Redireciona para 'index.xhtml' */
                 FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
                 System.out.println("[SYSTEM][USERCONTROLLER] Session recuperada com sucesso!");
@@ -115,7 +115,7 @@ public class UserController {
 
     // 02 - newLog()
     //      Insere um novo registro de atividade (log) no banco de dados.
-    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+    public void newLog(String type, String header, String detail) throws ExceptionDAO, SQLException {
         /* Inicia Session */
         FacesContext ctx = FacesContext.getCurrentInstance();
         session = (HttpSession) ctx.getExternalContext().getSession(true);
@@ -126,8 +126,9 @@ public class UserController {
         log.setSession_id((int) session.getAttribute("currentSessionID"));
         log.setUser_id((int) session.getAttribute("currentActiveUserID"));
         log.setTime(new Date());
-        /* Define tipo e detalhes do log */
+        /* Define tipo, cabeçalho e detalhes do log */
         log.setType(type);
+        log.setHeader(header);
         log.setDetails(detail);
         /* Insere log no banco de dados */
         logService.newLog(log);

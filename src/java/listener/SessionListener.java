@@ -2,14 +2,9 @@ package listener;
 
 import bean.LogBean;
 import dao.ExceptionDAO;
-import java.io.IOException;
 import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import javax.faces.application.FacesMessage;
-import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -19,20 +14,24 @@ import service.SessionService;
 public class SessionListener implements
         HttpSessionListener, Serializable {
     
-    // VARIAVEIS    
+    // VARIAVEIS GERAIS
     /* HTTP Session */
     private HttpSession session;
+    
+    // BEANS
     /* Armazena detalhes de LOG */
     private LogBean log = new LogBean();
     
     // SERVIÇOS
     LogService logService = new LogService();
 
+    /* @@ EXECUTADO AO INICIAR HTTP SESSION @@ */
     @Override
     public void sessionCreated(HttpSessionEvent se) {
         System.out.println("[SYSTEM][SESSIONLISTENER] Session iniciada '" + se.getSession().getId() + "'.");
     }
 
+    /* @@ EXECUTADO AO ENCERRAR HTTP SESSION @@ */
     @Override
     public void sessionDestroyed(HttpSessionEvent se) {
         /* Recupera session em aberto */
@@ -54,7 +53,7 @@ public class SessionListener implements
                 /* Encerra session o banco de dados */
                 sessionService.closeSession(currentActiveUserID, currentSessionID, endTime);
                 /* Registra LOG */
-                newLog("Acesso", "Login encerrado. Seção encerrada.");
+                newLog("Acesso", "Login encerrado. Seção encerrada.","");
             } catch (SQLException ex) {
                 System.out.println("[SYSTEM][SESSIONLISTENER] ERRO: Não foi possível encerrar a session de ID '" + currentSessionID + "' para o usuário de ID '" + currentActiveUserID + "'!");
             } catch (ExceptionDAO ex) {
@@ -68,20 +67,25 @@ public class SessionListener implements
 
     }
     
-    // 01 - newLog()
+    // MÉTODOS    
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // ## - newLog()
     //      Insere um novo registro de atividade (log) no banco de dados.
-    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+    public void newLog(String type, String header, String detail) throws ExceptionDAO, SQLException {
         /* Prepara bean 'log' para novo registro */
         log = new LogBean();
         /* Define dados gerais do log */
         log.setSession_id((int) session.getAttribute("currentSessionID"));
         log.setUser_id((int) session.getAttribute("currentActiveUserID"));
         log.setTime(new Date());
-        /* Define tipo e detalhes do log */
+        /* Define tipo, cabeçalho e detalhes do log */
         log.setType(type);
+        log.setHeader(header);
         log.setDetails(detail);
         /* Insere log no banco de dados */
         logService.newLog(log);
+        ////////////////////////////////////////////////////////////////////////
     }
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">

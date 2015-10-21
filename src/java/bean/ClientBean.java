@@ -11,6 +11,11 @@ public class ClientBean {
     private String comp;
     private String contact_no;
     private String contact_name;
+    private String contact_mail;
+    private int cnpj;
+    private int insc_est;
+    private int insc_mun;
+    private String obs;
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">
     public int getId() {
@@ -83,6 +88,46 @@ public class ClientBean {
 
     public void setContact_no(String contact_no) {
         this.contact_no = contact_no;
+    }
+
+    public String getContact_mail() {
+        return contact_mail;
+    }
+
+    public void setContact_mail(String contact_mail) {
+        this.contact_mail = contact_mail;
+    }
+
+    public int getCnpj() {
+        return cnpj;
+    }
+
+    public void setCnpj(int cnpj) {
+        this.cnpj = cnpj;
+    }
+
+    public int getInsc_est() {
+        return insc_est;
+    }
+
+    public void setInsc_est(int insc_est) {
+        this.insc_est = insc_est;
+    }
+
+    public int getInsc_mun() {
+        return insc_mun;
+    }
+
+    public void setInsc_mun(int insc_mun) {
+        this.insc_mun = insc_mun;
+    }
+
+    public String getObs() {
+        return obs;
+    }
+
+    public void setObs(String obs) {
+        this.obs = obs;
     }
 
     public String getContact_name() {

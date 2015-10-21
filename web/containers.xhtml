@@ -287,7 +287,7 @@
                                     <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-asterisk sidegap-s"></i>Aparência</h4>
                                     <div class="form-group col-xs-8">
                                         <label for="ContainerType">Tipo</label>                              
-                                        <h:selectOneMenu class="form-control" value="#{containerController.newContainerBean.type}" style="margin-top:-5px;padding:3px;height:35px;" >                                    
+                                        <h:selectOneMenu required="true" requiredMessage="É preciso selecionar um tipo para o novo container!" class="form-control" value="#{containerController.newContainerBean.type}" style="margin-top:-5px;padding:3px;height:35px;" >                                    
                                             <f:selectItems var="containerType" value="#{containerController.containerTypes}" />
                                         </h:selectOneMenu>
                                     </div>

@@ -17,10 +17,7 @@ import java.io.IOException;
 import java.util.Date;
 import javax.faces.application.FacesMessage;
 import javax.faces.context.FacesContext;
-import javax.faces.event.AjaxBehaviorEvent;
 import javax.servlet.http.HttpSession;
-import org.icefaces.ace.component.textentry.TextEntry;
-import org.primefaces.context.RequestContext;
 import service.InventoryService;
 import service.ContainerService;
 import service.ItemService;
@@ -127,9 +124,25 @@ public class InventoryController {
     public void updateInventoryItem() throws ExceptionDAO, SQLException {
         if (inventoryService.updateInventoryItem(inventoryBean) != null) {
             /* Registra LOG */
-            newLog("Alteração", "Alteração do Item '" + inventoryBean.getPn() + "'. Condição: '" + inventoryBean.getCondition() + "' | Container: '"
-                    + inventoryBean.getContainerAlias() + "' | Quantidade: '" + inventoryBean.getQuantity() + "' EA. | Preço: '" + inventoryBean.getPrice() + "' |"
-                    + " De: '" + inventoryBean.getFrom() + "' | Form Status: '" + inventoryBean.isForm_status() + "'.");
+            /* %% Traduz valores 'null', 'false' e 'true' para o LOG %% */
+            String form_status = "";
+            if (inventoryBean.getCondition() == null) {
+                inventoryBean.setCondition("Nenhuma ou Desconhecida");
+            }
+            if (inventoryBean.getFrom() == null || inventoryBean.getFrom().isEmpty()) {
+                inventoryBean.setFrom("Não Definido");
+            }
+            if (inventoryBean.isForm_status() == true) {
+                form_status = "Disponível";
+            }
+            if (inventoryBean.isForm_status() == false) {
+                form_status = "Indisponível";
+            }
+
+            newLog("Alteração", "Alteração do Item '" + inventoryBean.getPn() + "'.", "Condição: " + inventoryBean.getCondition() + " | Container: "
+                    + inventoryBean.getContainerAlias() + " | Quantidade: " + inventoryBean.getQuantity() + " EA. | Preço: " + inventoryBean.getPrice() + " |"
+                    + " De: " + inventoryBean.getFrom() + " | Form: " + form_status);
+
             /* Limpa bean 'inventoryBean' */
             inventoryBean = new InventoryBean();
             System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item atualizado com sucesso!");
@@ -244,7 +257,7 @@ public class InventoryController {
                 itemService.addPN(newPN);
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] PN inserido com sucesso no banco de dados!");
                 /* Registra LOG */
-                newLog("Inserção", "Cadastro do PN '" + newInventoryItem.getPn() + "'.");
+                newLog("Inserção", "Cadastro do PN '" + newInventoryItem.getPn() + "'.", "");
                 // Caso o PN exista o processo de novo PN é anulado
             } else {
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] O PN informado já existe. Pulando inserção do PN informado...");
@@ -259,8 +272,23 @@ public class InventoryController {
                 inventoryService.addNewInventoryItem(newInventoryItem);
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item inserido com sucesso no inventário!");
                 /* Registra LOG */
-                newLog("Inserção", "Cadastro do Item '" + newInventoryItem.getPn() + "' de Condição '" + newInventoryItem.getCondition() + "' em '"
-                        + newInventoryItem.getContainerAlias() + "' com '" + newInventoryItem.getQuantity() + "' EA.");
+                /* %% Traduz valores 'null', 'false' e 'true' para o LOG %% */
+                String form_status = "";
+                if (newInventoryItem.getCondition() == null) {
+                    newInventoryItem.setCondition("Nenhuma ou Desconhecida");
+                }
+                if (newInventoryItem.getFrom() == null || newInventoryItem.getFrom().isEmpty()) {
+                    newInventoryItem.setFrom("Não Definido");
+                }
+                if (newInventoryItem.isForm_status() == true) {
+                    form_status = "Disponível";
+                }
+                if (newInventoryItem.isForm_status() == false) {
+                    form_status = "Indisponível";
+                }
+                newLog("Inserção", "Cadastro do Item '" + newInventoryItem.getPn() + "'.", "Condição: " + newInventoryItem.getCondition() + " | Container: "
+                        + newInventoryItem.getContainerAlias() + " | Quantidade: " + newInventoryItem.getQuantity() + " EA. | Preço: " + newInventoryItem.getPrice() + " |"
+                        + " De: " + newInventoryItem.getFrom() + " | Form: " + form_status);
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newInventoryItem.getPn() + "' e condição '" + newInventoryItem.getCondition() + "' foi adicionado ao inventário com sucesso!"));
                 // Caso o PN exista no inventário uma mensagem de erro é exibida e o processo anulado
             } else {
@@ -285,7 +313,7 @@ public class InventoryController {
     public void moveAllFromTo() throws SQLException, ExceptionDAO {
         inventoryService.moveAllFromTo(moveInfo);
         /* Registra LOG */
-        newLog("Transferência", "Transferência de todos os itens do container'" + moveInfo.getContainerA() + "' para o container '" + moveInfo.getContainerB() + "'.");
+        newLog("Transferência", "Transferência de todos os itens do container'" + moveInfo.getContainerA() + "' para o container '" + moveInfo.getContainerB() + "'.", "");
     }
 
     // 12 - addToMove()
@@ -330,7 +358,7 @@ public class InventoryController {
                 inventoryService.moveItemTo(inventoryMoveList.get(i));
                 System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item '" + inventoryMoveList.get(i).getPn() + "' movido para '" + selectedMoveItemsContainer + "'.");
                 /* Registra LOG */
-                newLog("Transferência", "Tranferência do Item '" + inventoryMoveList.get(i).getPn() + "' para o container '" + selectedMoveItemsContainer + "'.");
+                newLog("Transferência", "Tranferência do Item '" + inventoryMoveList.get(i).getPn() + "' para o container '" + selectedMoveItemsContainer + "'.", "");
             }
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN, "", "Processo finalizado! Verifique se os items foram movidos para o local correspondente."));
         }
@@ -344,15 +372,16 @@ public class InventoryController {
 
     // 14 - newLog()
     //      Insere um novo registro de atividade (log) no banco de dados.
-    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+    public void newLog(String type, String header, String detail) throws ExceptionDAO, SQLException {
         /* Prepara bean 'log' para novo registro */
         log = new LogBean();
         /* Define dados gerais do log */
         log.setSession_id((int) session.getAttribute("currentSessionID"));
         log.setUser_id((int) session.getAttribute("currentActiveUserID"));
         log.setTime(new Date());
-        /* Define tipo e detalhes do log */
+        /* Define tipo, cabeçalho e detalhes do log */
         log.setType(type);
+        log.setHeader(header);
         log.setDetails(detail);
         /* Insere log no banco de dados */
         logService.newLog(log);

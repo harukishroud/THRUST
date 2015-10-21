@@ -7,18 +7,23 @@ import java.sql.SQLException;
 
 public class LogService {
 
-    // SERVICE 01 - newLog()
-    //              Executa DAO responsável pelo registro de novo LOG no banco -
-    //              de dados.
+    ////////////////////////////////////////////////////////////////////////////
+    // 01 - newLog()
+    //      @DAO
+    //      Adiciona um novo registro de atividade no banco de dados.
     public void newLog(LogBean log) throws SQLException, ExceptionDAO {
+        /* Inicia DAO */
         LogDAO logDAO = new LogDAO();
 
         try {
+            /* Executa DAO 'newLog' */
             logDAO.newLog(log);
         } catch (SQLException ex) {
-            System.out.println("[DATABASE][LOGSERVICE] ERRO: Não foi possível registrar LOG!");
+            /* Em caso de erros */
+            System.out.println("[SERVICE][LOG][newLog] ERRO: Não foi possível registrar a atividade no banco de dados.");
         }
-
+        
+        ////////////////////////////////////////////////////////////////////////
     }
 
 }

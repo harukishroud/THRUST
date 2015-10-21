@@ -61,7 +61,13 @@ public class PNsController {
         if (pnCheckStatus == false) {
             itemService.addPN(newPN);
             /* Registra LOG */
-            newLog("Inserção", "Cadastro do PN '" + newPN.getPn() + "'.");
+            /* %% Traduz valores 'null', 'false' e 'true' para o LOG %% */            
+            if (newPN.getDescription() == null || newPN.getDescription().isEmpty()) {
+                newPN.setDescription("Desconhecida");
+            }   
+            newLog("Inserção", "Cadastro do PN '" + newPN.getPn() + "'.","Descrição: " + newPN.getDescription() + " | Peso: "
+                    + newPN.getWeight() + " | Altura: " + newPN.getSize_h()+ " | Largura: " + newPN.getSize_w()+ " |"
+                    + " Profundidade: " + newPN.getSize_d());
             System.out.println("[SYSTEM][PNSCONTROLLER] PN inserido com sucesso no banco de dados!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O item de PN '" + newPN.getPn() + "' foi adicionado com sucesso!"));
             // Cancela o processo e exibe erro caso o PN já exista
@@ -86,9 +92,13 @@ public class PNsController {
     public void updatePN() throws ExceptionDAO, SQLException {
         if (itemService.updatePN(PN) != null) {
             /* Registra LOG */
-            newLog("Alteração", "Alteração do PN '" + PN.getPn() + "'. Descrição: '" + PN.getDescription() + "' | Peso: '"
-                    + PN.getWeight() + "' | Altura: '" + PN.getSize_h()+ "' | Largura: '" + PN.getSize_w()+ "' |"
-                    + " Profundidade: '" + PN.getSize_d()+ "'.");            
+            /* %% Traduz valores 'null', 'false' e 'true' para o LOG %% */            
+            if (PN.getDescription() == null || newPN.getDescription().isEmpty()) {
+                PN.setDescription("Desconhecida");
+            }  
+            newLog("Alteração", "Alteração do PN '" + PN.getPn() + "'.","Descrição: " + PN.getDescription() + " | Peso: "
+                    + PN.getWeight() + " | Altura: " + PN.getSize_h()+ " | Largura: " + PN.getSize_w()+ " |"
+                    + " Profundidade: " + PN.getSize_d());            
             PN = new ItemBean();
             System.out.println("[SYSTEM][PNSCONTROLLER] PN atualizado com sucesso!");
         } else {
@@ -105,7 +115,7 @@ public class PNsController {
         if (alternatePNCheckStatus == false) {
             alternateService.addAlternatePN(newAlt);
             /* Registra LOG */
-            newLog("Inserção", "Cadastro do PN Alternado'" + newAlt.getAlt_pn()+ "' para o PN '" + newAlt.getItems_pn() + "'.");  
+            newLog("Inserção", "Cadastro do PN Alternado'" + newAlt.getAlt_pn()+ "' para o PN '" + newAlt.getItems_pn() + "'.","");  
             System.out.println("[SYSTEM][PNSCONTROLLER] PN Alternado inserido com sucesso no banco de dados!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O PN Alternado '" + newAlt.getAlt_pn() + "' foi adicionado com sucesso!"));
             // Cancela o processo e exibe erro caso o PN Alternado já exista para o PN informado
@@ -121,18 +131,19 @@ public class PNsController {
 
     // 06 - newLog()
     //      Insere um novo registro de atividade (log) no banco de dados.
-    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+    public void newLog(String type, String header, String detail) throws ExceptionDAO, SQLException {
         /* Prepara bean 'log' para novo registro */
-        setLog(new LogBean());
+        log = new LogBean();
         /* Define dados gerais do log */
-        getLog().setSession_id((int) getSession().getAttribute("currentSessionID"));
-        getLog().setUser_id((int) getSession().getAttribute("currentActiveUserID"));
-        getLog().setTime(new Date());
-        /* Define tipo e detalhes do log */
-        getLog().setType(type);
-        getLog().setDetails(detail);
+        log.setSession_id((int) session.getAttribute("currentSessionID"));
+        log.setUser_id((int) session.getAttribute("currentActiveUserID"));
+        log.setTime(new Date());
+        /* Define tipo, cabeçalho e detalhes do log */
+        log.setType(type);
+        log.setHeader(header);
+        log.setDetails(detail);
         /* Insere log no banco de dados */
-        logService.newLog(getLog());
+        logService.newLog(log);
     }
 
     // CONSTRUTOR

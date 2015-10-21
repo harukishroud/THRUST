@@ -11,7 +11,7 @@
       >
 
     <h:head>
-        <title>PNs | THRUST</title>
+        <title>Clientes | THRUST</title>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
         <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
         <link href="css/style.css" rel="stylesheet"/>
@@ -31,69 +31,65 @@
 
             <div class="row topgap-m">                
 
-                <!-- PNs LIST -->
-                <h:form id="pnScreen" >
+                <!-- CLIENTS LIST -->
+                <h:form id="clientsScreen" >
                     <!-- Updater -->
-                    <p:poll interval="60"  listener="#{pnsController.loadPNsList()}" update="pnTable" />
-
-                    <p:ajaxStatus oncomplete="#{pnsController.loadPNsList()}"/>
+                    <p:poll interval="60"  listener="#{clientController.loadAllClients()}" update="clientGrid" />                    
+                    <p:ajaxStatus oncomplete="#{clientController.loadAllClients()}"/>
 
                     <div class="panel panel-default">
                         <!-- Panel Header -->
                         <div class="panel-heading">
                             <h4 style="line-height: 1px;">
-                                <i class="fa fa-cogs sidegap-s" style="color:grey"></i> <b>Gerenciador de PNs</b>                                
-                            </h4> 
-                            <button type="button" style="float:right;margin:-35px;margin-right:125px;" class="btn btn-default" onclick="$('#newPNModal').modal('show');">
-                                <i class="fa fa-plus sidegap-xs"></i> Adicionar PN
-                            </button>
-                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newAltModal').modal('show');">
-                                <i class="fa fa-random sidegap-xs"></i> Adicionar Alt.
+                                <i class="fa fa-users sidegap-s" style="color:grey"></i> <b>Clientes</b>                                
+                            </h4>                             
+                            <button type="button" style="float:right;margin:-35px;margin-right:0px;" class="btn btn-default " onclick="$('#newClientModal').modal('show');">
+                                <i class="fa fa-user-plus sidegap-xs"></i> Novo Cliente
                             </button>
                         </div>
 
                         <!-- Panel Body -->
                         <div class="panel-body">
                             <div class="row clearfix" style="max-height:auto;">
-                                <!-- PNS TABLE -->
-                                <div class="table-responsive">
-                                    <ace:dataTable id="pnTable"
-                                                   value="#{pnsController.PNs}"
-                                                   var="pn"
+                                <!-- CLIENTS TABLE -->
+                                <p:dataGrid var="client" value="#{clientController.clients}" columns="3"
+                                            rows="6" paginator="true" id="clientGrid">
+
+                                    <p:panel header="#{client.company}" style="text-align:center">
+                                        <h:panelGrid columns="1" style="width:100%">
+                                            
+
+                                            A: <h:outputText value="#{client.contact_mail}" />
+                                            B: <h:outputText value="#{client.insc_est}" />
+                                            C: <h:outputText value="#{client.district}" />
+
+                                            
+                                        </h:panelGrid>
+                                    </p:panel>
+
+
+                                </p:dataGrid>
+                                
+                                <ace:dataTable 
+                                    value="#{clientController.clients}"
+                                                   var="client"
                                                    paginator="true"
                                                    paginatorPosition="bottom"
                                                    rows="15"                                                   
                                                    scrollable="false" 
                                                    reorderableColumns="true"                                           
                                                    >
-                                        <ace:column id="pn" headerText="PN" sortBy="#{pn.pn}" filterBy="##{pn.pn}" filterMatchMode="contains" >
-                                            <b><h:outputText id="pnCell" value="#{pn.pn}"/></b>
+                                        <ace:column  headerText="Nome" >
+                                            <b><h:outputText  value="#{client.company}"/></b>
                                         </ace:column>
-                                        <ace:column id="description" headerText="Descrição" sortBy="#{pn.description}"
-                                                    filterBy="#{pn.description}" filterMatchMode="contains">
-                                            <h:outputText id="descriptionCell" value="#{pn.description}"/>
+                                        <ace:column  headerText="Estado" >
+                                            <h:outputText  value="#{client.state}"/>
                                         </ace:column>
-                                        <ace:column id="width" headerText="Largura">                                            
-                                            <h:outputText value="#{pn.size_w}"/>
+                                        <ace:column  headerText="CNPJ">                                            
+                                            <h:outputText value="#{client.cnpj}"/>
                                         </ace:column>
-                                        <ace:column id="height" headerText="Altura">                                            
-                                            <h:outputText value="#{pn.size_h}"/>
-                                        </ace:column>
-                                        <ace:column id="depth" headerText="Profundidade">                                            
-                                            <h:outputText value="#{pn.size_d}"/>
-                                        </ace:column>
-                                        <ace:column id="weight" headerText="Peso">                                            
-                                            <h:outputText value="#{pn.weight}"/>
-                                        </ace:column>                                                                              
-                                        <ace:column style="width:120px;">
-                                            <h:commandLink  class="btn btn-default btn-xs" actionListener="#{pnsController.setEditPN(pn)}"
-                                                            onclick="$('#editPNModal').modal('show');" >
-                                                <f:param name="selectedPN" value="#{pn.pn}" />
-                                                <i class="fa fa-pencil-square sidegap-xs"></i> Editar
-                                            </h:commandLink> 
-                                        </ace:column>
+                                        
                                     </ace:dataTable>
-                                </div>
                             </div>                        
                         </div>
                         <!-- Panel Footer -->

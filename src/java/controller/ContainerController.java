@@ -64,9 +64,23 @@ public class ContainerController {
     public void updateContainer() throws ExceptionDAO, SQLException {
         if (containerService.updateContainer(containerBean) != null) {
             /* Registra LOG */
-            newLog("Alteração", "Alteração do container '" + containerBean.getAlias() + "'. Cor: '" + containerBean.getColor() + "' |"
-                    + " Tipo: '" + containerBean.getType() + "' | Para: '" + containerBean.getTo() + "' | De: '" + containerBean.getFrom() + "' |"
-                    + " Status: '" + containerBean.isFull_status() + "'.");
+            /* %% Traduz valores 'null', 'false' e 'true' para o LOG %% */            
+            String container_status = "";
+            if (containerBean.getFrom() == null || containerBean.getFrom().isEmpty()) {
+                containerBean.setFrom("Não Definido");
+            }  
+            if (containerBean.getTo() == null || containerBean.getTo().isEmpty()) {
+                containerBean.setTo("Não Definido");
+            }  
+            if (containerBean.isFull_status() == true) {
+                container_status = "Indisponível";
+            } 
+            if (containerBean.isFull_status() == false) {
+                container_status = "Disponível";
+            } 
+            newLog("Alteração", "Alteração do container '" + containerBean.getAlias() + "'.", "Cor: " + containerBean.getColor() + " |"
+                    + " Tipo: " + containerBean.getType() + " | Para: " + containerBean.getTo() + " | De: " + containerBean.getFrom() + " |"
+                    + " Armazenamento: " + container_status);
             containerBean = new ContainerBean();
             System.out.println("[SYSTEM][CONTAINERCONTROLLER] Container atualizado com sucesso!");
         } else {
@@ -83,9 +97,23 @@ public class ContainerController {
         if (containerCheckStatus == false) {
             containerService.newContainer(newContainerBean);
             /* Registra LOG */
-            newLog("Inserção", "Cadastro do container '" + newContainerBean.getAlias() + "' de cor '" + newContainerBean.getColor() + "' do"
-                    + " tipo '" + newContainerBean.getType() + "' para '" + newContainerBean.getTo() + "' de '" + newContainerBean.getFrom() + "' com"
-                    + " status '" + newContainerBean.isFull_status() + "'.");
+            /* %% Traduz valores 'null', 'false' e 'true' para o LOG %% */            
+            String container_status = "";
+            if (newContainerBean.getFrom() == null || newContainerBean.getFrom().isEmpty()) {
+                newContainerBean.setFrom("Não Definido");
+            }  
+            if (newContainerBean.getTo() == null || newContainerBean.getTo().isEmpty()) {
+                newContainerBean.setTo("Não Definido");
+            }  
+            if (newContainerBean.isFull_status() == true) {
+                container_status = "Indisponível";
+            } 
+            if (newContainerBean.isFull_status() == false) {
+                container_status = "Disponível";
+            } 
+            newLog("Inserção", "Cadastro do container '" + newContainerBean.getAlias() + "'.", "Cor: " + newContainerBean.getColor() + " |"
+                    + " Tipo: " + newContainerBean.getType() + " | Para: " + newContainerBean.getTo() + " | De: " + newContainerBean.getFrom() + " |"
+                    + " Armazenamento: " + container_status);
             System.out.println("[SYSTEM][CONTAINERCONTROLLER] Container inserido com sucesso no banco de dados!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O Container '" + newContainerBean.getAlias() + "' foi adicionado com sucesso!"));
             // Cancela o processo e exibe erro caso já exista
@@ -104,9 +132,9 @@ public class ContainerController {
         if (containerBean.getItemsTotal() == 0) {
             containerService.removeContainer(containerBean.getAlias());
             /* Registra LOG */
-            newLog("Exclusão", "Exclusão do container '" + containerBean.getAlias() + "' de cor '" + containerBean.getColor() + "' do"
-                    + " tipo '" + containerBean.getType() + "' para '" + containerBean.getTo() + "' de '" + containerBean.getFrom() + "' com"
-                    + " status '" + containerBean.isFull_status() + "'.");
+            newLog("Exclusão", "Exclusão do container '" + containerBean.getAlias() + "'.","Cor: " + containerBean.getColor() + " |"
+                    + " Tipo: " + containerBean.getType() + " | Para: " + containerBean.getTo() + " | De: " + containerBean.getFrom() + " |"
+                    + " Status: " + containerBean.isFull_status());
             System.out.println("[SYSTEM][CONTAINERCONTROLLER] Container removido com sucesso do banco de dados!");
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O Container '" + containerBean.getAlias() + "' foi removido permamentemente."));
             containerBean = new ContainerBean();
@@ -119,18 +147,19 @@ public class ContainerController {
 
     // 06 - newLog()
     //      Insere um novo registro de atividade (log) no banco de dados.
-    public void newLog(String type, String detail) throws ExceptionDAO, SQLException {
+    public void newLog(String type, String header, String detail) throws ExceptionDAO, SQLException {
         /* Prepara bean 'log' para novo registro */
-        setLog(new LogBean());
+        log = new LogBean();
         /* Define dados gerais do log */
-        getLog().setSession_id((int) getSession().getAttribute("currentSessionID"));
-        getLog().setUser_id((int) getSession().getAttribute("currentActiveUserID"));
-        getLog().setTime(new Date());
-        /* Define tipo e detalhes do log */
-        getLog().setType(type);
-        getLog().setDetails(detail);
+        log.setSession_id((int) session.getAttribute("currentSessionID"));
+        log.setUser_id((int) session.getAttribute("currentActiveUserID"));
+        log.setTime(new Date());
+        /* Define tipo, cabeçalho e detalhes do log */
+        log.setType(type);
+        log.setHeader(header);
+        log.setDetails(detail);
         /* Insere log no banco de dados */
-        logService.newLog(getLog());
+        logService.newLog(log);
     }
 
     // CONSTRUTOR

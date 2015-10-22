@@ -19,7 +19,6 @@
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>        
 
-        <script src="js/jquery-2.1.4.js"></script>
         <script src="js/bootstrap.js"></script>
     </h:head>
 
@@ -34,7 +33,7 @@
                 <!-- CLIENTS LIST -->
                 <h:form id="clientsScreen" >
                     <!-- Updater -->
-                    <p:poll interval="60"  listener="#{clientController.loadAllClients()}" update="clientGrid" />                    
+                    <p:poll interval="60"  listener="#{clientController.loadAllClients()}" update="clientTable" />                    
                     <p:ajaxStatus oncomplete="#{clientController.loadAllClients()}"/>
 
                     <div class="panel panel-default">
@@ -51,45 +50,28 @@
                         <!-- Panel Body -->
                         <div class="panel-body">
                             <div class="row clearfix" style="max-height:auto;">
-                                <!-- CLIENTS TABLE -->
-                                <p:dataGrid var="client" value="#{clientController.clients}" columns="3"
-                                            rows="6" paginator="true" id="clientGrid">
-
-                                    <p:panel header="#{client.company}" style="text-align:center">
-                                        <h:panelGrid columns="1" style="width:100%">
-                                            
-
-                                            A: <h:outputText value="#{client.contact_mail}" />
-                                            B: <h:outputText value="#{client.insc_est}" />
-                                            C: <h:outputText value="#{client.district}" />
-
-                                            
-                                        </h:panelGrid>
-                                    </p:panel>
-
-
-                                </p:dataGrid>
-                                
+                                <!-- CLIENTS TABLE -->                               
                                 <ace:dataTable 
                                     value="#{clientController.clients}"
-                                                   var="client"
-                                                   paginator="true"
-                                                   paginatorPosition="bottom"
-                                                   rows="15"                                                   
-                                                   scrollable="false" 
-                                                   reorderableColumns="true"                                           
-                                                   >
-                                        <ace:column  headerText="Nome" >
-                                            <b><h:outputText  value="#{client.company}"/></b>
-                                        </ace:column>
-                                        <ace:column  headerText="Estado" >
-                                            <h:outputText  value="#{client.state}"/>
-                                        </ace:column>
-                                        <ace:column  headerText="CNPJ">                                            
-                                            <h:outputText value="#{client.cnpj}"/>
-                                        </ace:column>
-                                        
-                                    </ace:dataTable>
+                                    id="clientTable"
+                                    var="client"
+                                    paginator="true"
+                                    paginatorPosition="bottom"
+                                    rows="15"                                                   
+                                    scrollable="false" 
+                                    reorderableColumns="true"                                           
+                                    >
+                                    <ace:column  headerText="Nome" >
+                                        <b><h:outputText  value="#{client.company}"/></b>
+                                    </ace:column>
+                                    <ace:column  headerText="Estado" >
+                                        <h:outputText  value="#{client.state}"/>
+                                    </ace:column>
+                                    <ace:column  headerText="CNPJ">                                            
+                                        <h:outputText value="#{client.cnpj}"/>
+                                    </ace:column>
+
+                                </ace:dataTable>
                             </div>                        
                         </div>
                         <!-- Panel Footer -->
@@ -102,62 +84,121 @@
 
             <!-- MODALS -->
 
-            <!-- New PN Modal -->
-            <div class="modal fade" id="newPNModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+            <!-- New Client Modal -->
+            <div class="modal fade" id="newClientModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
                 <div class="modal-dialog" role="document">
                     <div class="modal-content">
-                        <h:form id="newPNForm">
+                        <h:form id="newClientForm">
                             <div class="modal-header">
                                 <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
                                 <h3 class="modal-title" id="myModalLabel3" style="font-weight: bold;">
-                                    <i class="fa fa-plus sidegap-s"></i> Adicionar novo PN</h3>
+                                    <i class="fa fa-user-plus sidegap-s"></i> Adicionar Novo Cliente</h3>
                             </div>
                             <div class="modal-body">
-                                <p:messages rendered="#{not empty facesContext.messageList}" id="newPNMessageBox" class="alert" 
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="newClientMessageBox" class="alert" 
                                             styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
                                             showSummary="false" />
                                 <div class="row">
-                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-tags sidegap-s"></i>Dados</h4>
-                                    <div class="form-group col-xs-4">
-                                        <label for="itemPN">PN</label>                              
-                                        <p:inputText class="form-control" size="30" value="#{pnsController.newPN.pn}" >
-                                            <f:validateLength minimum="1" maximum="25"/>
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-asterisk sidegap-s"></i>Dados Gerais</h4>
+                                    <div class="form-group col-xs-12">
+                                        <label for="clientName">Empresa</label>                              
+                                        <p:inputText class="form-control" size="30" value="#{clientController.newClientInfo.company}" >
+                                            <f:validateLength minimum="1" maximum="255"/>
                                         </p:inputText>
                                     </div>
-                                    <div class="form-group col-xs-8">
-                                        <label for="itemDescription">Descrição</label>                              
-                                        <p:inputText  class="form-control" size="30" value="#{pnsController.newPN.description}" />
-                                    </div>                                
-                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-object-group sidegap-s"></i>Especificações</h4>
+                                    <div class="form-group col-xs-5">
+                                        <label for="clientCnpj">CNPJ</label>                              
+                                        <p:inputMask mask="99.999.999/9999-99"  class="form-control" value="#{clientController.newClientInfo.cnpj}" />
+                                    </div> 
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientInscEst">Insc. Estadual</label>                              
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.insc_est}" />
+                                    </div> 
                                     <div class="form-group col-xs-3">
-                                        <label for="ItemHeight">Altura</label>                              
-                                        <h:inputText  class="form-control" size="30" value="#{pnsController.newPN.size_h}" >
-                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
-                                        </h:inputText>
+                                        <label for="clientInscMun">Insc. Municipal</label>                              
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.insc_mun}" />
+                                    </div> 
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-map sidegap-s"></i>Endereço</h4>
+                                    <div class="form-group col-xs-12">
+                                        <label for="clientAddress">Endereço</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.address}" />
                                     </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientState">Estado</label>                            
+                                        <p:inputMask mask="aa" class="form-control" size="2" value="#{clientController.newClientInfo.state}" />
+                                    </div> 
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientCity">Cidade</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.city}" />
+                                    </div> 
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientDistrict">Bairro</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.district}" />
+                                    </div> 
                                     <div class="form-group col-xs-3">
-                                        <label for="ItemWidth">Largura</label>                              
-                                        <h:inputText  class="form-control" size="30" value="#{pnsController.newPN.size_w}" >
-                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
-                                        </h:inputText>
+                                        <label for="clientCep">CEP</label>                            
+                                        <p:inputMask mask="99999-999" class="form-control" value="#{clientController.newClientInfo.cep}" />
+                                    </div> 
+                                    <div class="form-group col-xs-3">
+                                        <label for="clientCountry">País</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.country}" />
+                                    </div> 
+                                    <div class="form-group col-xs-6">
+                                        <label for="clientComp">Complemento</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.comp}" />
+                                    </div> 
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-user sidegap-s"></i>Contato</h4>
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientName">Nome</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.contact_name}" />
+                                    </div> 
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientNo">Telefone</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.contact_no}" />
+                                    </div> 
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientEmail">EMail</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.contact_mail}" />
+                                    </div> 
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-truck sidegap-s"></i>Endereço de Entrega</h4>
+                                    <div class="form-group col-xs-12">
+                                        <label for="clientDeliveryAddress">Endereço</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.delivery_address}" />
                                     </div>
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientDeliveryState">Estado</label>                            
+                                        <p:inputMask mask="aa" class="form-control" size="2" value="#{clientController.newClientInfo.delivery_state}" />
+                                    </div> 
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientDeliveryCity">Cidade</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.delivery_city}" />
+                                    </div> 
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientDeliveryDistrict">Bairro</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.delivery_district}" />
+                                    </div> 
                                     <div class="form-group col-xs-3">
-                                        <label for="ItemDepth">Profundidade</label>                              
-                                        <h:inputText class="form-control" size="30" value="#{pnsController.newPN.size_d}" >
-                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
-                                        </h:inputText>
-                                    </div>
-                                    <div class="form-group col-xs-3">
-                                        <label for="ItemWeight">Peso</label>                              
-                                        <h:inputText  class="form-control" size="30" value="#{pnsController.newPN.weight}" >
-                                            <f:convertNumber pattern="#,#0.0" minFractionDigits="1"/>
-                                        </h:inputText>
-                                    </div>                                
+                                        <label for="clientDeliveryCep">CEP</label>                            
+                                        <p:inputMask mask="99999-999"  class="form-control" value="#{clientController.newClientInfo.delivery_cep}" />
+                                    </div>                                     
+                                    <div class="form-group col-xs-4">
+                                        <label for="clientDeliveryComp">Complemento</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.delivery_comp}" />
+                                    </div> 
+                                    <div class="form-group col-xs-5">
+                                        <label for="clientDeliveryReceiver">Destinatário</label>                            
+                                        <p:inputText class="form-control" value="#{clientController.newClientInfo.delivery_receiver}" />
+                                    </div> 
+                                    <h4 style="margin-left:15px;"><i style="color:#007DC5" class="fa fa-info sidegap-s"></i>Informações Adicionais</h4>
+                                    <div class="form-group col-xs-12">
+                                        <label for="clientObs">Observações</label>                            
+                                        <p:inputTextarea rows="3" class="form-control" value="#{clientController.newClientInfo.obs}" />
+                                    </div> 
                                 </div>                                                           
                             </div>
                             <div class="modal-footer">
                                 <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
-                                <h:commandButton  value="Adicionar" class="btn btn-success" action="#{pnsController.addPN()}" type="submit">
+                                <h:commandButton  value="Adicionar" class="btn btn-success" action="#{clientController.newClient()}" type="submit">
 
                                 </h:commandButton>
                             </div>

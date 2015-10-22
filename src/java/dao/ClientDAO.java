@@ -27,35 +27,36 @@ public class ClientDAO {
         /* Prepara SQL e carrega dados da VIEW 'client_standardview' */
         String sql = "SELECT * FROM client";
         PreparedStatement ps = conn.prepareStatement(sql);
-        System.out.println("@@@@ PASS 01");
         ResultSet rs = ps.executeQuery();
-        System.out.println("@@@@ PASS 02");
         while (rs.next()) {
             /* Cria e limpa bean 'client' que armazena dados do cliente */
             ClientBean client = new ClientBean();
-            System.out.println("@@@@ PASS 03");
             /* Define dados do cliente */
             client.setId(rs.getInt("ID"));
             client.setCompany(rs.getString("COMPANY"));
             client.setAddress(rs.getString("ADDRESS"));
             client.setCity(rs.getString("CITY"));
-            System.out.println("@@@@ PASS 04");
             client.setDistrict(rs.getString("DISTRICT"));
             client.setCountry(rs.getString("COUNTRY"));
             client.setState(rs.getString("STATE"));
             client.setComp(rs.getString("COMP"));
-            System.out.println("@@@@ PASS 05");
             client.setContact_name(rs.getString("CONTACT_NAME"));
             client.setContact_no(rs.getString("CONTACT_NO"));
-            client.setCnpj(rs.getLong("CNPJ"));
-            client.setInsc_est(rs.getInt("INSC_EST"));
-            System.out.println("@@@@ PASS 06");
-            client.setInsc_mun(rs.getInt("INSC_MUN"));
+            client.setCnpj(rs.getString("CNPJ"));
+            client.setInsc_est(rs.getString("INSC_EST"));
+            client.setInsc_mun(rs.getString("INSC_MUN"));
             client.setObs(rs.getString("OBS"));
             client.setContact_mail(rs.getString("CONTACT_MAIL"));
+            client.setCep(rs.getString("CEP"));
+            client.setDelivery_address(rs.getString("DELIVERY_ADDRESS"));
+            client.setDelivery_city(rs.getString("DELIVERY_CITY"));
+            client.setDelivery_comp(rs.getString("DELIVERY_COMP"));
+            client.setDelivery_district(rs.getString("DELIVERY_DISTRICT"));
+            client.setDelivery_receiver(rs.getString("DELIVERY_RECEIVER"));
+            client.setDelivery_state(rs.getString("DELIVERY_STATE"));
+            client.setDelivery_cep(rs.getString("DELIVERY_CEP"));
             /* Adiciona cliente à lista 'clientList' */
             clientList.add(client);
-            System.out.println("@@@@ PASS 07");
         }
 
         /* Encerra SQL e conexão */
@@ -81,10 +82,11 @@ public class ClientDAO {
         System.out.println("[DAO][CLIENT][newClient] Preparando SQL para inserir o cliente '" + client.getCompany() + "'...");
 
         /* Prepara SQL e define dados do novo cliente */
-        String sql = "INSERT INTO client (COMPANY,ADDRESS,CITY,DISTRICT,COUNTRY,STATE,COMP,CONTACT_NAME,CONTACT_NO,CONTACT_MAIL,CNPJ,INSC_EST,INSC_MUN,OBS)"
-                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+        String sql = "INSERT INTO client (COMPANY,ADDRESS,CITY,DISTRICT,COUNTRY,STATE,COMP,CONTACT_NAME,CONTACT_NO,CONTACT_MAIL,CNPJ,INSC_EST,INSC_MUN,OBS"
+                + ",CEP,DELIVERY_ADDRESS,DELIVERY_CITY,DELIVERY_STATE,DELIVERY_RECEIVER,DELIVERY_DISTRICT,DELIVERY_COMP,DELIVERY_CEP)"
+                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";       
+        
         PreparedStatement ps = conn.prepareStatement(sql);
-        ResultSet rs = ps.executeQuery();
         ps.setString(1, client.getCompany());
         ps.setString(2, client.getAddress());
         ps.setString(3, client.getCity());
@@ -95,10 +97,19 @@ public class ClientDAO {
         ps.setString(8, client.getContact_name());
         ps.setString(9, client.getContact_no());
         ps.setString(10, client.getContact_mail());
-        ps.setLong(11, client.getCnpj());
-        ps.setInt(12, client.getInsc_est());
-        ps.setInt(13, client.getInsc_mun());
+        ps.setString(11, client.getCnpj());
+        ps.setString(12, client.getInsc_est());
+        ps.setString(13, client.getInsc_mun());
         ps.setString(14, client.getObs());
+        ps.setString(15, client.getCep());
+        ps.setString(16, client.getDelivery_address());
+        ps.setString(17, client.getDelivery_city());
+        ps.setString(18, client.getDelivery_state());
+        ps.setString(19, client.getDelivery_receiver());
+        ps.setString(20, client.getDelivery_district());
+        ps.setString(21, client.getDelivery_comp());
+        ps.setString(22, client.getDelivery_cep());
+        System.out.println(ps);
 
         /* Executa SQL */
         ps.execute();
@@ -141,11 +152,20 @@ public class ClientDAO {
             client.setComp(rs.getString("COMP"));
             client.setContact_name(rs.getString("CONTACT_NAME"));
             client.setContact_no(rs.getString("CONTACT_NO"));
-            client.setCnpj(rs.getLong("CNPJ"));
-            client.setInsc_est(rs.getInt("INSC_EST"));
-            client.setInsc_mun(rs.getInt("INSC_MUN"));
+            client.setCnpj(rs.getString("CNPJ"));
+            client.setInsc_est(rs.getString("INSC_EST"));
+            client.setInsc_mun(rs.getString("INSC_MUN"));
             client.setObs(rs.getString("OBS"));
             client.setContact_mail(rs.getString("CONTACT_MAIL"));
+            client.setCep(rs.getString("CEP"));
+            client.setDelivery_address(rs.getString("DELIVERY_ADDRESS"));
+            client.setDelivery_city(rs.getString("DELIVERY_CITY"));
+            client.setDelivery_comp(rs.getString("DELIVERY_COMP"));
+            client.setDelivery_district(rs.getString("DELIVERY_DISTRICT"));
+            client.setDelivery_receiver(rs.getString("DELIVERY_RECEIVER"));
+            client.setDelivery_state(rs.getString("DELIVERY_STATE"));
+            client.setDelivery_cep(rs.getString("DELIVERY_CEP"));
+
         }
 
         /* Encerra SQL e conexão */
@@ -173,6 +193,7 @@ public class ClientDAO {
         /* Prepara SQL e define dados a serem atualizados */
         String sql = "UPDATE client SET COMPANY = ?,ADDRESS = ?,CITY = ?,DISTRICT = ?,"
                 + "COUNTRY = ?,STATE = ?,COMP = ?,CONTACT_NAME = ?,CONTACT_NO = ?,CONTACT_MAIL = ?,CNPJ = ?,INSC_EST = ?,INSC_MUN = ?,OBS = ?"
+                + ",CEP = ?,DELIVERY_ADDRESS = ?,DELIVERY_CITY = ?,DELIVERY_STATE = ?,DELIVERY_RECEIVER = ?,DELIVERY_DISTRICT = ?,DELIVERY_COMP = ?,DELIVERY_CEP = ?"
                 + " WHERE ID = ?";
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, updatedClient.getCompany());
@@ -183,13 +204,21 @@ public class ClientDAO {
         ps.setString(6, updatedClient.getState());
         ps.setString(7, updatedClient.getComp());
         ps.setString(8, updatedClient.getContact_name());
-        ps.setString(9, updatedClient.getContact_no());        
+        ps.setString(9, updatedClient.getContact_no());
         ps.setString(10, updatedClient.getContact_mail());
-        ps.setLong(11, updatedClient.getCnpj());
-        ps.setInt(12, updatedClient.getInsc_est());
-        ps.setInt(13, updatedClient.getInsc_mun());
+        ps.setString(11, updatedClient.getCnpj());
+        ps.setString(12, updatedClient.getInsc_est());
+        ps.setString(13, updatedClient.getInsc_mun());
         ps.setString(14, updatedClient.getObs());
-        ps.setInt(15, updatedClient.getId());
+        ps.setString(15, updatedClient.getCep());
+        ps.setString(16, updatedClient.getDelivery_address());
+        ps.setString(17, updatedClient.getDelivery_city());
+        ps.setString(18, updatedClient.getDelivery_state());
+        ps.setString(19, updatedClient.getDelivery_receiver());
+        ps.setString(20, updatedClient.getDelivery_district());
+        ps.setString(21, updatedClient.getDelivery_comp());
+        ps.setString(22, updatedClient.getDelivery_cep());
+        ps.setInt(23, updatedClient.getId());
 
         /* Executa SQL */
         ps.execute();

@@ -28,9 +28,9 @@ public class ClientController {
     /* Armazena detalhes de LOG */
     private LogBean log = new LogBean();
     /* Armazena cliente para função */
-    private ClientBean client = new ClientBean();
-    /* Armazena dado de novo cliente */
-    private ClientBean newClient = new ClientBean();
+    private ClientBean client = new ClientBean();    
+    /* Armazena dados de novo cliente */
+    private ClientBean newClientInfo = new ClientBean();    
 
     // LISTAS
     /* Armazena lista de clientes */
@@ -49,11 +49,6 @@ public class ClientController {
     public void loadAllClients() throws SQLException, ExceptionDAO {
         System.out.println("[CONTROLLER][CLIENT][loadAllClients] Carregando lista de clientes...");
         clients = clientService.loadAllClients();
-        if (clients.isEmpty()) {
-            System.out.println("OH SHIT! LIST IS EMPTY FOR WTF REASON!");
-        } else {
-            System.out.println("HERE WE GO!");
-        }
         ////////////////////////////////////////////////////////////////////////
     }
 
@@ -77,7 +72,10 @@ public class ClientController {
                     + " | Bairro: " + client.getDistrict() + " | Complemento: " + client.getComp() + " | País: " + client.getCountry()
                     + " | Nome Contato: " + client.getContact_name() + " | Número Contato: " + client.getContact_no() + " |"
                     + " CPNJ: " + client.getCnpj() + " | Inscrição Estadual: " + client.getInsc_est() + " | Inscrição Muncipal: "
-                    + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() + ".");
+                    + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() + " | "
+                    + "Endereço de Entrega: " + client.getDelivery_address() + ", " + client.getDelivery_city() + ", " + client.getDelivery_district()
+                    + ", " + client.getDelivery_state() + ", " + client.getDelivery_comp() + " | Destinatário: " + client.getDelivery_receiver()
+                    + " | CEP: " + client.getCep());
 
             System.out.println("[CONTROLLER][CLIENT][updateClient] Cliente '" + client.getCompany() + "' atualizado com sucesso!");
 
@@ -93,20 +91,23 @@ public class ClientController {
     // 04 - newClient()
     //      Cadastra novo cliente no banco de dados.
     public void newClient() throws SQLException, ExceptionDAO {
-        clientService.newClient(newClient);
+        clientService.newClient(newClientInfo);
         /* Registra LOG */
-        newLog("Inserção", "Cadastro do cliente '" + newClient.getCompany() + "'.", "Nome: " + newClient.getCompany() + " | "
-                + "Endereço: " + newClient.getAddress() + " | Cidade: " + newClient.getCity() + " | Estado: " + newClient.getState()
-                + " | Bairro: " + newClient.getDistrict() + " | Complemento: " + newClient.getComp() + " | País: " + newClient.getCountry()
-                + " | Nome Contato: " + newClient.getContact_name() + " | Número Contato: " + newClient.getContact_no() + " |"
-                + " CPNJ: " + newClient.getCnpj() + " | Inscrição Estadual: " + newClient.getInsc_est() + " | Inscrição Muncipal: "
-                + newClient.getInsc_mun() + " | Email Contato: " + newClient.getContact_mail() + " | OBS: " + newClient.getObs() + ".");
+        newLog("Inserção", "Cadastro do cliente '" + newClientInfo.getCompany() + "'.", "Nome: " + newClientInfo.getCompany() + " | "
+                + "Endereço: " + newClientInfo.getAddress() + " | Cidade: " + newClientInfo.getCity() + " | Estado: " + newClientInfo.getState()
+                + " | Bairro: " + newClientInfo.getDistrict() + " | Complemento: " + newClientInfo.getComp() + " | País: " + newClientInfo.getCountry()
+                + " | Nome Contato: " + newClientInfo.getContact_name() + " | Número Contato: " + newClientInfo.getContact_no() + " |"
+                + " CPNJ: " + newClientInfo.getCnpj() + " | Inscrição Estadual: " + newClientInfo.getInsc_est() + " | Inscrição Muncipal: "
+                + newClientInfo.getInsc_mun() + " | Email Contato: " + newClientInfo.getContact_mail() + " | OBS: " + newClientInfo.getObs() + "| "
+                + "Endereço de Entrega: " + newClientInfo.getDelivery_address() + ", " + newClientInfo.getDelivery_city() + ", " + newClientInfo.getDelivery_district()
+                + ", " + newClientInfo.getDelivery_state() + ", " + newClientInfo.getDelivery_comp() + " | Destinatário: " + newClientInfo.getDelivery_receiver()
+                + " | CEP: " + newClientInfo.getCep());
 
-        System.out.println("[CONTROLLER][CLIENT][newClient] Cliente '" + newClient.getCompany() + "' cadastrado com sucesso!");
+        System.out.println("[CONTROLLER][CLIENT][newClient] Cliente '" + newClientInfo.getCompany() + "' cadastrado com sucesso!");
         /* Feedback */
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O Cliente '" + newClient.getCompany() + "' foi cadastrado com sucesso!"));
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "O Cliente '" + newClientInfo.getCompany() + "' foi cadastrado com sucesso!"));
         /* Limpa bean 'newClient' para novo uso */
-        newClient = new ClientBean();
+        setNewClientInfo(new ClientBean());
         ////////////////////////////////////////////////////////////////////////
     }
 
@@ -121,8 +122,11 @@ public class ClientController {
                 + " | Bairro: " + client.getDistrict() + " | Complemento: " + client.getComp() + " | País: " + client.getCountry()
                 + " | Nome Contato: " + client.getContact_name() + " | Número Contato: " + client.getContact_no() + " |"
                 + " CPNJ: " + client.getCnpj() + " | Inscrição Estadual: " + client.getInsc_est() + " | Inscrição Muncipal: "
-                + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() + ".");
-
+                + client.getInsc_mun() + " | Email Contato: " + client.getContact_mail() + " | OBS: " + client.getObs() + "| "
+                + "Endereço de Entrega: " + client.getDelivery_address() + ", " + client.getDelivery_city() + ", " + client.getDelivery_district()
+                + ", " + client.getDelivery_state() + ", " + client.getDelivery_comp() + " | Destinatário: " + client.getDelivery_receiver()
+                + " | CEP: " + client.getCep());
+        
         System.out.println("[CONTROLLER][CLIENT][removeClient] Cliente '" + client.getCompany() + "' removido com sucesso!");
         /* Limpa bean 'client' para novo uso */
         client = new ClientBean();
@@ -181,15 +185,7 @@ public class ClientController {
 
     public void setClient(ClientBean client) {
         this.client = client;
-    }
-
-    public ClientBean getNewClient() {
-        return newClient;
-    }
-
-    public void setNewClient(ClientBean newClient) {
-        this.newClient = newClient;
-    }
+    }   
 
     public List<ClientBean> getClients() {
         return clients;
@@ -214,6 +210,14 @@ public class ClientController {
     public void setLogService(LogService logService) {
         this.logService = logService;
     }
-    // </editor-fold>   
+
+    public ClientBean getNewClientInfo() {
+        return newClientInfo;
+    }
+
+    public void setNewClientInfo(ClientBean newClientInfo) {
+        this.newClientInfo = newClientInfo;
+    }
+        // </editor-fold>   
 
 }

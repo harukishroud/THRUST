@@ -22,11 +22,6 @@ public class ClientService {
         try {
             /* Executa DAO 'loadAllClients' */
             clientList = clientDAO.loadAllClients();
-            if (clientList.isEmpty()) {
-                System.out.println("[2] OH SHIT! LIST IS EMPTY FOR WTF REASON!");
-            } else {
-                System.out.println("[2] HERE WE GO!");
-            }
         } catch (SQLException ex) {
             /* Em caso de erros */
             System.out.println("[SERVICE][CLIENT][loadAllClients] ERRO: Não foi possível carregar clientes do banco de dados.");

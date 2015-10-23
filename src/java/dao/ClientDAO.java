@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import javax.faces.model.SelectItem;
 
 public class ClientDAO {
 
@@ -84,8 +85,8 @@ public class ClientDAO {
         /* Prepara SQL e define dados do novo cliente */
         String sql = "INSERT INTO client (COMPANY,ADDRESS,CITY,DISTRICT,COUNTRY,STATE,COMP,CONTACT_NAME,CONTACT_NO,CONTACT_MAIL,CNPJ,INSC_EST,INSC_MUN,OBS"
                 + ",CEP,DELIVERY_ADDRESS,DELIVERY_CITY,DELIVERY_STATE,DELIVERY_RECEIVER,DELIVERY_DISTRICT,DELIVERY_COMP,DELIVERY_CEP)"
-                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";       
-        
+                + " VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?)";
+
         PreparedStatement ps = conn.prepareStatement(sql);
         ps.setString(1, client.getCompany());
         ps.setString(2, client.getAddress());
@@ -255,6 +256,40 @@ public class ClientDAO {
         conn.close();
 
         System.out.println("[DAO][CLIENT][removeClient] Cliente de ID '" + clientId + "' removido com sucesso!");
+        ////////////////////////////////////////////////////////////////////////
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // 06 - createExistingStateList()
+    //      Cria lista de estados existentes entre os clientes cadastrados.
+    public List<SelectItem> createExistingStateList() throws SQLException, ExceptionDAO {
+        /* Cria lista 'stateList' que armazena estados existentes */
+        List<SelectItem> stateList = new ArrayList<SelectItem>();
+
+        /* Inicia e configura conexão com banco de dados */
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        /* Prepara e executa SQL */
+        String sql = "SELECT DISTINCT STATE FROM client";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        /* Adiciona opção 'TODOS' à lista */
+        stateList.add(new SelectItem(""));
+
+        /* Adiciona estados encontrados à lista */
+        while (rs.next()) {
+            stateList.add(new SelectItem(rs.getString("STATE")));
+        }
+
+        /* Encerra SQL e conexão */
+        rs.close();
+        ps.close();
+        conn.close();
+
+        /* Retorna lista de estados */
+        return stateList;
         ////////////////////////////////////////////////////////////////////////
     }
 

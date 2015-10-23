@@ -1,16 +1,209 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<!--
-To change this license header, choose License Headers in Project Properties.
-To change this template file, choose Tools | Templates
-and open the template in the editor.
--->
-<!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml">
-    <head>
-        <title>TODO supply a title</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-    </head>
-    <body>
-        <div>TODO write content</div>
-    </body>
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:c="http://java.sun.com/jsp/jstl/core"
+      xmlns:ace="http://www.icefaces.org/icefaces/components"
+      xmlns:icecore="http://www.icefaces.org/icefaces/core">
+
+    <h:head>
+        <title>Cotações | THRUST</title>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"></meta>
+        <meta name="viewport" content="width=device-width, initial-scale=1"></meta>  
+        <link href="css/style.css" rel="stylesheet"/>
+        <link href="css/bootstrap.css" rel="stylesheet"/>
+        <link href="css/font-awesome.css" rel="stylesheet"/>
+
+        <script src="js/jquery-2.1.4.js"></script>
+        <script src="js/bootstrap.js"></script>
+    </h:head>
+    <h:body>
+        <ui:include src="masterheader.xhtml" />
+
+        <div class="container">
+
+            <div class="row topgap-m">                                
+
+                <!-- LIST -->
+                <h:form id="quoteList">
+                    <div class="panel panel-default">
+                        <!-- Panel Header -->
+                        <div class="panel-heading">
+                            <h4 style="line-height: 1px;">
+                                <i class="fa fa-calculator sidegap-s" style="color:grey"></i> <b>Cotações</b>                                
+                            </h4>          
+                            <div class="btn-group"  style="float:right;margin:-35px;margin-right:0px;">
+                                <button type="button" class="btn btn-default dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-file-o sidegap-s"></i> Nova Cotação <span class="caret"></span>
+                                </button>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <h:commandLink onclick="$('#manualQuoteModal').modal('show');" actionListener="#{quoteController.loadAvailableInventory()}">
+                                            <i class="fa fa-hand-pointer-o sidegap-xs"></i>Manual <br></br> <small>Seleciona items manualmente</small>
+                                        </h:commandLink>
+                                    </li>   
+                                    <li>
+                                        <h:commandLink>
+                                            <i class="fa fa-file-excel-o sidegap-xs"></i>Automática <br></br> <small>Carrega um arquivo .xls</small>
+                                        </h:commandLink>
+                                    </li>                                                                    
+                                </ul>
+                            </div>
+                        </div>
+
+                        <!-- Panel Body -->
+                        <div class="panel-body">                          
+                        </div>
+                        <!-- Panel Footer -->
+                        <div class="panel-footer">                        
+                        </div>
+                    </div>
+                </h:form>  
+
+            </div>
+            
+            <!-- Manual Quote Modal -->
+            <div class="modal fade" id="manualQuoteModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content">
+                        <h:form id="manualQuoteForm">   
+                            <div class="modal-header">
+                                <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+                                <h3 class="modal-title" id="myModalLabel2" style="font-weight: bold;">
+                                    <i class="fa fa-calculator sidegap-s"></i>Cotação Manual</h3>
+                            </div>
+                            <div class="modal-body">        
+                                <p:messages rendered="#{not empty facesContext.messageList}" id="manualQuoteMessageBox" class="alert" 
+                                            styleClass="generalfont_fix" showDetail="true" style="width:100%;margin-top:-20px;margin-bottom:-10px;font-weight: normal"
+                                            showSummary="false"/>
+                                <div class="row">
+
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-list sidegap-s"></i>Inventário</h4>
+
+                                    <ace:dataTable id="quoteSelectionTable"
+                                                   value="#{quoteController.inventory}"
+                                                   var="selectionItem"                                             
+                                                   scrollable="true" 
+                                                   scrollHeight="200"
+                                                   >
+                                        <ace:column id="selectionPn" headerText="PN" sortBy="#{selectionItem.pn}" filterBy="#{selectionItem.pn}" filterMatchMode="contains">
+                                            <h:outputText style="font-weight:bold;font-size:16px;font-family: rajdhani;" id="selectionPnCell" value="#{selectionItem.pn}"/>
+                                        </ace:column>
+                                        <ace:column id="selectionCondition" headerText="Cond." sortBy="#{selectionItem.condition}"
+                                                    filterOptions="#{quoteController.conditionFilterOptions}" filterBy="#{selectionItem.condition}" filterMatchMode="contains">
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('OH')}">
+                                                <h:outputText  style="font-size:12px;" class="label label-default" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('PMA')}">
+                                                <h:outputText style="font-size:12px;" class="label label-warning" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('AR')}">
+                                                <h:outputText style="font-size:12px;" class="label label-info" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('NEW')}">
+                                                <h:outputText style="font-size:12px;" class="label label-success" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('SV')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('RP')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectionItem.condition.equals('RB')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success"  value="#{selectionItem.condition}"/>
+                                            </p:outputPanel>
+                                        </ace:column>
+                                        <ace:column id="selectionQuantity" headerText="Qnt." sortBy="#{selectionItem.quantity}" filterBy="#{selectionItem.quantity}" filterMatchMode="exact">
+                                            <h:outputText  id="selectionQuantityCell" value="#{selectionItem.quantity}"/>                                            
+                                        </ace:column>  
+                                        <ace:column id="selectionQuantityToQuote">
+                                            <h:inputText style="max-width:65px;" class="form-control" id="selectionQuantityToQuoteCell" value="#{selectionItem.selectedQuantity}"/>                                            
+                                        </ace:column>   
+                                        <ace:column style="width:50px;">
+                                            <h:commandLink  class="btn btn-default btn-xs" actionListener="#{quoteController.addToQuote(selectionItem)}">
+                                                <i class="fa fa-check"></i>
+                                            </h:commandLink> 
+                                        </ace:column>
+                                    </ace:dataTable>
+
+
+                                    <h4 style="margin-left:15px;" ><i style="color:#007DC5;" class="fa fa-check-square-o sidegap-s"></i>Items Selecionados</h4>   
+
+                                    <ace:dataTable id="selectedQuoteItemsTable"
+                                                   value="#{quoteController.selectedToQuote}"
+                                                   var="selectedQuoteItem"                                                                                                                                                             
+                                                   scrollable="true"                                                        
+                                                   >
+                                        <ace:column id="selectedPn">
+                                            <h:outputText id="selectedPnCell" style="font-weight:bold;font-size:16px;font-family: rajdhani;" value="#{selectedQuoteItem.pn}"/>
+                                        </ace:column>
+                                        <ace:column id="selectedCondition">
+                                            <p:outputPanel rendered="#{selectedQuoteItem.condition.equals('OH')}">
+                                                <h:outputText  style="font-size:12px;" class="label label-default" value="#{selectedQuoteItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectedQuoteItem.condition.equals('PMA')}">
+                                                <h:outputText style="font-size:12px;" class="label label-warning" value="#{selectedQuoteItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectedQuoteItem.condition.equals('AR')}">
+                                                <h:outputText style="font-size:12px;" class="label label-info" value="#{selectedQuoteItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectedQuoteItem.condition.equals('NEW')}">
+                                                <h:outputText style="font-size:12px;" class="label label-success" value="#{selectedQuoteItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectedQuoteItem.condition.equals('SV')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{selectedQuoteItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectedQuoteItem.condition.equals('RP')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success" value="#{selectedQuoteItem.condition}"/>
+                                            </p:outputPanel>
+                                            <p:outputPanel rendered="#{selectedQuoteItem.condition.equals('RB')}">
+                                                <h:outputText style="font-size:12px;background:#B2B2B2;" class="label label-success"  value="#{selectedQuoteItem.condition}"/>
+                                            </p:outputPanel>
+                                        </ace:column>
+                                        <ace:column id="selectedQuantity">
+                                            <h:outputText id="selectedQuantityCell" value="#{selectedQuoteItem.quantity}"/>
+                                        </ace:column>
+                                        <ace:column id="selectedPrice">
+                                            <i class="fa fa-dollar sidegap-xs"></i><h:outputText id="selectedPriceCell" value="#{selectedQuoteItem.price}"/>
+                                        </ace:column>
+                                        <ace:column style="width:50px;">
+                                            <h:commandLink  class="btn btn-default btn-xs" actionListener="#{quoteController.addToQuote(selectionItem)}">
+                                                <i class="fa fa-remove"></i>
+                                            </h:commandLink> 
+                                        </ace:column>
+                                    </ace:dataTable>
+                                    
+                                    <div class="form-group col-xs-12" style="margin-top:10px;">
+                                        <!--
+                                <label>Mover para Container</label>                              
+                                <h:selectOneMenu class="form-control" value="#{inventoryController.selectedMoveItemsContainer}">                                        
+                                    <f:selectItems value="#{inventoryController.availableContainers}"   />                                       
+                                </h:selectOneMenu>
+                                <span id="helpBlock" class="help-block">Este container receberá os items da lista de <b>items selecionados</b>.</span>
+                                        -->
+                                        </div>
+                            
+                            
+                                </div> 
+                                
+                            </div> 
+                            
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-default" data-dismiss="modal">Cancelar</button>
+                                <h:commandButton value="Gerar Cotação" class="btn btn-warning" type="submit"> 
+                                    
+                                </h:commandButton>
+                            </div>
+                        </h:form>
+                    </div>
+                </div>
+            </div> 
+            
+            
+        </div>        
+       
+    </h:body>
 </html>

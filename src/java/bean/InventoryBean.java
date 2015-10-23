@@ -20,6 +20,7 @@ public class InventoryBean {
     private String oldpn;
     private String oldalias;
     private String movealias;
+    private int selectedQuantity;
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">
     public String getPn() {
@@ -140,6 +141,14 @@ public class InventoryBean {
 
     public void setMovealias(String movealias) {
         this.movealias = movealias;
+    }
+
+    public int getSelectedQuantity() {
+        return selectedQuantity;
+    }
+
+    public void setSelectedQuantity(int selectedQuantity) {
+        this.selectedQuantity = selectedQuantity;
     }
 
     public String getOldalias() {

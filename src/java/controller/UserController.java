@@ -85,7 +85,7 @@ public class UserController {
                 /* Define atributos de session */
                 session.setAttribute("currentSessionID", currentSession.getSession_id());
                 /* Registra LOG */
-                newLog("Acesso", "Login efetuado. Seção iniciada.","");
+                newLog("Acesso", "Login efetuado. Seção iniciada.", "");
                 /* Redireciona para 'index.xhtml' */
                 FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
                 System.out.println("[SYSTEM][USERCONTROLLER] Nova session criada com sucesso!");
@@ -98,7 +98,7 @@ public class UserController {
                 /* Define atributos de session */
                 session.setAttribute("currentSessionID", currentSession.getSession_id());
                 /* Registra LOG */
-                newLog("Acesso", "Login recuperado. Seção iniciada.","");
+                newLog("Acesso", "Login recuperado. Seção iniciada.", "");
                 /* Redireciona para 'index.xhtml' */
                 FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/index.xhtml");
                 System.out.println("[SYSTEM][USERCONTROLLER] Session recuperada com sucesso!");
@@ -139,11 +139,13 @@ public class UserController {
     public void doLogout() throws IOException {
         /* Recupera session */
         FacesContext ctx = FacesContext.getCurrentInstance();
-        session = (HttpSession) ctx.getExternalContext().getSession(true);       
+        session = (HttpSession) ctx.getExternalContext().getSession(true);
         /* Invalida session no navegador */
         session.invalidate();
         /* Redireciona para 'login.xhtml' */
         FacesContext.getCurrentInstance().getExternalContext().redirect(ctx.getExternalContext().getRequestContextPath() + "/login.xhtml");
+        /* Feedback */
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Vôcê saiu do sistema."));
     }
 
     // CONSTRUTOR

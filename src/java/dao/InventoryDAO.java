@@ -270,11 +270,11 @@ public class InventoryDAO {
         System.out.println("[DATABASE][INVENTORYDAO] Preparando para mover item '" + item.getPn()
                 + "' para '" + item.getMovealias() + "' ...");
 
-        if (item.getCondition() == null) {            
+        if (item.getCondition() == null) {
             String sql = "UPDATE inventory SET container_ALIAS = ? WHERE items_PN = ? AND ITEMCONDITION IS NULL";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, item.getMovealias());
-            ps.setString(2, item.getPn());            
+            ps.setString(2, item.getPn());
 
             System.out.println(ps);
             ps.execute();
@@ -284,7 +284,7 @@ public class InventoryDAO {
 
             System.out.println("[DATABASE][INVENTORYDAO] Item '" + item.getPn()
                     + "' movido para '" + item.getMovealias() + "' com sucesso!");
-        } else {            
+        } else {
             String sql = "UPDATE inventory SET container_ALIAS = ? WHERE items_PN = ? AND ITEMCONDITION = ?";
             PreparedStatement ps = conn.prepareStatement(sql);
             ps.setString(1, item.getMovealias());
@@ -301,5 +301,55 @@ public class InventoryDAO {
                     + "' movido para '" + item.getMovealias() + "' com sucesso!");
         }
 
+    }
+
+    ////////////////////////////////////////////////////////////////////////////
+    // 10 - loadAvailableInventory()
+    //      Carrega todos os itens disponíveis da tabela inventário.
+    public List<InventoryBean> loadAvailableInventory() throws ExceptionDAO, SQLException {
+        /* Cria lista que armazena items disponíveis no inventário */
+        List<InventoryBean> availableInventory = new ArrayList<InventoryBean>();
+
+        /* Inicia e configura conexão com banco de dados */
+        ConnectionBuilder connection = new ConnectionBuilder();
+        Connection conn = connection.getConnection();
+
+        System.out.println("[DAO][INVENTORY][loadAvailableInventory] Iniciando...");
+
+        /* Prepara SQL e carrega dados da VIEW 'inventory_standardview' */
+        String sql = "SELECT * FROM inventory_standardview WHERE QUANTITY > 0";
+        PreparedStatement ps = conn.prepareStatement(sql);
+        ResultSet rs = ps.executeQuery();
+
+        System.out.println("[DAO][INVENTORY][loadAvailableInventory] Executando pesquisa...");
+
+        while (rs.next()) {
+            InventoryBean inventoryItem = new InventoryBean();
+            inventoryItem.setId(rs.getInt("ID"));
+            inventoryItem.setPn(rs.getString("PN"));
+            inventoryItem.setDescription(rs.getString("DESCRIPTION"));
+            inventoryItem.setCondition(rs.getString("ITEMCONDITION"));
+            inventoryItem.setQuantity(rs.getInt("QUANTITY"));
+            inventoryItem.setContainerAlias(rs.getString("ALIAS"));
+            inventoryItem.setPrice(rs.getFloat("PRICE"));
+            inventoryItem.setStatus(rs.getString("ITEM_STATUS"));
+            inventoryItem.setFrom(rs.getString("ITEM_FROM"));
+            inventoryItem.setForm_link(rs.getString("FORM_LINK"));
+            inventoryItem.setForm_status(rs.getBoolean("FORM_STATUS"));
+            inventoryItem.setObs(rs.getString("OBS"));
+            inventoryItem.setContainerfull_status(rs.getBoolean("CONTAINER_STATUS"));
+            inventoryItem.setOldpn(rs.getString("PN"));
+            inventoryItem.setOldalias(rs.getString("ALIAS"));
+
+            availableInventory.add(inventoryItem);
+        }
+
+        System.out.println("[DAO][INVENTORY][loadAvailableInventory] Pesquisa concluída com sucesso!");
+
+        rs.close();
+        ps.close();
+        conn.close();
+
+        return availableInventory;
     }
 }

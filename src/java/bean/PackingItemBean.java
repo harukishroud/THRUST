@@ -6,7 +6,7 @@ public class PackingItemBean {
     private String description;
     private String condition;
     private boolean form_status;
-    private int quantity;
+    private int quantity; 
 
     // <editor-fold desc="GET and SET" defaultstate="collapsed">
     public int getPacking_n() {

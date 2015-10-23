@@ -6,6 +6,7 @@ import java.util.List;
 import bean.ClientBean;
 import dao.ExceptionDAO;
 import dao.ClientDAO;
+import javax.faces.model.SelectItem;
 
 public class ClientService {
 
@@ -110,6 +111,28 @@ public class ClientService {
             System.out.println("[SERVICE][CLIENT][removeClient] ERRO: Não foi possível remover o cliente de ID '" + clientId + "'.");
         }
 
+        ////////////////////////////////////////////////////////////////////////
+    }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // 06 - createExistingStateList()
+    //      @DAO
+    //      Cria lista de estados existentes entre os clientes cadastrados.
+    public List<SelectItem> createExistingStateList() throws ExceptionDAO {
+        /* Cria lista 'stateList' que armazena estados encontrados */
+        List<SelectItem> stateList = new ArrayList<SelectItem>();
+        /* Inicia DAO */
+        ClientDAO clientDAO = new ClientDAO();
+        
+        try {
+            /* Executa DAO 'createExistingStateList' */
+            stateList = clientDAO.createExistingStateList();
+        } catch (SQLException ex) {
+            /* Em caso de erros */
+            System.out.println("[SERVICE][CLIENT][createExistingStateList] ERRO: Não foi possível criar lista de estados existentes no banco de dados.");
+        }
+        
+        return stateList;
         ////////////////////////////////////////////////////////////////////////
     }
 

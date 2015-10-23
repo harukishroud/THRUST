@@ -11,6 +11,7 @@ import javax.faces.application.FacesMessage;
 import javax.faces.bean.ManagedBean;
 import javax.faces.bean.ViewScoped;
 import javax.faces.context.FacesContext;
+import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import service.ClientService;
 import service.LogService;
@@ -35,6 +36,8 @@ public class ClientController {
     // LISTAS
     /* Armazena lista de clientes */
     private List<ClientBean> clients = new ArrayList<ClientBean>();
+    /* Armazena lista de estados de clientes cadastrados para filtro */
+    private List<SelectItem> clientStateList = new ArrayList<SelectItem>();
 
     // SERVIÇOS
     /* Inicia serviços */
@@ -132,6 +135,14 @@ public class ClientController {
         client = new ClientBean();
         ////////////////////////////////////////////////////////////////////////
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // 06 - loadExistingStates()
+    //      Carrega lista de estados de clientes cadastrados para filtro.
+    public void loadExistingStates() throws ExceptionDAO {
+        clientStateList = clientService.createExistingStateList(); 
+        ////////////////////////////////////////////////////////////////////////
+    }
 
     ////////////////////////////////////////////////////////////////////////////
     // ## - newLog()
@@ -156,6 +167,9 @@ public class ClientController {
 
         /* Carrega lista de clientes */
         loadAllClients();
+        
+        /* Carrega lista de estados de clientes cadastrados para filtro */
+        loadExistingStates();
 
         /* Carrega dados da session */
         FacesContext ctx = FacesContext.getCurrentInstance();
@@ -209,6 +223,14 @@ public class ClientController {
 
     public void setLogService(LogService logService) {
         this.logService = logService;
+    }
+
+    public List<SelectItem> getClientStateList() {
+        return clientStateList;
+    }
+
+    public void setClientStateList(List<SelectItem> clientStateList) {
+        this.clientStateList = clientStateList;
     }
 
     public ClientBean getNewClientInfo() {

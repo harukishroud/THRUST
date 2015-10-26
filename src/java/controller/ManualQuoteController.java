@@ -13,17 +13,25 @@ import javax.faces.model.SelectItem;
 import javax.servlet.http.HttpSession;
 import service.InventoryService;
 
-@ManagedBean(name = "quoteController")
+@ManagedBean(name = "manualQuoteController")
 @ViewScoped
 
-public class QuoteController {
-
+public class ManualQuoteController {
+    
     // VARIAVEIS GERAIS
     /* HTTP Session */
     private HttpSession session;
-
+    
+    /* Armazena valor total da cotação */
+    private float totalQuotePrice;
+    /* Armazena valor total da cotação em BRL */
+    private float totalQuoteBRLPrice;
+    /* Armazena total de items na cotação */
+    private int totalQuoteItens;
     /* Armazena e define progresso do construtor de cotação */
     private int quoteProgress;
+    /* Salva tipo de arquivo a ser exportado */
+    private String exportType;
 
     // BEANS
     // LISTAS
@@ -38,6 +46,7 @@ public class QuoteController {
     InventoryService inventoryService = new InventoryService();
 
     // MÉTODOS
+    
     ////////////////////////////////////////////////////////////////////////////
     // 01 - loadAvailableInventory()
     //      Carrega inventário existente no banco de dados.
@@ -60,7 +69,7 @@ public class QuoteController {
         if (selectedItem.getSelectedQuantity() == 0) {
             /* Feedback */
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "Você precisa informar uma quantidade válida para adicionar este item!"));
-            System.out.println("[CONTROLLER][QUOTE][addToQuote] ERRO: O Item '" + selectedItem.getPn() + "' não pode ser adicionado com quantidade zero.");
+            System.out.println("[CONTROLLER][MANUALQUOTE][addToQuote] ERRO: O Item '" + selectedItem.getPn() + "' não pode ser adicionado com quantidade zero.");
         }
 
         /* Verifica toda lista de items selecionados pelo item informado */
@@ -70,7 +79,7 @@ public class QuoteController {
                 selectedItemCheckStatus = true;
                 /* Feedback */
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "O Item '" + selectedItem.getPn() + "' já existe na lista de mudança."));
-                System.out.println("[CONTROLLER][QUOTE][addToQuote] ERRO: O Item '" + selectedItem.getPn() + "' já existe na lista de mudança.");
+                System.out.println("[CONTROLLER][MANUALQUOTE][addToQuote] ERRO: O Item '" + selectedItem.getPn() + "' já existe na lista de mudança.");
             }
         }
 
@@ -80,7 +89,7 @@ public class QuoteController {
                 selectedItemQuantityCheckStatus = true;
                 /* Feedback */
                 FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_ERROR, "", "A quantidade informada para o item '" + selectedItem.getPn() + "' não está disponível!"));
-                System.out.println("[CONTROLLER][QUOTE][addToQuote] A quantidade informada para o item '" + selectedItem.getPn() + "' não está disponível!");
+                System.out.println("[CONTROLLER][MANUALQUOTE][addToQuote] ERRO: A quantidade informada para o item '" + selectedItem.getPn() + "' não está disponível!");
             }
         }
 
@@ -92,15 +101,46 @@ public class QuoteController {
             verifiedItem.setQuantity(selectedItem.getSelectedQuantity());
             /* Adiciona item verificado à lista */
             selectedToQuote.add(verifiedItem);
+            /* Atualiza variaveis */
+            totalQuoteItens = totalQuoteItens + 1;
+            totalQuotePrice = totalQuotePrice + (verifiedItem.getPrice() * verifiedItem.getSelectedQuantity());
             /* Feedback */
             FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO, "", "Item '" + selectedItem.getPn() + "' adicionado com sucesso!"));
-            System.out.println("[SYSTEM][INVENTORYCONTROLLER] Item '" + selectedItem.getPn() + "' adicionado à lista de mudança.");
+                System.out.println("[CONTROLLER][MANUALQUOTE][addToQuote] O item '" + selectedItem.getPn() + "' foi adicionado à lista com sucesso!");
         }
         ////////////////////////////////////////////////////////////////////////
     }
+    
+    ////////////////////////////////////////////////////////////////////////////
+    // 03 - resetQuote()
+    //      Limpa toda informação relacionada ao construtor de cotação.
+    public void resetQuote() throws SQLException, ExceptionDAO {
+        /* Limpa lista de items a cotar */
+        selectedToQuote = new ArrayList<InventoryBean>();
+        /* Limpa inventário */
+        inventory = new ArrayList<InventoryBean>();
+        /* Limpa detalhes da cotação */
+        totalQuoteBRLPrice = 0;
+        totalQuoteItens = 0;
+        totalQuotePrice = 0;                
+        
+        /* Carrega inventário para tabela de seleção */
+        loadAvailableInventory();
+    }
 
     // CONSTRUTOR
-    public QuoteController() {
+    public ManualQuoteController() throws SQLException, ExceptionDAO {
+        /* Carrega inventário para tabela de seleção */
+        loadAvailableInventory();
+        
+        /* Define o tipo de exportação padrão do inventário atual */
+        this.exportType = "xls";
+        
+        
+        /* Inicializa variaveis da cotação */
+        totalQuoteBRLPrice = 0;
+        totalQuoteItens = 0;
+        totalQuotePrice = 0;
 
         /* Cria lista de condições para filtro na tabela de inventário */
         conditionFilterOptions.add(new SelectItem(""));      // ALL
@@ -113,7 +153,7 @@ public class QuoteController {
         conditionFilterOptions.add(new SelectItem("RB"));    // REBUILT
 
     }
-
+    
     // <editor-fold desc="GET and SET" defaultstate="collapsed">
     public HttpSession getSession() {
         return session;
@@ -145,6 +185,38 @@ public class QuoteController {
 
     public void setConditionFilterOptions(List<SelectItem> conditionFilterOptions) {
         this.conditionFilterOptions = conditionFilterOptions;
+    }
+
+    public float getTotalQuotePrice() {
+        return totalQuotePrice;
+    }
+
+    public void setTotalQuotePrice(float totalQuotePrice) {
+        this.totalQuotePrice = totalQuotePrice;
+    }
+
+    public float getTotalQuoteBRLPrice() {
+        return totalQuoteBRLPrice;
+    }
+
+    public void setTotalQuoteBRLPrice(float totalQuoteBRLPrice) {
+        this.totalQuoteBRLPrice = totalQuoteBRLPrice;
+    }
+
+    public int getTotalQuoteItens() {
+        return totalQuoteItens;
+    }
+
+    public void setTotalQuoteItens(int totalQuoteItens) {
+        this.totalQuoteItens = totalQuoteItens;
+    }
+
+    public String getExportType() {
+        return exportType;
+    }
+
+    public void setExportType(String exportType) {
+        this.exportType = exportType;
     }
 
     public List<InventoryBean> getSelectedToQuote() {

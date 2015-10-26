@@ -10,7 +10,7 @@
         <link href="css/style.css" rel="stylesheet"/>
         <link href="css/bootstrap.css" rel="stylesheet"/>
         <link href="css/font-awesome.css" rel="stylesheet"/>
-        
+
     </h:head>
     <h:body>
         <h:form>
@@ -34,11 +34,29 @@
                                 <h:commandLink actionListener="#{mainController.goTo('/inventory.xhtml')}">
                                     <i class="fa fa-th-list sidegap-xs"></i> Inventário
                                 </h:commandLink>
-                            </li>
-                            <li> 
-                                <h:commandLink actionListener="#{mainController.goTo('/quote.xhtml')}">
-                                    <i class="fa fa-calculator sidegap-xs"></i> Cotação
-                                </h:commandLink>
+                            </li>                            
+                            <li class="dropdown">
+                                <a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-calculator sidegap-xs"></i> Cotações<span class="caret countersidegap-s"></span></a>
+                                <ul class="dropdown-menu">
+                                    <li>
+                                        <h:commandLink actionListener="#{mainController.goTo('/pns.xhtml')}">
+                                            <i class="fa fa-gears sidegap-xs"></i>Gerenciar <br></br> <small>Exibe todas as cotações</small>
+                                        </h:commandLink>
+                                    </li>
+                                    <li role="separator" class="divider"></li>
+
+                                    <li>
+                                        <h:commandLink actionListener="#{mainController.goTo('/manualQuote.xhtml')}">
+                                            <i class="fa fa-hand-pointer-o sidegap-xs"></i>Manual <br></br> <small>Seleciona items manualmente</small>
+                                        </h:commandLink>
+                                    </li>
+                                    <li>
+                                        <h:commandLink actionListener="#{mainController.goTo('/containers.xhtml')}">
+                                            <i class="fa fa-file-excel-o sidegap-xs"></i>Automática <br></br> <small>Carrega um arquivo .xls</small>
+                                        </h:commandLink>
+                                    </li>                                      
+                                </ul>
                             </li>
                             <li>
                                 <h:commandLink actionListener="#{mainController.goTo('/packing.xhtml')}">
@@ -62,17 +80,17 @@
                                 <ul class="dropdown-menu">
                                     <li>
                                         <h:commandLink actionListener="#{mainController.goTo('/pns.xhtml')}">
-                                            <i class="fa fa-gears sidegap-xs"></i>PNs
+                                            <i class="fa fa-gears sidegap-xs"></i>PNs <br></br> <small>Cadastro, detalhes e alterações de PNs</small>
                                         </h:commandLink>
                                     </li>
                                     <li>
                                         <h:commandLink actionListener="#{mainController.goTo('/containers.xhtml')}">
-                                            <i class="fa fa-cubes sidegap-xs"></i>Containers
+                                            <i class="fa fa-cubes sidegap-xs"></i>Containers <br></br> <small>Criação, alteração, remoção e detalhes</small>
                                         </h:commandLink>
                                     </li>   
                                     <li>
                                         <h:commandLink actionListener="#{mainController.goTo('/clients.xhtml')}">
-                                            <i class="fa fa-users sidegap-xs"></i>Clientes
+                                            <i class="fa fa-users sidegap-xs"></i>Clientes  <br></br> <small>Cadastro e informações em geral</small>
                                         </h:commandLink>
                                     </li>  
                                     <li role="separator" class="divider"></li>
